@@ -12,6 +12,13 @@
         "label": "Password",
         "required": "Password is required"
       },
+      "errors": {
+        "invalidRequest": "Invalid request data",
+        "invalidCredentials": "Invalid email or password",
+        "locked": "Account temporarily locked",
+        "tooManyAttempts": "Too many attempts, please try again in 15 minutes",
+        "generic": "An error occurred, please try again later"
+      },
       "submit": "Sign in",
       "register": "Not registered yet... Create an account",
       "forgotPassword": "Forgot password"

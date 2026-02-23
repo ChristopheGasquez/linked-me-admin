@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -6,14 +7,18 @@ import {
   MatCardActions,
   MatCardContent,
   MatCardHeader,
-  MatCardTitle,
   MatCardSubtitle,
+  MatCardTitle,
 } from '@angular/material/card';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { TranslocoDirective } from '@jsverse/transloco';
 import { RouterLink } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { EMPTY } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -41,8 +46,11 @@ import { RouterLink } from '@angular/router';
 })
 export class Login {
   #formBuilder: FormBuilder = inject(FormBuilder);
+  #authService = inject(AuthService);
 
   showPassword = signal(false);
+  loading = signal(false);
+  error = signal<string | null>(null);
 
   form: FormGroup = this.#formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -53,6 +61,32 @@ export class Login {
     if (this.form.invalid) return;
 
     const { email, password } = this.form.getRawValue();
-    console.log(email, password);
+    this.error.set(null);
+    this.loading.set(true);
+    this.#authService
+      .login(email, password)
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          switch (err.status) {
+            case 400:
+              this.error.set('auth.login.errors.invalidRequest');
+              break;
+            case 401:
+              this.error.set('auth.login.errors.invalidCredentials');
+              break;
+            case 403:
+              this.error.set('auth.login.errors.locked');
+              break;
+            case 429:
+              this.error.set('auth.login.errors.tooManyAttempts');
+              break;
+            default:
+              this.error.set('auth.login.errors.generic');
+          }
+          return EMPTY;
+        }),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe();
   }
 }

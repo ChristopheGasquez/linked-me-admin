@@ -12,6 +12,13 @@
         "label": "Mot de passe",
         "required": "Le mot de passe est requis"
       },
+      "errors": {
+        "invalidRequest": "Données de connexion invalides",
+        "invalidCredentials": "Email ou mot de passe incorrect",
+        "locked": "Compte temporairement verrouillé",
+        "tooManyAttempts": "Trop de tentatives, réessaye dans 15 minutes",
+        "generic": "Une erreur est survenue, réessaye plus tard"
+      },
       "submit": "Se connecter",
       "register": "Pas encore inscrit... Créer un compte",
       "forgotPassword": "Mot de passe oublié"
