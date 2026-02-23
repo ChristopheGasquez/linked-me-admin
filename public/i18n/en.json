@@ -1,4 +1,10 @@
 {
+  "common": {
+    "langs": {
+      "fr": "French",
+      "en": "English"
+    }
+  },
   "auth": {
     "login": {
       "title": "Sign in",
