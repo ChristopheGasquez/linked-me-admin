@@ -1,0 +1,73 @@
+<ng-container *transloco="let t">
+  <mat-card
+    class="login-card"
+    appearance="outlined">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+      <mat-card-header class="login-card__header">
+        <mat-card-title class="login-card__header__title">
+          <h2>{{ t('auth.login.title') }}</h2>
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ t('auth.login.subtitle') }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="login-card__content">
+        @if (error()) {
+          <p class="login-card__error">{{ t(error()!) }}</p>
+        }
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t('auth.login.email.label') }}</mat-label>
+          <input
+            matInput
+            type="email"
+            formControlName="email" />
+          @if (form.controls['email']?.hasError('required')) {
+            <mat-error>{{ t('auth.login.email.required') }}</mat-error>
+          } @else if (form.controls['email']?.hasError('email')) {
+            <mat-error>{{ t('auth.login.email.invalid') }}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t('auth.login.password.label') }}</mat-label>
+          <input
+            matInput
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword.set(!showPassword())">
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.controls['password']?.hasError('required')) {
+            <mat-error>{{ t('auth.login.password.required') }}</mat-error>
+          }
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions class="login-card__actions">
+        <button
+          class="login-card__actions__item"
+          matButton="filled"
+          type="submit"
+          [disabled]="loading()">
+          {{ t('auth.login.submit') }}
+        </button>
+        <a
+          class="login-card__actions__item"
+          matButton
+          [routerLink]="['/', 'auth', 'register']">
+          {{ t('auth.login.register') }}
+        </a>
+        <a
+          class="login-card__actions__item"
+          matButton
+          [routerLink]="['/', 'auth', 'forgot-password']">
+          {{ t('auth.login.forgotPassword') }}
+        </a>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</ng-container>

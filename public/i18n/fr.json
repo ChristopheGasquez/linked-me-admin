@@ -1,0 +1,41 @@
+{
+  "common": {
+    "langs": {
+      "fr": "Français",
+      "en": "Anglais"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Renseignez vos informations de connexion pour accéder à votre espace personnel",
+      "email": {
+        "label": "Email",
+        "required": "L'email est requis",
+        "invalid": "Email invalide"
+      },
+      "password": {
+        "label": "Mot de passe",
+        "required": "Le mot de passe est requis"
+      },
+      "errors": {
+        "invalidRequest": "Données de connexion invalides",
+        "invalidCredentials": "Email ou mot de passe incorrect",
+        "locked": "Compte temporairement verrouillé",
+        "tooManyAttempts": "Trop de tentatives, réessaye dans 15 minutes",
+        "generic": "Une erreur est survenue, réessaye plus tard"
+      },
+      "submit": "Se connecter",
+      "register": "Pas encore inscrit... Créer un compte",
+      "forgotPassword": "Mot de passe oublié"
+    }
+  },
+  "layout": {
+    "public": {
+      "nav": {
+        "login": "Connexion",
+        "register": "Inscription"
+      }
+    }
+  }
+}

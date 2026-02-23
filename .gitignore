@@ -44,3 +44,6 @@ Thumbs.db
 
 # Claude Code
 .claude/settings.local.json
+
+# Dev memo
+backlog.md

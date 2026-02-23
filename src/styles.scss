@@ -1,1 +1,9 @@
+//// VARIABLES ////
+@use 'styles/variables/_containers';
+@use 'styles/variables/_spaces';
+
+//// THEMES ////
 @use 'styles/themes/theme';
+
+//// COMPONENTS ////
+@use 'styles/components/heading';

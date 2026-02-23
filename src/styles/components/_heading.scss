@@ -1,0 +1,23 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--mat-sys-primary);
+}
+
+h1 {
+  margin: 0 0 var(--lma-spacing-margin--xl);
+}
+h2 {
+  margin: 0 0 var(--lma-spacing-margin--lg);
+}
+h3 {
+  margin: 0 0 var(--lma-spacing-margin--md);
+}
+h4,
+h5,
+h6 {
+  margin: 0 0 var(--lma-spacing-margin--sm);
+}
