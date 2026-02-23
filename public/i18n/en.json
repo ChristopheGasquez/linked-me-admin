@@ -1,0 +1,41 @@
+{
+  "common": {
+    "langs": {
+      "fr": "French",
+      "en": "English"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Enter your credentials to access your personal space",
+      "email": {
+        "label": "Email",
+        "required": "Email is required",
+        "invalid": "Invalid email"
+      },
+      "password": {
+        "label": "Password",
+        "required": "Password is required"
+      },
+      "errors": {
+        "invalidRequest": "Invalid request data",
+        "invalidCredentials": "Invalid email or password",
+        "locked": "Account temporarily locked",
+        "tooManyAttempts": "Too many attempts, please try again in 15 minutes",
+        "generic": "An error occurred, please try again later"
+      },
+      "submit": "Sign in",
+      "register": "Not registered yet... Create an account",
+      "forgotPassword": "Forgot password"
+    }
+  },
+  "layout": {
+    "public": {
+      "nav": {
+        "login": "Sign in",
+        "register": "Sign up"
+      }
+    }
+  }
+}
