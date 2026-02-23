@@ -1,0 +1,20 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Enter your credentials to access your personal space",
+      "email": {
+        "label": "Email",
+        "required": "Email is required",
+        "invalid": "Invalid email"
+      },
+      "password": {
+        "label": "Password",
+        "required": "Password is required"
+      },
+      "submit": "Sign in",
+      "register": "Not registered yet... Create an account",
+      "forgotPassword": "Forgot password"
+    }
+  }
+}

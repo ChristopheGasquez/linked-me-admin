@@ -12,6 +12,7 @@ import {
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -35,6 +36,7 @@ import { RouterLink } from '@angular/router';
     MatInput,
     MatCardSubtitle,
     RouterLink,
+    TranslocoDirective,
   ],
 })
 export class Login {
