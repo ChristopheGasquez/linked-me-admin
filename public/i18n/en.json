@@ -23,5 +23,13 @@
       "register": "Not registered yet... Create an account",
       "forgotPassword": "Forgot password"
     }
+  },
+  "layout": {
+    "public": {
+      "nav": {
+        "login": "Sign in",
+        "register": "Sign up"
+      }
+    }
   }
 }

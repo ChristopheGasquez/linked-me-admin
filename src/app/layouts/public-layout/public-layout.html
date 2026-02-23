@@ -1,11 +1,16 @@
-<div class="public-layout">
-    <header class="public-layout__header">
-        header
-    </header>
-    <main class="public-layout__body">
-        <router-outlet />
-    </main>
-    <footer class="public-layout__footer">
-        footer
-    </footer>
-</div>
+<mat-toolbar class="public-layout__header">
+  <nav class="public-layout__header__nav">
+    <a matButton [routerLink]="['/', 'auth', 'login']">{{ 'layout.public.nav.login' | transloco }}</a>
+    <a matButton [routerLink]="['/', 'auth', 'register']">{{ 'layout.public.nav.register' | transloco }}</a>
+  </nav>
+  <div class="public-layout__header__actions">
+    <app-theme-toggle />
+    <app-lang-switcher />
+  </div>
+</mat-toolbar>
+<main class="public-layout__body">
+  <router-outlet />
+</main>
+<footer class="public-layout__footer">
+  v{{ version }}
+</footer>

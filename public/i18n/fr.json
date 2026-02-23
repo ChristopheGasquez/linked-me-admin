@@ -23,5 +23,13 @@
       "register": "Pas encore inscrit... Créer un compte",
       "forgotPassword": "Mot de passe oublié"
     }
+  },
+  "layout": {
+    "public": {
+      "nav": {
+        "login": "Connexion",
+        "register": "Inscription"
+      }
+    }
   }
 }

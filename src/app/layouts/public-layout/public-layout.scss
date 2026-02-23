@@ -1,18 +1,37 @@
 :host {
-    display: contents;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
 
-    .public-layout {
+  .public-layout {
+    &__header {
+      &__nav {
+        flex: 1;
         display: flex;
-        flex-direction: column;
-        height: 100dvh;
-
-        &__body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: auto;
-            padding: var(--lma-spacing-padding--xxl);
-        }
+        gap: var(--lma-spacing-gap--sm);
+      }
+      &__actions {
+        display: flex;
+      }
     }
+
+    &__footer {
+      position: absolute;
+      bottom: 0;
+      font-size: 0.8rem;
+      color: var(--mat-sys-outline);
+      padding: var(--lma-spacing-padding--sm);
+      opacity: 0.5;
+    }
+
+    &__body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: auto;
+      padding: var(--lma-spacing-padding--xxl);
+    }
+  }
 }
