@@ -12,6 +12,8 @@
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
+    "singleAttributePerLine": true,
+    "bracketSameLine": true,
     "overrides": [
       {
         "files": "*.html",

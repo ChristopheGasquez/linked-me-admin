@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-public-layout',
   imports: [RouterOutlet],
-  template: '<p>public-layout works!</p><router-outlet />',
+  templateUrl: './public-layout.html',
+  styleUrl: './public-layout.scss',
 })
-export class PublicLayout {}
+export class PublicLayout { }

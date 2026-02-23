@@ -1,0 +1,18 @@
+:host {
+    display: contents;
+
+    .public-layout {
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
+
+        &__body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: auto;
+            padding: var(--lma-spacing-padding--xxl);
+        }
+    }
+}
