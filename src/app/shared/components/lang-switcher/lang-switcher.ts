@@ -11,12 +11,16 @@ import { AVAILABLE_LANGS } from '../../models/lang.model';
   selector: 'app-lang-switcher',
   imports: [MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, TranslocoPipe],
   template: `
-    <button mat-icon-button [matMenuTriggerFor]="langMenu">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="langMenu">
       <mat-icon>language</mat-icon>
     </button>
     <mat-menu #langMenu>
       @for (lang of langs; track lang) {
-        <button mat-menu-item (click)="setLang(lang)">
+        <button
+          mat-menu-item
+          (click)="setLang(lang)">
           <mat-icon>{{ activeLang() === lang ? 'check' : '' }}</mat-icon>
           {{ 'common.langs.' + lang | transloco }}
         </button>
