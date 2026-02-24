@@ -21,6 +21,27 @@
       "submit": "Sign in",
       "register": "Not registered yet... Create an account",
       "forgotPassword": "Forgot password"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Enter your information to create your personal space",
+      "name": {
+        "label": "Username",
+        "required": "Username is required",
+        "minlength": "Username must be at least 2 characters"
+      },
+      "email": {
+        "label": "Email",
+        "required": "Email is required",
+        "invalid": "Invalid email"
+      },
+      "password": {
+        "label": "Password",
+        "required": "Password is required",
+        "minlength": "Password must be at least 8 characters"
+      },
+      "submit": "Create my account",
+      "login": "Already have an account? Sign in"
     }
   },
   "api": {

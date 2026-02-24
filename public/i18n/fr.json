@@ -21,6 +21,27 @@
       "submit": "Se connecter",
       "register": "Pas encore inscrit... Créer un compte",
       "forgotPassword": "Mot de passe oublié"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Renseignez vos informations pour créer votre espace personnel",
+      "name": {
+        "label": "Nom d'utilisateur",
+        "required": "Le nom est requis",
+        "minlength": "Le nom doit contenir au moins 2 caractères"
+      },
+      "email": {
+        "label": "Email",
+        "required": "L'email est requis",
+        "invalid": "Email invalide"
+      },
+      "password": {
+        "label": "Mot de passe",
+        "required": "Le mot de passe est requis",
+        "minlength": "Le mot de passe doit contenir au moins 8 caractères"
+      },
+      "submit": "Créer mon compte",
+      "login": "Déjà un compte ? Se connecter"
     }
   },
   "api": {
