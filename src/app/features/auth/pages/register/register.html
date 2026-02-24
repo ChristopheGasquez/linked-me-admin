@@ -12,11 +12,13 @@
         <mat-card-subtitle>
           {{ t('auth.register.subtitle') }}
         </mat-card-subtitle>
+        @if (error()) {
+          <mat-card-subtitle class="register-card__error">{{
+            t('api.' + error()!.code, error()!.params ?? {})
+          }}</mat-card-subtitle>
+        }
       </mat-card-header>
       <mat-card-content class="register-card__content">
-        @if (error()) {
-          <p class="register-card__error">{{ t('api.' + error()!.code, error()!.params ?? {}) }}</p>
-        }
         <mat-form-field appearance="outline">
           <mat-label>{{ t('auth.register.name.label') }}</mat-label>
           <input

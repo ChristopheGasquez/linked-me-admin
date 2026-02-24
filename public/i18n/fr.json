@@ -19,6 +19,7 @@
         "required": "Le mot de passe est requis"
       },
       "submit": "Se connecter",
+      "resendEmail": "Renvoyer l'email de confirmation",
       "register": "Pas encore inscrit... Créer un compte",
       "forgotPassword": "Mot de passe oublié"
     },

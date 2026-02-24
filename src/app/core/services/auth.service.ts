@@ -33,6 +33,10 @@ export class AuthService {
     );
   }
 
+  resendVerificationEmail(email: string): Observable<void> {
+    return this.#authApi.resendVerificationEmail(email);
+  }
+
   logout(): void {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);

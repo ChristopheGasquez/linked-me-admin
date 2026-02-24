@@ -19,6 +19,7 @@
         "required": "Password is required"
       },
       "submit": "Sign in",
+      "resendEmail": "Resend confirmation email",
       "register": "Not registered yet... Create an account",
       "forgotPassword": "Forgot password"
     },

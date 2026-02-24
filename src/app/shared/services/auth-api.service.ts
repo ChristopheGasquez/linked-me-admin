@@ -34,6 +34,10 @@ export class AuthApiService {
     });
   }
 
+  resendVerificationEmail(email: string): Observable<void> {
+    return this.#http.post<void>(`${this.baseUrl}/resend-verification`, { email });
+  }
+
   logout(): Observable<void> {
     return this.#http.post<void>(`${this.baseUrl}/logout`, {});
   }

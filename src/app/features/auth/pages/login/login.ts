@@ -53,6 +53,7 @@ export class Login {
   showPassword = signal(false);
   loading = signal(false);
   error = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
+  emailToResend = signal<string | null>(null);
 
   form: FormGroup = this.#formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -64,6 +65,7 @@ export class Login {
 
     const { email, password } = this.form.getRawValue();
     this.error.set(null);
+    this.emailToResend.set(null);
     this.loading.set(true);
     this.#authService
       .login(email, password)
@@ -77,11 +79,27 @@ export class Login {
               code: apiError?.code ?? 'unknown',
               params: apiError?.params as Record<string, unknown>,
             });
+            if (apiError?.code === 'auth.login.email_not_verified') {
+              this.emailToResend.set(email);
+            }
           }
           return EMPTY;
         }),
         finalize(() => this.loading.set(false)),
       )
       .subscribe();
+  }
+
+  resendVerificationEmail(): void {
+    const email = this.emailToResend();
+    if (!email) return;
+
+    this.loading.set(true);
+    this.#authService
+      .resendVerificationEmail(email)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => this.emailToResend.set(null),
+      });
   }
 }
