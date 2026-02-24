@@ -18,17 +18,101 @@
         "label": "Password",
         "required": "Password is required"
       },
-      "errors": {
-        "invalidRequest": "Invalid request data",
-        "invalidCredentials": "Invalid email or password",
-        "locked": "Account temporarily locked",
-        "tooManyAttempts": "Too many attempts, please try again in 15 minutes",
-        "generic": "An error occurred, please try again later"
-      },
       "submit": "Sign in",
       "register": "Not registered yet... Create an account",
       "forgotPassword": "Forgot password"
     }
+  },
+  "api": {
+    "auth": {
+      "register": {
+        "conflict": "An account already exists with this email"
+      },
+      "login": {
+        "invalid_credentials": "Invalid email or password",
+        "account_locked": "Account temporarily locked",
+        "email_not_verified": "Please verify your email before signing in"
+      },
+      "refresh": {
+        "invalid_token": "Session expired, please sign in again",
+        "token_revoked": "Session revoked, please sign in again"
+      },
+      "session": {
+        "not_found": "Session not found"
+      },
+      "email": {
+        "invalid_token": "Invalid or expired verification link",
+        "verified": "Email verified successfully",
+        "resend_sent": "Verification email sent"
+      },
+      "password_reset": {
+        "invalid_token": "Invalid or expired reset link",
+        "success": "Password reset successfully"
+      },
+      "forgot_password": {
+        "sent": "If an account exists with this email, a link has been sent"
+      },
+      "logout": {
+        "success": "Signed out successfully"
+      },
+      "logout_all": {
+        "success": "All sessions have been revoked"
+      }
+    },
+    "profile": {
+      "user": {
+        "not_found": "User not found"
+      },
+      "password": {
+        "incorrect": "Current password is incorrect",
+        "changed": "Password changed successfully"
+      },
+      "deleted": "Account deleted successfully"
+    },
+    "admin": {
+      "user": {
+        "not_found": "User not found",
+        "has_roles": "Cannot delete: user has assigned roles",
+        "role": {
+          "already_assigned": "This role is already assigned to this user",
+          "not_assigned": "This role is not assigned to this user",
+          "assigned": "Role assigned successfully",
+          "removed": "Role removed successfully"
+        },
+        "deleted": "User deleted"
+      },
+      "role": {
+        "not_found": "Role not found",
+        "already_exists": "A role with this name already exists",
+        "has_users": "Cannot delete: users have this role",
+        "deleted": "Role deleted",
+        "permission": {
+          "not_assigned": "This permission is not assigned to this role",
+          "removed": "Permission removed from role"
+        }
+      },
+      "permission": {
+        "unknown": "Unknown permission(s): {{ permissions }}"
+      }
+    },
+    "task": {
+      "cleanup": {
+        "unverified_users": {
+          "done": "{{ count }} unverified account(s) deleted"
+        },
+        "expired_tokens": {
+          "done": "{{ count }} expired token(s) deleted"
+        },
+        "orphaned_permissions": {
+          "done": "{{ count }} orphaned permission(s) deleted",
+          "none_found": "No orphaned permissions found"
+        },
+        "audit_logs": {
+          "done": "{{ count }} log(s) deleted"
+        }
+      }
+    },
+    "unknown": "An error occurred, please try again later"
   },
   "layout": {
     "public": {

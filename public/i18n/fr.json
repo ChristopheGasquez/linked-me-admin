@@ -18,17 +18,101 @@
         "label": "Mot de passe",
         "required": "Le mot de passe est requis"
       },
-      "errors": {
-        "invalidRequest": "Données de connexion invalides",
-        "invalidCredentials": "Email ou mot de passe incorrect",
-        "locked": "Compte temporairement verrouillé",
-        "tooManyAttempts": "Trop de tentatives, réessaye dans 15 minutes",
-        "generic": "Une erreur est survenue, réessaye plus tard"
-      },
       "submit": "Se connecter",
       "register": "Pas encore inscrit... Créer un compte",
       "forgotPassword": "Mot de passe oublié"
     }
+  },
+  "api": {
+    "auth": {
+      "register": {
+        "conflict": "Un compte existe déjà avec cet email"
+      },
+      "login": {
+        "invalid_credentials": "Email ou mot de passe incorrect",
+        "account_locked": "Compte temporairement verrouillé",
+        "email_not_verified": "Veuillez vérifier votre email avant de vous connecter"
+      },
+      "refresh": {
+        "invalid_token": "Session expirée, veuillez vous reconnecter",
+        "token_revoked": "Session révoquée, veuillez vous reconnecter"
+      },
+      "session": {
+        "not_found": "Session introuvable"
+      },
+      "email": {
+        "invalid_token": "Lien de vérification invalide ou expiré",
+        "verified": "Email vérifié avec succès",
+        "resend_sent": "Email de vérification renvoyé"
+      },
+      "password_reset": {
+        "invalid_token": "Lien de réinitialisation invalide ou expiré",
+        "success": "Mot de passe réinitialisé avec succès"
+      },
+      "forgot_password": {
+        "sent": "Si un compte existe avec cet email, un lien vous a été envoyé"
+      },
+      "logout": {
+        "success": "Déconnexion réussie"
+      },
+      "logout_all": {
+        "success": "Toutes les sessions ont été révoquées"
+      }
+    },
+    "profile": {
+      "user": {
+        "not_found": "Utilisateur introuvable"
+      },
+      "password": {
+        "incorrect": "Mot de passe actuel incorrect",
+        "changed": "Mot de passe modifié avec succès"
+      },
+      "deleted": "Compte supprimé avec succès"
+    },
+    "admin": {
+      "user": {
+        "not_found": "Utilisateur introuvable",
+        "has_roles": "Impossible de supprimer : l'utilisateur possède des rôles",
+        "role": {
+          "already_assigned": "Ce rôle est déjà assigné à cet utilisateur",
+          "not_assigned": "Ce rôle n'est pas assigné à cet utilisateur",
+          "assigned": "Rôle assigné avec succès",
+          "removed": "Rôle retiré avec succès"
+        },
+        "deleted": "Utilisateur supprimé"
+      },
+      "role": {
+        "not_found": "Rôle introuvable",
+        "already_exists": "Un rôle avec ce nom existe déjà",
+        "has_users": "Impossible de supprimer : des utilisateurs ont ce rôle",
+        "deleted": "Rôle supprimé",
+        "permission": {
+          "not_assigned": "Cette permission n'est pas assignée à ce rôle",
+          "removed": "Permission retirée du rôle"
+        }
+      },
+      "permission": {
+        "unknown": "Permission(s) inconnue(s) : {{ permissions }}"
+      }
+    },
+    "task": {
+      "cleanup": {
+        "unverified_users": {
+          "done": "{{ count }} compte(s) non vérifié(s) supprimé(s)"
+        },
+        "expired_tokens": {
+          "done": "{{ count }} token(s) expiré(s) supprimé(s)"
+        },
+        "orphaned_permissions": {
+          "done": "{{ count }} permission(s) orpheline(s) supprimée(s)",
+          "none_found": "Aucune permission orpheline trouvée"
+        },
+        "audit_logs": {
+          "done": "{{ count }} log(s) supprimé(s)"
+        }
+      }
+    },
+    "unknown": "Une erreur est survenue, réessaie plus tard"
   },
   "layout": {
     "public": {
