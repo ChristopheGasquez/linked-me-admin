@@ -44,6 +44,19 @@
       "login": "Déjà un compte ? Se connecter"
     }
   },
+  "validation": {
+    "password": {
+      "matches": "Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial",
+      "minLength": "Le mot de passe doit contenir au moins 8 caractères"
+    },
+    "email": {
+      "isEmail": "Email invalide"
+    },
+    "name": {
+      "minLength": "Le nom doit contenir au moins 2 caractères",
+      "maxLength": "Le nom ne peut pas dépasser 100 caractères"
+    }
+  },
   "api": {
     "auth": {
       "register": {
@@ -52,7 +65,7 @@
       "login": {
         "invalid_credentials": "Email ou mot de passe incorrect",
         "account_locked": "Compte temporairement verrouillé",
-        "email_not_verified": "Veuillez vérifier votre email avant de vous connecter"
+        "email_not_verified": "Vous devez confirmer votre adresse email en cliquant sur le lien qui vous a été envoyé à cette adresse"
       },
       "refresh": {
         "invalid_token": "Session expirée, veuillez vous reconnecter",

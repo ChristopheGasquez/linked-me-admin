@@ -44,6 +44,19 @@
       "login": "Already have an account? Sign in"
     }
   },
+  "validation": {
+    "password": {
+      "matches": "Password must contain at least one uppercase letter, one number and one special character",
+      "minLength": "Password must be at least 8 characters"
+    },
+    "email": {
+      "isEmail": "Invalid email"
+    },
+    "name": {
+      "minLength": "Username must be at least 2 characters",
+      "maxLength": "Username cannot exceed 100 characters"
+    }
+  },
   "api": {
     "auth": {
       "register": {

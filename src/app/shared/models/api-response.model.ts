@@ -1,9 +1,17 @@
+export interface ApiValidationField {
+  key: string;
+  code: string;
+}
+
 export interface ApiError {
   statusCode: number;
   message: string;
   error: string;
   code?: string;
-  params?: Record<string, unknown>;
+  params?: {
+    fields?: ApiValidationField[];
+    [key: string]: unknown;
+  };
 }
 
 export interface ApiMessage {

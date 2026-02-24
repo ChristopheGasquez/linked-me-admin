@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 import { AuthApiService } from '../../shared/services/auth-api.service';
+import { RegisterResponse } from '../../shared/models/auth.model';
 import { MeResponse } from '../../shared/models/me.model';
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +15,10 @@ export class AuthService {
 
   readonly isAuthenticated = signal<boolean>(!!localStorage.getItem(this.ACCESS_TOKEN_KEY));
   readonly currentUser = signal<MeResponse | null>(null);
+
+  register(name: string, email: string, password: string): Observable<RegisterResponse> {
+    return this.#authApi.register({ name, email, password });
+  }
 
   login(email: string, password: string): Observable<void> {
     return this.#authApi.login({ email, password }).pipe(

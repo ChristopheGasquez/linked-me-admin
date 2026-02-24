@@ -27,6 +27,8 @@
             <mat-error>{{ t('auth.login.email.required') }}</mat-error>
           } @else if (form.controls['email']?.hasError('email')) {
             <mat-error>{{ t('auth.login.email.invalid') }}</mat-error>
+          } @else if (form.controls['email']?.hasError('serverError')) {
+            <mat-error>{{ t(form.controls['email'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline">
@@ -44,6 +46,8 @@
           </button>
           @if (form.controls['password']?.hasError('required')) {
             <mat-error>{{ t('auth.login.password.required') }}</mat-error>
+          } @else if (form.controls['password']?.hasError('serverError')) {
+            <mat-error>{{ t(form.controls['password'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
       </mat-card-content>

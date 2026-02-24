@@ -27,6 +27,8 @@
             <mat-error>{{ t('auth.register.name.required') }}</mat-error>
           } @else if (form.controls['name']?.hasError('minlength')) {
             <mat-error>{{ t('auth.register.name.minlength') }}</mat-error>
+          } @else if (form.controls['name']?.hasError('serverError')) {
+            <mat-error>{{ t(form.controls['name'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline">
@@ -39,6 +41,8 @@
             <mat-error>{{ t('auth.register.email.required') }}</mat-error>
           } @else if (form.controls['email']?.hasError('email')) {
             <mat-error>{{ t('auth.register.email.invalid') }}</mat-error>
+          } @else if (form.controls['email']?.hasError('serverError')) {
+            <mat-error>{{ t(form.controls['email'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline">
@@ -58,6 +62,8 @@
             <mat-error>{{ t('auth.register.password.required') }}</mat-error>
           } @else if (form.controls['password']?.hasError('minlength')) {
             <mat-error>{{ t('auth.register.password.minlength') }}</mat-error>
+          } @else if (form.controls['password']?.hasError('serverError')) {
+            <mat-error>{{ t(form.controls['password'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
       </mat-card-content>

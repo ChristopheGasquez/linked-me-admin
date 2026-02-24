@@ -20,6 +20,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
 @Component({
   selector: 'app-login',
@@ -69,10 +70,14 @@ export class Login {
       .pipe(
         catchError((err: HttpErrorResponse) => {
           const apiError = err.error as ApiError;
-          this.error.set({
-            code: apiError?.code ?? 'unknown',
-            params: apiError?.params,
-          });
+          if (apiError?.code === 'validation.failed') {
+            applyValidationErrors(this.form, apiError);
+          } else {
+            this.error.set({
+              code: apiError?.code ?? 'unknown',
+              params: apiError?.params as Record<string, unknown>,
+            });
+          }
           return EMPTY;
         }),
         finalize(() => this.loading.set(false)),
