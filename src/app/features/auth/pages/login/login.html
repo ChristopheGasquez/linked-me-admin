@@ -12,11 +12,13 @@
         <mat-card-subtitle>
           {{ t('auth.login.subtitle') }}
         </mat-card-subtitle>
+        @if (error()) {
+          <mat-card-subtitle class="login-card__error">{{
+            t('api.' + error()!.code, error()!.params ?? {})
+          }}</mat-card-subtitle>
+        }
       </mat-card-header>
       <mat-card-content class="login-card__content">
-        @if (error()) {
-          <p class="login-card__error">{{ t('api.' + error()!.code, error()!.params ?? {}) }}</p>
-        }
         <mat-form-field appearance="outline">
           <mat-label>{{ t('auth.login.email.label') }}</mat-label>
           <input
@@ -59,6 +61,17 @@
           [disabled]="loading()">
           {{ t('auth.login.submit') }}
         </button>
+        @if (emailToResend()) {
+          <button
+            class="login-card__actions__item button--error"
+            matButton="filled"
+            type="button"
+            color="warn"
+            [disabled]="loading()"
+            (click)="resendVerificationEmail()">
+            {{ t('auth.login.resendEmail') }}
+          </button>
+        }
         <a
           class="login-card__actions__item"
           matButton

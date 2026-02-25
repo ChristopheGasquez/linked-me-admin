@@ -4,6 +4,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 
 import { AuthApiService } from '../../shared/services/auth-api.service';
 import { RegisterResponse } from '../../shared/models/auth.model';
+import { ApiMessage } from '../../shared/models/api-response.model';
 import { MeResponse } from '../../shared/models/me.model';
 
 @Injectable({ providedIn: 'root' })
@@ -31,6 +32,10 @@ export class AuthService {
       tap((me) => this.currentUser.set(me)),
       map(() => undefined),
     );
+  }
+
+  resendVerificationEmail(email: string): Observable<ApiMessage> {
+    return this.#authApi.resendVerificationEmail(email);
   }
 
   logout(): void {

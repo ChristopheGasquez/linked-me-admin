@@ -19,6 +19,7 @@
         "required": "Le mot de passe est requis"
       },
       "submit": "Se connecter",
+      "resendEmail": "Renvoyer l'email de confirmation",
       "register": "Pas encore inscrit... Créer un compte",
       "forgotPassword": "Mot de passe oublié"
     },
@@ -42,6 +43,12 @@
       },
       "submit": "Créer mon compte",
       "login": "Déjà un compte ? Se connecter"
+    },
+    "verifyEmail": {
+      "title": "Vérifiez votre email",
+      "description": "Un email vous a été envoyé. Cliquez sur le lien pour valider votre adresse email.\nSi vous ne l'avez pas reçu, cliquez sur \"Renvoyer l'email de vérification\" et pensez à vérifier vos courriers indésirables.",
+      "resend": "Renvoyer l'email de vérification",
+      "backToLogin": "Retour à la connexion"
     }
   },
   "validation": {
@@ -77,7 +84,7 @@
       "email": {
         "invalid_token": "Lien de vérification invalide ou expiré",
         "verified": "Email vérifié avec succès",
-        "resend_sent": "Email de vérification renvoyé"
+        "resend_sent": "Un nouvel email de vérification a été envoyé à votre adresse."
       },
       "password_reset": {
         "invalid_token": "Lien de réinitialisation invalide ou expiré",
@@ -145,6 +152,9 @@
           "done": "{{ count }} log(s) supprimé(s)"
         }
       }
+    },
+    "throttle": {
+      "too_many_requests": "Trop de tentatives. Réessayez dans {{ retryAfter }}."
     },
     "unknown": "Une erreur est survenue, réessaie plus tard"
   },
