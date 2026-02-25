@@ -6,6 +6,7 @@ import { AppConfigService } from '../../core/services/app-config.service';
 import { AuthResponse, RegisterResponse, TokensResponse } from '../models/auth.model';
 import { LoginDto, RegisterDto } from '../models/login.dto';
 import { MeResponse } from '../models/me.model';
+import { ApiMessage } from '../models/api-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
@@ -34,8 +35,8 @@ export class AuthApiService {
     });
   }
 
-  resendVerificationEmail(email: string): Observable<void> {
-    return this.#http.post<void>(`${this.baseUrl}/resend-verification`, { email });
+  resendVerificationEmail(email: string): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/resend-verification`, { email });
   }
 
   logout(): Observable<void> {

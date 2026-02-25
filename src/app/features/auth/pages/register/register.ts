@@ -14,10 +14,10 @@ import {
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { EMPTY } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
@@ -49,6 +49,7 @@ import { applyValidationErrors } from '../../../../shared/utils/form-validation'
 export class Register {
   #formBuilder: FormBuilder = inject(FormBuilder);
   #authService = inject(AuthService);
+  #router = inject(Router);
 
   showPassword = signal(false);
   loading = signal(false);
@@ -69,6 +70,7 @@ export class Register {
     this.#authService
       .register(name, email, password)
       .pipe(
+        tap(() => this.#router.navigate(['/', 'auth', 'verify-email'], { queryParams: { email } })),
         catchError((err: HttpErrorResponse) => {
           const apiError = err.error as ApiError;
           if (apiError?.code === 'validation.failed') {

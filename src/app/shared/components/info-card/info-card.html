@@ -1,0 +1,36 @@
+<ng-container *transloco="let t">
+  <mat-card class="info-card" appearance="outlined">
+    <mat-card-header class="info-card__header">
+      <mat-card-title class="info-card__header__title">
+        <h2>{{ t(titleKey()) }}</h2>
+      </mat-card-title>
+      @for (notification of notifications(); track notification.key) {
+        <mat-card-subtitle [class]="'info-card__' + notification.type">
+          {{ t(notification.key, notification.params ?? {}) }}
+        </mat-card-subtitle>
+      }
+    </mat-card-header>
+    <mat-card-content class="info-card__content">
+      {{ t(descriptionKey()) }}
+    </mat-card-content>
+    @if (actions().length) {
+      <mat-card-actions class="info-card__actions">
+        @for (action of actions(); track action.labelKey) {
+          @if (action.type === 'link') {
+            <a class="info-card__actions__item" matButton [routerLink]="action.routerLink">
+              {{ t(action.labelKey) }}
+            </a>
+          } @else {
+            <button
+              [class]="'info-card__actions__item' + (action.cssClass ? ' ' + action.cssClass : '')"
+              matButton="filled"
+              [disabled]="action.disabled"
+              (click)="action.onClick()">
+              {{ t(action.labelKey) }}
+            </button>
+          }
+        }
+      </mat-card-actions>
+    }
+  </mat-card>
+</ng-container>
