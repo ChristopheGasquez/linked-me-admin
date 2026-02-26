@@ -45,6 +45,10 @@ export class AuthService {
     return this.#authApi.forgotPassword(email, callbackUrl);
   }
 
+  resetPassword(token: string, password: string): Observable<ApiMessage> {
+    return this.#authApi.resetPassword(token, password);
+  }
+
   logout(): void {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);

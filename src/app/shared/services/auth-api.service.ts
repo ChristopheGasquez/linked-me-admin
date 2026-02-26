@@ -47,6 +47,10 @@ export class AuthApiService {
     return this.#http.post<ApiMessage>(`${this.baseUrl}/forgot-password`, { email, callbackUrl });
   }
 
+  resetPassword(token: string, password: string): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/reset-password`, { token, password });
+  }
+
   logout(): Observable<void> {
     return this.#http.post<void>(`${this.baseUrl}/logout`, {});
   }
