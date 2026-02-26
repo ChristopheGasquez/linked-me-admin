@@ -224,6 +224,12 @@
       "title": "401 – Accès non autorisé",
       "description": "Votre session a expiré ou vous n'êtes pas encore authentifié. Veuillez vous connecter pour accéder à cette page.",
       "loginLink": "Se connecter"
+    },
+    "notFound": {
+      "title": "404 – Page introuvable",
+      "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+      "loginLink": "Se connecter",
+      "dashboardLink": "Retour au tableau de bord"
     }
   }
 }

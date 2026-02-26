@@ -224,6 +224,12 @@
       "title": "401 – Unauthorized",
       "description": "Your session has expired or you are not authenticated yet. Please sign in to access this page.",
       "loginLink": "Sign in"
+    },
+    "notFound": {
+      "title": "404 – Page not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "loginLink": "Sign in",
+      "dashboardLink": "Back to dashboard"
     }
   }
 }
