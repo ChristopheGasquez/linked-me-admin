@@ -44,6 +44,21 @@
       "submit": "Create my account",
       "login": "Already have an account? Sign in"
     },
+    "emailConfirmed": {
+      "loading": {
+        "title": "Verifying...",
+        "subtitle": "Please wait while we verify your email address."
+      },
+      "success": {
+        "title": "Email confirmed!",
+        "subtitle": "Your email address has been successfully verified.",
+        "redirect": "Redirecting to login in {{ seconds }} second(s)..."
+      },
+      "error": {
+        "title": "Invalid link"
+      },
+      "loginLink": "Sign in"
+    },
     "verifyEmail": {
       "title": "Check your email",
       "description": "An email has been sent to you. Click the link to verify your email address.\nIf you didn't receive it, click \"Resend verification email\" and remember to check your spam folder.",

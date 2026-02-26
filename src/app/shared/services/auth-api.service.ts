@@ -35,8 +35,16 @@ export class AuthApiService {
     });
   }
 
-  resendVerificationEmail(email: string): Observable<ApiMessage> {
-    return this.#http.post<ApiMessage>(`${this.baseUrl}/resend-verification`, { email });
+  verifyEmail(token: string): Observable<ApiMessage> {
+    return this.#http.get<ApiMessage>(`${this.baseUrl}/verify-email`, { params: { token } });
+  }
+
+  resendVerificationEmail(email: string, callbackUrl: string): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/resend-verification`, { email, callbackUrl });
+  }
+
+  forgotPassword(email: string, callbackUrl: string): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/forgot-password`, { email, callbackUrl });
   }
 
   logout(): Observable<void> {

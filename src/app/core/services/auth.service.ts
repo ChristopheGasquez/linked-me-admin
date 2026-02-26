@@ -18,7 +18,8 @@ export class AuthService {
   readonly currentUser = signal<MeResponse | null>(null);
 
   register(name: string, email: string, password: string): Observable<RegisterResponse> {
-    return this.#authApi.register({ name, email, password });
+    const callbackUrl = `${window.location.origin}/auth/email-confirmed`;
+    return this.#authApi.register({ name, email, password, callbackUrl });
   }
 
   login(email: string, password: string): Observable<void> {
@@ -35,7 +36,13 @@ export class AuthService {
   }
 
   resendVerificationEmail(email: string): Observable<ApiMessage> {
-    return this.#authApi.resendVerificationEmail(email);
+    const callbackUrl = `${window.location.origin}/auth/email-confirmed`;
+    return this.#authApi.resendVerificationEmail(email, callbackUrl);
+  }
+
+  forgotPassword(email: string): Observable<ApiMessage> {
+    const callbackUrl = `${window.location.origin}/auth/reset-password`;
+    return this.#authApi.forgotPassword(email, callbackUrl);
   }
 
   logout(): void {

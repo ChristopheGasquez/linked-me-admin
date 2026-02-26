@@ -44,6 +44,21 @@
       "submit": "Créer mon compte",
       "login": "Déjà un compte ? Se connecter"
     },
+    "emailConfirmed": {
+      "loading": {
+        "title": "Vérification en cours...",
+        "subtitle": "Veuillez patienter pendant que nous validons votre adresse email."
+      },
+      "success": {
+        "title": "Email confirmé !",
+        "subtitle": "Votre adresse email a été vérifiée avec succès.",
+        "redirect": "Redirection vers la page de connexion dans {{ seconds }} seconde(s)..."
+      },
+      "error": {
+        "title": "Lien invalide"
+      },
+      "loginLink": "Se connecter"
+    },
     "verifyEmail": {
       "title": "Vérifiez votre email",
       "description": "Un email vous a été envoyé. Cliquez sur le lien pour valider votre adresse email.\nSi vous ne l'avez pas reçu, cliquez sur \"Renvoyer l'email de vérification\" et pensez à vérifier vos courriers indésirables.",
