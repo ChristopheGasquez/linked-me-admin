@@ -64,6 +64,40 @@
       "description": "An email has been sent to you. Click the link to verify your email address.\nIf you didn't receive it, click \"Resend verification email\" and remember to check your spam folder.",
       "resend": "Resend verification email",
       "backToLogin": "Back to sign in"
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Enter your email address to receive a reset link",
+      "email": {
+        "label": "Email",
+        "required": "Email is required",
+        "invalid": "Invalid email"
+      },
+      "submit": "Send reset link",
+      "success": {
+        "title": "Email sent",
+        "subtitle": "If an account exists with this email, a reset link has been sent. Check your inbox."
+      },
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "New password",
+      "subtitle": "Enter your new password",
+      "password": {
+        "label": "New password",
+        "required": "Password is required",
+        "minlength": "Password must be at least 8 characters"
+      },
+      "submit": "Reset password",
+      "success": {
+        "title": "Password reset!",
+        "subtitle": "Your password has been successfully changed.",
+        "redirect": "Redirecting to login in {{ seconds }} second(s)..."
+      },
+      "error": {
+        "title": "Invalid link"
+      },
+      "backToLogin": "Sign in"
     }
   },
   "validation": {

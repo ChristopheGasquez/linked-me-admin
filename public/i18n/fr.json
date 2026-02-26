@@ -64,6 +64,40 @@
       "description": "Un email vous a été envoyé. Cliquez sur le lien pour valider votre adresse email.\nSi vous ne l'avez pas reçu, cliquez sur \"Renvoyer l'email de vérification\" et pensez à vérifier vos courriers indésirables.",
       "resend": "Renvoyer l'email de vérification",
       "backToLogin": "Retour à la connexion"
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Entrez votre adresse email pour recevoir un lien de réinitialisation",
+      "email": {
+        "label": "Email",
+        "required": "L'email est requis",
+        "invalid": "Email invalide"
+      },
+      "submit": "Envoyer le lien",
+      "success": {
+        "title": "Email envoyé",
+        "subtitle": "Si un compte existe avec cet email, un lien de réinitialisation vous a été envoyé. Vérifiez votre boîte de réception."
+      },
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe",
+      "password": {
+        "label": "Nouveau mot de passe",
+        "required": "Le mot de passe est requis",
+        "minlength": "Le mot de passe doit contenir au moins 8 caractères"
+      },
+      "submit": "Réinitialiser",
+      "success": {
+        "title": "Mot de passe réinitialisé !",
+        "subtitle": "Votre mot de passe a été modifié avec succès.",
+        "redirect": "Redirection vers la page de connexion dans {{ seconds }} seconde(s)..."
+      },
+      "error": {
+        "title": "Lien invalide"
+      },
+      "backToLogin": "Se connecter"
     }
   },
   "validation": {
