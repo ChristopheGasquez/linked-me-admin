@@ -214,5 +214,12 @@
         "register": "Inscription"
       }
     }
+  },
+  "errors": {
+    "unauthorized": {
+      "title": "401 – Accès non autorisé",
+      "description": "Votre session a expiré ou vous n'êtes pas encore authentifié. Veuillez vous connecter pour accéder à cette page.",
+      "loginLink": "Se connecter"
+    }
   }
 }

@@ -214,5 +214,12 @@
         "register": "Sign up"
       }
     }
+  },
+  "errors": {
+    "unauthorized": {
+      "title": "401 – Unauthorized",
+      "description": "Your session has expired or you are not authenticated yet. Please sign in to access this page.",
+      "loginLink": "Sign in"
+    }
   }
 }
