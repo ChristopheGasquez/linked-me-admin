@@ -1,0 +1,27 @@
+:host {
+  display: contents;
+  .email-confirmed-card {
+    margin-block: auto;
+    max-width: var(--lma-container-width--xs);
+    &__content {
+      padding-top: var(--lma-spacing-padding--xxl);
+      padding-bottom: var(--lma-spacing-padding--xxl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--lma-spacing-gap--lg);
+
+      &__error {
+        color: var(--mat-sys-error);
+        font-size: 0.875rem;
+      }
+    }
+    &__actions {
+      gap: var(--lma-spacing-gap--md);
+      flex-direction: column;
+
+      &__item {
+        width: 100%;
+      }
+    }
+  }
+}

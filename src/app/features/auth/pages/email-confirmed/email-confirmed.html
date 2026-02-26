@@ -1,0 +1,41 @@
+<ng-container *transloco="let t">
+  <mat-card
+    class="email-confirmed-card"
+    appearance="outlined">
+    <mat-card-header class="email-confirmed-card__header">
+      <mat-card-title class="email-confirmed-card__header__title">
+        <h2>
+          @if (loading()) {
+            {{ t('auth.emailConfirmed.loading.title') }}
+          } @else if (error()) {
+            {{ t('auth.emailConfirmed.error.title') }}
+          } @else {
+            {{ t('auth.emailConfirmed.success.title') }}
+          }
+        </h2>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="email-confirmed-card__content">
+      @if (loading()) {
+        <p>{{ t('auth.emailConfirmed.loading.subtitle') }}</p>
+      } @else if (error()) {
+        <p class="email-confirmed-card__content__error">
+          {{ t('api.' + error()!.code, error()!.params ?? {}) }}
+        </p>
+      } @else {
+        <p>{{ t('auth.emailConfirmed.success.subtitle') }}</p>
+        <p>{{ t('auth.emailConfirmed.success.redirect', { seconds: countdown() }) }}</p>
+      }
+    </mat-card-content>
+    <mat-card-actions class="email-confirmed-card__actions">
+      @if (!loading()) {
+        <a
+          class="email-confirmed-card__actions__item"
+          matButton="filled"
+          [routerLink]="['/', 'auth', 'login']">
+          {{ t('auth.emailConfirmed.loginLink') }}
+        </a>
+      }
+    </mat-card-actions>
+  </mat-card>
+</ng-container>
