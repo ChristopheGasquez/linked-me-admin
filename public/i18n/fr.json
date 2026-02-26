@@ -128,7 +128,11 @@
         "token_revoked": "Session révoquée, veuillez vous reconnecter"
       },
       "session": {
-        "not_found": "Session introuvable"
+        "not_found": "Session introuvable",
+        "revoked": "Session révoquée"
+      },
+      "callback_url": {
+        "not_allowed": "URL de callback non autorisée"
       },
       "email": {
         "invalid_token": "Lien de vérification invalide ou expiré",

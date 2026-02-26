@@ -128,7 +128,11 @@
         "token_revoked": "Session revoked, please sign in again"
       },
       "session": {
-        "not_found": "Session not found"
+        "not_found": "Session not found",
+        "revoked": "Session revoked"
+      },
+      "callback_url": {
+        "not_allowed": "Callback URL not allowed"
       },
       "email": {
         "invalid_token": "Invalid or expired verification link",
