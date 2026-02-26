@@ -230,6 +230,12 @@
       "description": "The page you are looking for does not exist or has been moved.",
       "loginLink": "Sign in",
       "dashboardLink": "Back to dashboard"
+    },
+    "workInProgress": {
+      "title": "Work in progress",
+      "description": "This section is under development and will be available soon.",
+      "loginLink": "Sign in",
+      "dashboardLink": "Back to dashboard"
     }
   }
 }

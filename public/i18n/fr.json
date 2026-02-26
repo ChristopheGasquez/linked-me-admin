@@ -230,6 +230,12 @@
       "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
       "loginLink": "Se connecter",
       "dashboardLink": "Retour au tableau de bord"
+    },
+    "workInProgress": {
+      "title": "En construction",
+      "description": "Cette section est en cours de développement. Elle sera disponible très prochainement.",
+      "loginLink": "Se connecter",
+      "dashboardLink": "Retour au tableau de bord"
     }
   }
 }
