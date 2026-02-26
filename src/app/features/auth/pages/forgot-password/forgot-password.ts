@@ -19,6 +19,7 @@ import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { ApiError } from '../../../../shared/models/api-response.model';
+import { formatRetryAfter } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
 @Component({
@@ -69,10 +70,11 @@ export class ForgotPassword {
           if (apiError?.code === 'validation.failed') {
             applyValidationErrors(this.form, apiError);
           } else {
-            this.error.set({
-              code: apiError?.code ?? 'unknown',
-              params: apiError?.params as Record<string, unknown>,
-            });
+            const rawParams = apiError?.params as Record<string, unknown> | undefined;
+            const params = rawParams?.['retryAfter'] !== undefined
+              ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
+              : rawParams;
+            this.error.set({ code: apiError?.code ?? 'unknown', params });
           }
           return EMPTY;
         }),

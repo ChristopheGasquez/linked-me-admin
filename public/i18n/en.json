@@ -128,7 +128,11 @@
         "token_revoked": "Session revoked, please sign in again"
       },
       "session": {
-        "not_found": "Session not found"
+        "not_found": "Session not found",
+        "revoked": "Session revoked"
+      },
+      "callback_url": {
+        "not_allowed": "Callback URL not allowed"
       },
       "email": {
         "invalid_token": "Invalid or expired verification link",
@@ -213,6 +217,31 @@
         "login": "Sign in",
         "register": "Sign up"
       }
+    }
+  },
+  "errors": {
+    "unauthorized": {
+      "title": "401 – Unauthorized",
+      "description": "Your session has expired or you are not authenticated yet. Please sign in to access this page.",
+      "loginLink": "Sign in"
+    },
+    "notFound": {
+      "title": "404 – Page not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "loginLink": "Sign in",
+      "dashboardLink": "Back to dashboard"
+    },
+    "workInProgress": {
+      "title": "Work in progress",
+      "description": "This section is under development and will be available soon.",
+      "loginLink": "Sign in",
+      "dashboardLink": "Back to dashboard"
+    },
+    "forbidden": {
+      "title": "403 – Forbidden",
+      "description": "You do not have the required permissions to access this page.",
+      "loginLink": "Sign in",
+      "dashboardLink": "Back to dashboard"
     }
   }
 }

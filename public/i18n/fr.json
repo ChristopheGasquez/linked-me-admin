@@ -128,7 +128,11 @@
         "token_revoked": "Session révoquée, veuillez vous reconnecter"
       },
       "session": {
-        "not_found": "Session introuvable"
+        "not_found": "Session introuvable",
+        "revoked": "Session révoquée"
+      },
+      "callback_url": {
+        "not_allowed": "URL de callback non autorisée"
       },
       "email": {
         "invalid_token": "Lien de vérification invalide ou expiré",
@@ -213,6 +217,31 @@
         "login": "Connexion",
         "register": "Inscription"
       }
+    }
+  },
+  "errors": {
+    "unauthorized": {
+      "title": "401 – Accès non autorisé",
+      "description": "Votre session a expiré ou vous n'êtes pas encore authentifié. Veuillez vous connecter pour accéder à cette page.",
+      "loginLink": "Se connecter"
+    },
+    "notFound": {
+      "title": "404 – Page introuvable",
+      "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+      "loginLink": "Se connecter",
+      "dashboardLink": "Retour au tableau de bord"
+    },
+    "workInProgress": {
+      "title": "En construction",
+      "description": "Cette section est en cours de développement. Elle sera disponible très prochainement.",
+      "loginLink": "Se connecter",
+      "dashboardLink": "Retour au tableau de bord"
+    },
+    "forbidden": {
+      "title": "403 – Accès refusé",
+      "description": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
+      "loginLink": "Se connecter",
+      "dashboardLink": "Retour au tableau de bord"
     }
   }
 }

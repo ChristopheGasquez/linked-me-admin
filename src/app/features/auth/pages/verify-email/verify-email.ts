@@ -6,6 +6,7 @@ import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { ApiError, ApiMessage } from '../../../../shared/models/api-response.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { formatRetryAfter } from '../../../../shared/utils/api-error';
 import {
   InfoCard,
   InfoCardAction,
@@ -50,11 +51,6 @@ export class VerifyEmail {
     },
   ]);
 
-  #formatRetryAfter(seconds: number): string {
-    if (seconds < 60) return `${seconds}s`;
-    return `${Math.ceil(seconds / 60)} min`;
-  }
-
   #resend(): void {
     this.loading.set(true);
     this.#authService
@@ -65,7 +61,7 @@ export class VerifyEmail {
           const apiError = err.error as ApiError;
           const rawParams = apiError?.params as Record<string, unknown> | undefined;
           const params = rawParams?.['retryAfter'] !== undefined
-            ? { ...rawParams, retryAfter: this.#formatRetryAfter(rawParams['retryAfter'] as number) }
+            ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
             : rawParams;
           this.notifications.set([{ type: 'error', key: 'api.' + (apiError?.code ?? 'unknown'), params }]);
           return EMPTY;
