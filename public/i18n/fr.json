@@ -236,6 +236,12 @@
       "description": "Cette section est en cours de développement. Elle sera disponible très prochainement.",
       "loginLink": "Se connecter",
       "dashboardLink": "Retour au tableau de bord"
+    },
+    "forbidden": {
+      "title": "403 – Accès refusé",
+      "description": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
+      "loginLink": "Se connecter",
+      "dashboardLink": "Retour au tableau de bord"
     }
   }
 }

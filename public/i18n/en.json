@@ -236,6 +236,12 @@
       "description": "This section is under development and will be available soon.",
       "loginLink": "Sign in",
       "dashboardLink": "Back to dashboard"
+    },
+    "forbidden": {
+      "title": "403 – Forbidden",
+      "description": "You do not have the required permissions to access this page.",
+      "loginLink": "Sign in",
+      "dashboardLink": "Back to dashboard"
     }
   }
 }
