@@ -40,7 +40,10 @@ export class AuthApiService {
   }
 
   resendVerificationEmail(email: string, callbackUrl: string): Observable<ApiMessage> {
-    return this.#http.post<ApiMessage>(`${this.baseUrl}/resend-verification`, { email, callbackUrl });
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/resend-verification`, {
+      email,
+      callbackUrl,
+    });
   }
 
   forgotPassword(email: string, callbackUrl: string): Observable<ApiMessage> {

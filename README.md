@@ -34,8 +34,8 @@ npm install
 
 The app loads its runtime configuration from `public/config.json` at startup (via `APP_INITIALIZER`).
 
-| Key | Description |
-|-----|-------------|
+| Key      | Description                   |
+| -------- | ----------------------------- |
 | `apiUrl` | Base URL of the linked-me API |
 
 In development, `public/config.json` is committed with a local fallback value and ignored from git tracking:
@@ -58,13 +58,13 @@ npm run build
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm start` | Start dev server (`ng serve`) |
-| `npm run build` | Production build |
+| Script          | Description                       |
+| --------------- | --------------------------------- |
+| `npm start`     | Start dev server (`ng serve`)     |
+| `npm run build` | Production build                  |
 | `npm run watch` | Build in watch mode (development) |
-| `npm test` | Run unit tests (Karma + Jasmine) |
-| `npm run lint` | Run ESLint |
+| `npm test`      | Run unit tests (Karma + Jasmine)  |
+| `npm run lint`  | Run ESLint                        |
 
 ## Architecture
 
@@ -98,43 +98,43 @@ src/
 
 Full auth flow backed by the linked-me API:
 
-| Page | Route |
-|------|-------|
-| Login | `/auth/login` |
-| Register | `/auth/register` |
-| Verify email | `/auth/verify-email` |
+| Page            | Route                   |
+| --------------- | ----------------------- |
+| Login           | `/auth/login`           |
+| Register        | `/auth/register`        |
+| Verify email    | `/auth/verify-email`    |
 | Email confirmed | `/auth/email-confirmed` |
 | Forgot password | `/auth/forgot-password` |
-| Reset password | `/auth/reset-password` |
+| Reset password  | `/auth/reset-password`  |
 
 ### Error pages
 
-| Page | Route |
-|------|-------|
+| Page             | Route  |
+| ---------------- | ------ |
 | 401 Unauthorized | `/401` |
-| 403 Forbidden | `/403` |
-| 404 Not Found | `/**` |
+| 403 Forbidden    | `/403` |
+| 404 Not Found    | `/**`  |
 | Work in progress | `/wip` |
 
 ### Admin
 
 Protected routes under `/admin` — access controlled by RBAC permissions from the API.
 
-| Section | Route |
-|---------|-------|
-| Users | `/admin/users` |
-| Roles | `/admin/roles` |
+| Section    | Route          |
+| ---------- | -------------- |
+| Users      | `/admin/users` |
+| Roles      | `/admin/roles` |
 | Audit logs | `/admin/audit` |
-| Tasks | `/admin/tasks` |
+| Tasks      | `/admin/tasks` |
 
 ## Internationalisation
 
 The app uses [Transloco](https://jsverse.github.io/transloco/) for i18n. Translation files are located in `public/i18n/`:
 
-| File | Language |
-|------|----------|
-| `fr.json` | French |
-| `en.json` | English |
+| File      | Language |
+| --------- | -------- |
+| `fr.json` | French   |
+| `en.json` | English  |
 
 API error codes returned by the server (e.g. `auth.login.invalid_credentials`) are mapped directly to translation keys under the `api.*` namespace.
 
@@ -145,13 +145,14 @@ Deployed on **Railway** via push to `master`.
 The app is served as a static bundle behind **Nginx** inside a Docker container (multi-stage build).
 
 At container startup, `docker-entrypoint.sh`:
+
 1. Injects `$PORT` into the Nginx config
 2. Generates `public/config.json` from environment variables
 
-| Variable | Description |
-|----------|-------------|
-| `API_URL` | Base URL of the linked-me API |
-| `PORT` | Port Nginx listens on (injected by Railway) |
+| Variable  | Description                                 |
+| --------- | ------------------------------------------- |
+| `API_URL` | Base URL of the linked-me API               |
+| `PORT`    | Port Nginx listens on (injected by Railway) |
 
 ## Git flow
 
@@ -160,12 +161,14 @@ At container startup, `docker-entrypoint.sh`:
 - `feature/*` — feature branches from develop
 
 Branch protection rules:
+
 - `master`: PR required, CI must pass, branch must be up to date before merging
 - `develop`: PR required, CI must pass
 
 Merge strategy: feature → develop via **squash merge**, develop → master via **merge commit**.
 
 CI pipeline:
+
 - **All branches**: unit tests
 - **`develop`**: lint
 - **`master`**: production build
