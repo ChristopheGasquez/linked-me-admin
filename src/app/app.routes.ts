@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { isAuthenticatedGuard } from './core/guards/is-authenticated.guard';
 import { PrivateLayout } from './layouts/private-layout/private-layout';
 import { PublicLayout } from './layouts/public-layout/public-layout';
 
@@ -13,11 +14,13 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: PrivateLayout,
+    canActivate: [isAuthenticatedGuard],
     loadChildren: () => import('./features/admin.routes').then((m) => m.adminRoutes),
   },
   {
     path: 'profile',
     component: PrivateLayout,
+    canActivate: [isAuthenticatedGuard],
     loadChildren: () => import('./features/profile/profile.routes').then((m) => m.profileRoutes),
   },
   {

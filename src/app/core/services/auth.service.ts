@@ -35,6 +35,13 @@ export class AuthService {
     );
   }
 
+  loadMe(): Observable<void> {
+    return this.#authApi.getMe().pipe(
+      tap((me) => this.currentUser.set(me)),
+      map(() => undefined),
+    );
+  }
+
   resendVerificationEmail(email: string): Observable<ApiMessage> {
     const callbackUrl = `${window.location.origin}/auth/email-confirmed`;
     return this.#authApi.resendVerificationEmail(email, callbackUrl);
