@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import { AuthApiService } from '../../shared/services/auth-api.service';
 import { RegisterResponse } from '../../shared/models/auth.model';
@@ -55,6 +55,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.#authApi.logout().pipe(catchError(() => EMPTY)).subscribe();
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     this.isAuthenticated.set(false);
