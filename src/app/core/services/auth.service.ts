@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 
 import { AuthApiService } from '../../shared/services/auth-api.service';
 import { RegisterResponse } from '../../shared/models/auth.model';
@@ -13,6 +13,9 @@ export class AuthService {
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
 
   #authApi = inject(AuthApiService);
+
+  private isRefreshing = false;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   readonly isAuthenticated = signal<boolean>(!!localStorage.getItem(this.ACCESS_TOKEN_KEY));
   readonly currentUser = signal<MeResponse | null>(null);
@@ -59,6 +62,39 @@ export class AuthService {
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
+  }
+
+  refreshTokens(): Observable<string> {
+    if (this.isRefreshing) {
+      return this.refreshTokenSubject.pipe(
+        filter((token) => token !== null),
+        take(1),
+      ) as Observable<string>;
+    }
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token'));
+    }
+
+    this.isRefreshing = true;
+    this.refreshTokenSubject.next(null);
+
+    return this.#authApi.refresh(refreshToken).pipe(
+      tap((tokens) => {
+        this.isRefreshing = false;
+        localStorage.setItem(this.ACCESS_TOKEN_KEY, tokens.access_token);
+        localStorage.setItem(this.REFRESH_TOKEN_KEY, tokens.refresh_token);
+        this.refreshTokenSubject.next(tokens.access_token);
+      }),
+      map((tokens) => tokens.access_token),
+      catchError((err) => {
+        this.isRefreshing = false;
+        this.logout();
+        return throwError(() => err);
+      }),
+    );
   }
 
   getAccessToken(): string | null {
