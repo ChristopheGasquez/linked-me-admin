@@ -29,9 +29,7 @@ export class AuthService {
         localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refresh_token);
         this.isAuthenticated.set(true);
       }),
-      switchMap(() => this.#authApi.getMe()),
-      tap((me) => this.currentUser.set(me)),
-      map(() => undefined),
+      switchMap(() => this.loadMe()),
     );
   }
 
