@@ -20,6 +20,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { formatRetryAfter } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
 @Component({
@@ -71,16 +72,17 @@ export class Login {
     this.#authService
       .login(email, password)
       .pipe(
-        tap(() => this.#router.navigate(['/admin/dashboard'])),
+        tap(() => this.#router.navigate(['/dashboard'])),
         catchError((err: HttpErrorResponse) => {
           const apiError = err.error as ApiError;
           if (apiError?.code === 'validation.failed') {
             applyValidationErrors(this.form, apiError);
           } else {
-            this.error.set({
-              code: apiError?.code ?? 'unknown',
-              params: apiError?.params as Record<string, unknown>,
-            });
+            const rawParams = apiError?.params as Record<string, unknown> | undefined;
+            const params = rawParams?.['retryAfter'] !== undefined
+              ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
+              : rawParams;
+            this.error.set({ code: apiError?.code ?? 'unknown', params });
             if (apiError?.code === 'auth.login.email_not_verified') {
               this.emailToResend.set(email);
             }
