@@ -1,13 +1,17 @@
 <mat-toolbar class="private-layout__header">
   <nav class="private-layout__header__nav">
-    <a mat-icon-button [routerLink]="['/', 'dashboard']">
+    <a mat-icon-button [routerLink]="['/', 'dashboard']"
+       [matTooltip]="'layout.private.nav.home' | transloco"
+       [matTooltipShowDelay]="500">
       <mat-icon>home</mat-icon>
     </a>
   </nav>
   <div class="private-layout__header__actions">
     <app-theme-toggle />
     <app-lang-switcher />
-    <button mat-icon-button (click)="logout()">
+    <button mat-icon-button (click)="logout()"
+            [matTooltip]="'layout.private.actions.logout' | transloco"
+            [matTooltipShowDelay]="500">
       <mat-icon>logout</mat-icon>
     </button>
   </div>

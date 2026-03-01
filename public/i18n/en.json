@@ -212,6 +212,20 @@
     "unknown": "An error occurred, please try again later"
   },
   "layout": {
+    "common": {
+      "actions": {
+        "theme": "Switch theme",
+        "lang": "Choose a language"
+      }
+    },
+    "private": {
+      "nav": {
+        "home": "Home"
+      },
+      "actions": {
+        "logout": "Sign out"
+      }
+    },
     "public": {
       "nav": {
         "login": "Sign in",

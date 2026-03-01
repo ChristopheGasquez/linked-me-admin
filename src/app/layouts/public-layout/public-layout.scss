@@ -6,6 +6,8 @@
 
   .public-layout {
     &__header {
+      box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--mat-sys-secondary) 5%, transparent);
+
       &__nav {
         flex: 1;
         display: flex;

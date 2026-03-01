@@ -212,6 +212,20 @@
     "unknown": "Une erreur est survenue, réessaie plus tard"
   },
   "layout": {
+    "common": {
+      "actions": {
+        "theme": "Choisir un thème",
+        "lang": "Choisir une langue"
+      }
+    },
+    "private": {
+      "nav": {
+        "home": "Accueil"
+      },
+      "actions": {
+        "logout": "Se déconnecter"
+      }
+    },
     "public": {
       "nav": {
         "login": "Connexion",
