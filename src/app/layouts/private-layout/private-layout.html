@@ -1,24 +1,100 @@
 <mat-toolbar class="private-layout__header">
   <nav class="private-layout__header__nav">
-    <a mat-icon-button [routerLink]="['/', 'dashboard']"
-       [matTooltip]="'layout.private.nav.home' | transloco"
-       [matTooltipShowDelay]="500">
+    <button
+      mat-icon-button
+      (click)="sidenav.toggle()"
+      [matTooltip]="'layout.private.nav.menu' | transloco"
+      [matTooltipShowDelay]="500">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <a
+      mat-icon-button
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/', 'dashboard']"
+      [matTooltip]="'layout.private.nav.home' | transloco"
+      [matTooltipShowDelay]="500">
       <mat-icon>home</mat-icon>
     </a>
   </nav>
   <div class="private-layout__header__actions">
     <app-theme-toggle />
     <app-lang-switcher />
-    <button mat-icon-button (click)="logout()"
-            [matTooltip]="'layout.private.actions.logout' | transloco"
-            [matTooltipShowDelay]="500">
+    <button
+      mat-icon-button
+      (click)="logout()"
+      [matTooltip]="'layout.private.actions.logout' | transloco"
+      [matTooltipShowDelay]="500">
       <mat-icon>logout</mat-icon>
     </button>
   </div>
 </mat-toolbar>
-<main class="private-layout__body">
-  <router-outlet />
-</main>
-<footer class="private-layout__footer">
-  v{{ version }}
-</footer>
+<mat-sidenav-container class="private-layout__container">
+  <mat-sidenav
+    #sidenav
+    class="private-layout__sidenav"
+    [mode]="isDesktop() ? 'side' : 'over'"
+    [opened]="isDesktop()">
+    <mat-nav-list class="private-layout__sidenav__list">
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        #rlaDashboard="routerLinkActive"
+        [activated]="rlaDashboard.isActive"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [routerLink]="['/', 'dashboard']">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>{{ 'layout.private.sidenav.dashboard' | transloco }}</span>
+      </a>
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        #rlaProfile="routerLinkActive"
+        [activated]="rlaProfile.isActive"
+        [routerLink]="['/', 'me']">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>{{ 'layout.private.sidenav.profile' | transloco }}</span>
+      </a>
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        #rlaUsers="routerLinkActive"
+        [activated]="rlaUsers.isActive"
+        [routerLink]="['/', 'admin', 'users']">
+        <mat-icon matListItemIcon>people</mat-icon>
+        <span matListItemTitle>{{ 'layout.private.sidenav.users' | transloco }}</span>
+      </a>
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        #rlaRoles="routerLinkActive"
+        [activated]="rlaRoles.isActive"
+        [routerLink]="['/', 'admin', 'roles']">
+        <mat-icon matListItemIcon>badge</mat-icon>
+        <span matListItemTitle>{{ 'layout.private.sidenav.roles' | transloco }}</span>
+      </a>
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        #rlaAudit="routerLinkActive"
+        [activated]="rlaAudit.isActive"
+        [routerLink]="['/', 'admin', 'audit']">
+        <mat-icon matListItemIcon>history</mat-icon>
+        <span matListItemTitle>{{ 'layout.private.sidenav.audit' | transloco }}</span>
+      </a>
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        #rlaTasks="routerLinkActive"
+        [activated]="rlaTasks.isActive"
+        [routerLink]="['/', 'admin', 'tasks']">
+        <mat-icon matListItemIcon>task</mat-icon>
+        <span matListItemTitle>{{ 'layout.private.sidenav.tasks' | transloco }}</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="private-layout__body">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<footer class="private-layout__footer">v{{ version }}</footer>
