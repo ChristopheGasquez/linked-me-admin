@@ -116,9 +116,25 @@ Full auth flow backed by the linked-me API:
 | 404 Not Found    | `/**`  |
 | Work in progress | `/wip` |
 
+### Dashboard
+
+| Page      | Route        |
+| --------- | ------------ |
+| Dashboard | `/dashboard` |
+
+### Mon compte
+
+Protected routes — requires `realm:profile` permission.
+
+| Page            | Route          |
+| --------------- | -------------- |
+| Profile         | `/me`          |
+| Change password | `/me/password` |
+| Sessions        | `/me/sessions` |
+
 ### Admin
 
-Protected routes under `/admin` — access controlled by RBAC permissions from the API.
+Protected routes under `/admin` — requires admin-level permissions.
 
 | Section    | Route          |
 | ---------- | -------------- |

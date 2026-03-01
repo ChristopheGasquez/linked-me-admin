@@ -6,23 +6,34 @@ import { PrivateLayout } from './layouts/private-layout/private-layout';
 import { PublicLayout } from './layouts/public-layout/public-layout';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
     path: 'auth',
     component: PublicLayout,
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
   {
+    path: 'dashboard',
+    component: PrivateLayout,
+    canActivate: [isAuthenticatedGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+      },
+    ],
+  },
+  {
+    path: 'me',
+    component: PrivateLayout,
+    canActivate: [isAuthenticatedGuard, hasPermissionGuard('realm:profile')],
+    loadChildren: () => import('./features/profile/profile.routes').then((m) => m.profileRoutes),
+  },
+  {
     path: 'admin',
     component: PrivateLayout,
     canActivate: [isAuthenticatedGuard],
     loadChildren: () => import('./features/admin.routes').then((m) => m.adminRoutes),
-  },
-  {
-    path: 'profile',
-    component: PrivateLayout,
-    canActivate: [isAuthenticatedGuard, hasPermissionGuard('realm:profile')],
-    loadChildren: () => import('./features/profile/profile.routes').then((m) => m.profileRoutes),
   },
   {
     path: '401',
