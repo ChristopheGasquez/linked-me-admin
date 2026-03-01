@@ -220,10 +220,19 @@
     },
     "private": {
       "nav": {
+        "menu": "Menu",
         "home": "Home"
       },
       "actions": {
         "logout": "Sign out"
+      },
+      "sidenav": {
+        "dashboard": "Dashboard",
+        "profile": "My profile",
+        "users": "Users",
+        "roles": "Roles",
+        "audit": "Audit",
+        "tasks": "Tasks"
       }
     },
     "public": {

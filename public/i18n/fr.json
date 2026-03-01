@@ -220,10 +220,19 @@
     },
     "private": {
       "nav": {
+        "menu": "Menu",
         "home": "Accueil"
       },
       "actions": {
         "logout": "Se déconnecter"
+      },
+      "sidenav": {
+        "dashboard": "Tableau de bord",
+        "profile": "Mon profil",
+        "users": "Utilisateurs",
+        "roles": "Rôles",
+        "audit": "Audit",
+        "tasks": "Tâches"
       }
     },
     "public": {
