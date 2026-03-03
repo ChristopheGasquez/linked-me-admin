@@ -55,9 +55,10 @@
     }
 
     &__body {
-      display: flex;
-      flex-direction: column;
-      overflow: auto;
+      // Material content hack: Header height + padding;
+      height: calc(
+        100dvh - var(--lma-spacing-padding--xxl) - var(--lma-spacing-padding--xxl) - 64px
+      );
       padding: var(--lma-spacing-padding--xxl);
     }
   }
