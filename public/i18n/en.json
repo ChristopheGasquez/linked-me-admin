@@ -105,6 +105,9 @@
       "matches": "Password must contain at least one uppercase letter, one number and one special character",
       "minLength": "Password must be at least 8 characters"
     },
+    "newPassword": {
+      "matches": "Password must contain at least one uppercase letter, one number and one special character"
+    },
     "email": {
       "isEmail": "Invalid email"
     },
@@ -210,6 +213,41 @@
       "too_many_requests": "Too many requests. Please try again in {{ retryAfter }}."
     },
     "unknown": "An error occurred, please try again later"
+  },
+  "me": {
+    "profile": {
+      "title": "My profile",
+      "infoSection": "My information",
+      "securitySection": "Security",
+      "nameSuccess": "Username updated successfully",
+      "name": {
+        "label": "Username",
+        "edit": "Edit username",
+        "required": "Username is required",
+        "minlength": "Username must be at least 2 characters"
+      },
+      "password": {
+        "label": "Password",
+        "edit": "Edit password",
+        "current": "Current password",
+        "new": "New password",
+        "confirm": "Confirm new password",
+        "required": "Current password is required",
+        "newRequired": "New password is required",
+        "confirmRequired": "Confirmation is required",
+        "minlength": "Password must be at least 8 characters",
+        "mismatch": "Passwords do not match"
+      },
+      "saveInfo": "Save information",
+      "savePassword": "Save password",
+      "cancel": "Cancel",
+      "passwordChanged": {
+        "title": "Password changed!",
+        "subtitle": "Your password has been successfully changed.",
+        "redirect": "Redirecting to login in {{ seconds }} second(s)...",
+        "loginLink": "Sign in"
+      }
+    }
   },
   "layout": {
     "common": {

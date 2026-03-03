@@ -26,6 +26,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
+      if (req.method === 'PATCH' && error.error?.code === 'profile.password.incorrect') {
+        return throwError(() => error);
+      }
+
       return authService.refreshTokens().pipe(
         switchMap(newToken => {
           const retryReq = req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } });

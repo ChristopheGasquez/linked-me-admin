@@ -1,0 +1,8 @@
+.input--readonly {
+  .mat-mdc-input-element:disabled,
+  .mat-mdc-input-element[disabled] {
+    color: var(--mat-sys-on-surface);
+    -webkit-text-fill-color: var(--mat-sys-on-surface);
+    opacity: 1;
+  }
+}

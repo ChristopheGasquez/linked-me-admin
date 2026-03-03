@@ -105,6 +105,9 @@
       "matches": "Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial",
       "minLength": "Le mot de passe doit contenir au moins 8 caractères"
     },
+    "newPassword": {
+      "matches": "Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial"
+    },
     "email": {
       "isEmail": "Email invalide"
     },
@@ -210,6 +213,41 @@
       "too_many_requests": "Trop de tentatives. Réessayez dans {{ retryAfter }}."
     },
     "unknown": "Une erreur est survenue, réessaie plus tard"
+  },
+  "me": {
+    "profile": {
+      "title": "Mon profil",
+      "infoSection": "Mes informations",
+      "securitySection": "Sécurité",
+      "nameSuccess": "Nom d'utilisateur mis à jour",
+      "name": {
+        "label": "Nom d'utilisateur",
+        "edit": "Modifier le nom d'utilisateur",
+        "required": "Le nom est requis",
+        "minlength": "Le nom doit contenir au moins 2 caractères"
+      },
+      "password": {
+        "label": "Mot de passe",
+        "edit": "Modifier le mot de passe",
+        "current": "Mot de passe actuel",
+        "new": "Nouveau mot de passe",
+        "confirm": "Confirmer le nouveau mot de passe",
+        "required": "Le mot de passe actuel est requis",
+        "newRequired": "Le nouveau mot de passe est requis",
+        "confirmRequired": "La confirmation est requise",
+        "minlength": "Le mot de passe doit contenir au moins 8 caractères",
+        "mismatch": "Les mots de passe ne correspondent pas"
+      },
+      "saveInfo": "Enregistrer les informations",
+      "savePassword": "Enregistrer le mot de passe",
+      "cancel": "Annuler",
+      "passwordChanged": {
+        "title": "Mot de passe modifié !",
+        "subtitle": "Votre mot de passe a été modifié avec succès.",
+        "redirect": "Redirection vers la page de connexion dans {{ seconds }} seconde(s)...",
+        "loginLink": "Me reconnecter"
+      }
+    }
   },
   "layout": {
     "common": {
