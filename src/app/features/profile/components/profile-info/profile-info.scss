@@ -1,0 +1,32 @@
+:host {
+  display: contents;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lma-spacing-gap--md);
+  }
+
+  .profile-info {
+    &__error {
+      color: var(--mat-sys-error);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__success {
+      color: var(--mat-sys-primary);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--lma-spacing-gap--sm);
+      flex-wrap: wrap;
+    }
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}

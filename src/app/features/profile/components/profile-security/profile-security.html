@@ -1,0 +1,125 @@
+<ng-container *transloco="let t">
+  <form
+    [formGroup]="securityForm"
+    (ngSubmit)="onSubmit()">
+    @if (!passwordSuccess()) {
+      @if (passwordEditing() && error()) {
+        <p
+          class="profile-security__error"
+          role="alert">
+          {{ t('api.' + error()!.code, error()!.params ?? {}) }}
+        </p>
+      }
+
+      @if (!passwordEditing()) {
+        <mat-form-field
+          class="input--readonly"
+          appearance="outline">
+          <mat-label>{{ t('me.profile.password.label') }}</mat-label>
+          <input
+            matInput
+            type="password"
+            value="placeholder"
+            disabled />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            [attr.aria-label]="t('me.profile.password.edit')"
+            (click)="enable()">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-form-field>
+      } @else {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t('me.profile.password.current') }}</mat-label>
+          <input
+            matInput
+            [type]="showCurrentPassword() ? 'text' : 'password'"
+            formControlName="currentPassword" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showCurrentPassword.set(!showCurrentPassword())">
+            <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (securityForm.controls['currentPassword'].hasError('required')) {
+            <mat-error>{{ t('me.profile.password.required') }}</mat-error>
+          } @else if (securityForm.controls['currentPassword'].hasError('serverError')) {
+            <mat-error>{{
+              t(securityForm.controls['currentPassword'].errors!['serverError'])
+            }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t('me.profile.password.new') }}</mat-label>
+          <input
+            matInput
+            [type]="showNewPassword() ? 'text' : 'password'"
+            formControlName="newPassword" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showNewPassword.set(!showNewPassword())">
+            <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (securityForm.controls['newPassword'].hasError('required')) {
+            <mat-error>{{ t('me.profile.password.newRequired') }}</mat-error>
+          } @else if (securityForm.controls['newPassword'].hasError('minlength')) {
+            <mat-error>{{ t('me.profile.password.minlength') }}</mat-error>
+          } @else if (securityForm.controls['newPassword'].hasError('serverError')) {
+            <mat-error>{{
+              t(securityForm.controls['newPassword'].errors!['serverError'])
+            }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t('me.profile.password.confirm') }}</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="confirmPassword" />
+          @if (securityForm.controls['confirmPassword'].hasError('required')) {
+            <mat-error>{{ t('me.profile.password.confirmRequired') }}</mat-error>
+          } @else if (securityForm.controls['confirmPassword'].hasError('mismatch')) {
+            <mat-error>{{ t('me.profile.password.mismatch') }}</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      @if (passwordEditing()) {
+        <div class="profile-security__actions">
+          <button
+            matButton
+            type="button"
+            (click)="cancel()">
+            {{ t('me.profile.cancel') }}
+          </button>
+          <button
+            matButton="filled"
+            type="submit"
+            [disabled]="!canSave() || loading()">
+            {{ t('me.profile.savePassword') }}
+          </button>
+        </div>
+      }
+    } @else {
+      <div
+        class="profile-security__success-state"
+        role="status">
+        <p>{{ t('me.profile.passwordChanged.subtitle') }}</p>
+        <p>{{ t('me.profile.passwordChanged.redirect', { seconds: countdown() }) }}</p>
+        <button
+          matButton="filled"
+          type="button"
+          (click)="goToLogin()">
+          {{ t('me.profile.passwordChanged.loginLink') }}
+        </button>
+      </div>
+    }
+  </form>
+</ng-container>
