@@ -1,0 +1,64 @@
+<ng-container *transloco="let t">
+  <form
+    [formGroup]="infoForm"
+    (ngSubmit)="onSubmit()">
+    @if (nameEditing()) {
+      @if (error()) {
+        <p
+          class="profile-info__error"
+          role="alert">
+          {{ t('api.' + error()!.code, error()!.params ?? {}) }}
+        </p>
+      } @else if (nameSuccess()) {
+        <p
+          class="profile-info__success"
+          role="status">
+          {{ t('me.profile.nameSuccess') }}
+        </p>
+      }
+    }
+
+    <mat-form-field
+      class="input--readonly"
+      appearance="outline">
+      <mat-label>{{ t('me.profile.name.label') }}</mat-label>
+      <input
+        matInput
+        formControlName="name" />
+      @if (!nameEditing()) {
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="t('me.profile.name.edit')"
+          (click)="enable()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      }
+      @if (infoForm.controls['name'].hasError('required')) {
+        <mat-error>{{ t('me.profile.name.required') }}</mat-error>
+      } @else if (infoForm.controls['name'].hasError('minlength')) {
+        <mat-error>{{ t('me.profile.name.minlength') }}</mat-error>
+      } @else if (infoForm.controls['name'].hasError('serverError')) {
+        <mat-error>{{ t(infoForm.controls['name'].errors!['serverError']) }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (nameEditing()) {
+      <div class="profile-info__actions">
+        <button
+          matButton
+          type="button"
+          (click)="cancel()">
+          {{ t('me.profile.cancel') }}
+        </button>
+        <button
+          matButton="filled"
+          type="submit"
+          [disabled]="!canSave() || loading()">
+          {{ t('me.profile.saveInfo') }}
+        </button>
+      </div>
+    }
+  </form>
+</ng-container>

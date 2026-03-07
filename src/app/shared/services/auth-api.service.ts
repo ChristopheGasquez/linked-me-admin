@@ -7,6 +7,8 @@ import { AuthResponse, RegisterResponse, TokensResponse } from '../models/auth.m
 import { LoginDto, RegisterDto } from '../models/login.dto';
 import { MeResponse } from '../models/me.model';
 import { ApiMessage } from '../models/api-response.model';
+import { PaginatedResponse, PaginationParams } from '../models/pagination.model';
+import { SessionResponse } from '../models/session.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
@@ -60,5 +62,15 @@ export class AuthApiService {
 
   logoutAll(): Observable<void> {
     return this.#http.post<void>(`${this.baseUrl}/logout-all`, {});
+  }
+
+  getSessions(params: PaginationParams = {}): Observable<PaginatedResponse<SessionResponse>> {
+    return this.#http.get<PaginatedResponse<SessionResponse>>(`${this.baseUrl}/sessions`, {
+      params: { ...params },
+    });
+  }
+
+  revokeSession(id: number): Observable<ApiMessage> {
+    return this.#http.delete<ApiMessage>(`${this.baseUrl}/sessions/${id}`);
   }
 }

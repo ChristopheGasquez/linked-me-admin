@@ -1,11 +1,13 @@
 //// VARIABLES ////
 @use 'styles/variables/_containers';
 @use 'styles/variables/_spaces';
+@use 'styles/variables/_typography';
 
 //// THEMES ////
 @use 'styles/themes/theme';
 
 //// COMPONENTS ////
 @use 'styles/components/button';
+@use 'styles/components/icon';
 @use 'styles/components/input';
 @use 'styles/components/heading';

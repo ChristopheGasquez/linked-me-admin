@@ -3,7 +3,8 @@
     "langs": {
       "fr": "Français",
       "en": "Anglais"
-    }
+    },
+    "dateTimeFormat": "dd/MM/yyyy HH:mm"
   },
   "auth": {
     "login": {
@@ -247,6 +248,16 @@
         "redirect": "Redirection vers la page de connexion dans {{ seconds }} seconde(s)...",
         "loginLink": "Me reconnecter"
       }
+    },
+    "sessions": {
+      "title": "Mes sessions connectées",
+      "empty": "Aucune session active",
+      "columns": {
+        "createdAt": "Connecté le",
+        "expiresAt": "Expire le",
+        "actions": "Actions"
+      },
+      "disconnect": "Déconnecter"
     }
   },
   "layout": {
