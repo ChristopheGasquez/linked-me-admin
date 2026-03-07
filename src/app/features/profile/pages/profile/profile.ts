@@ -15,6 +15,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { ApiError } from '../../../../shared/models/api-response.model';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
+import { SessionsList } from '../../components/sessions-list/sessions-list';
 
 @Component({
   selector: 'app-profile',
@@ -31,6 +32,7 @@ import { applyValidationErrors } from '../../../../shared/utils/form-validation'
     MatLabel,
     MatError,
     MatInput,
+    SessionsList,
   ],
 })
 export class Profile implements OnInit, OnDestroy {

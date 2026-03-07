@@ -34,12 +34,12 @@
 
       &__success {
         color: var(--mat-sys-primary);
-        font-size: 0.875rem;
+        font-size: var(--lma-font-size--md);
       }
 
       &__error {
         color: var(--mat-sys-error);
-        font-size: 0.875rem;
+        font-size: var(--lma-font-size--md);
       }
 
       &__success-state {
