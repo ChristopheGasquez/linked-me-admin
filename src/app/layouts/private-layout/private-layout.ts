@@ -13,6 +13,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LangSwitcher } from '../../shared/components/lang-switcher/lang-switcher';
 import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
+import { HasPermissionDirective } from '../../shared/directives/has-permission.directive';
 import { AuthService } from '../../core/services/auth.service';
 import pkg from '../../../../package.json';
 
@@ -36,6 +37,7 @@ import pkg from '../../../../package.json';
     TranslocoPipe,
     ThemeToggle,
     LangSwitcher,
+    HasPermissionDirective,
   ],
   templateUrl: './private-layout.html',
   styleUrl: './private-layout.scss',
