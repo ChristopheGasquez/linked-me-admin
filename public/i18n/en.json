@@ -4,7 +4,8 @@
       "fr": "French",
       "en": "English"
     },
-    "dateTimeFormat": "MM/dd/yyyy hh:mm a"
+    "dateTimeFormat": "MM/dd/yyyy hh:mm a",
+    "dateFormat": "MM/dd/yyyy"
   },
   "auth": {
     "login": {
@@ -288,6 +289,29 @@
       "nav": {
         "login": "Sign in",
         "register": "Sign up"
+      }
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "Users",
+      "searchLabel": "Search",
+      "search": "Search (email, name...)",
+      "clearSearch": "Clear search",
+      "filterRoleLabel": "Role",
+      "filterRoleAll": "All roles",
+      "filterEmailCheckedLabel": "Email verified",
+      "filterEmailCheckedAll": "All statuses",
+      "filterEmailCheckedVerified": "Verified",
+      "filterEmailCheckedUnverified": "Unverified",
+      "empty": "No users found",
+      "viewDetail": "View details",
+      "columns": {
+        "identity": "Identity",
+        "roles": "Roles",
+        "emailStatus": "Email",
+        "createdAt": "Created on",
+        "actions": "Actions"
       }
     }
   },

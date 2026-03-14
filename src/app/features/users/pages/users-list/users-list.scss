@@ -1,0 +1,113 @@
+:host {
+  display: contents;
+
+  // Hide default Material sort arrow — replaced by custom icons in headers
+  ::ng-deep .mat-sort-header-arrow {
+    display: none;
+  }
+
+  .users-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lma-spacing-gap--xl);
+    width: 100%;
+
+    &__title {
+      margin: 0;
+    }
+
+    &__filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--lma-spacing-gap--md);
+
+      mat-form-field {
+        flex: 1;
+        min-width: 180px;
+      }
+    }
+
+    &__error {
+      color: var(--mat-sys-error);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--lma-spacing-gap--md);
+      color: var(--mat-sys-on-surface-variant);
+
+      mat-icon {
+        font-size: var(--lma-icon-size--xl);
+        width: var(--lma-icon-size--xl);
+        height: var(--lma-icon-size--xl);
+      }
+    }
+
+    &__table-wrapper {
+      overflow-x: auto;
+    }
+
+    &__table {
+      width: 100%;
+
+      &__column--shrink {
+        width: 1px;
+        white-space: nowrap;
+        text-align: center;
+      }
+
+      &__name {
+        display: block;
+        font-weight: 500;
+      }
+
+      &__email {
+        display: block;
+        font-size: var(--lma-font-size--sm);
+        color: var(--mat-sys-on-surface-variant);
+      }
+
+      &__sort-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        vertical-align: middle;
+        margin-left: var(--lma-spacing-gap--xs);
+        color: var(--mat-sys-on-surface-variant);
+        opacity: 0;
+        transition: opacity 0.15s ease;
+
+        &--active {
+          opacity: 1;
+          color: var(--mat-sys-primary);
+        }
+      }
+
+      th:hover,
+      th:focus-within {
+        .users-list__table__sort-icon {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__filter-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: var(--lma-spacing-gap--xs);
+    }
+
+    &__icon--verified {
+      color: var(--mat-sys-primary);
+    }
+
+    &__icon--unverified {
+      color: var(--mat-sys-error);
+    }
+  }
+}

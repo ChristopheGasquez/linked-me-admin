@@ -4,7 +4,8 @@
       "fr": "Français",
       "en": "Anglais"
     },
-    "dateTimeFormat": "dd/MM/yyyy HH:mm"
+    "dateTimeFormat": "dd/MM/yyyy HH:mm",
+    "dateFormat": "dd/MM/yyyy"
   },
   "auth": {
     "login": {
@@ -288,6 +289,29 @@
       "nav": {
         "login": "Connexion",
         "register": "Inscription"
+      }
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "Utilisateurs",
+      "searchLabel": "Recherche",
+      "search": "Rechercher (email, nom...)",
+      "clearSearch": "Effacer la recherche",
+      "filterRoleLabel": "Rôle",
+      "filterRoleAll": "Tous les rôles",
+      "filterEmailCheckedLabel": "Email vérifié",
+      "filterEmailCheckedAll": "Tous les statuts",
+      "filterEmailCheckedVerified": "Vérifié",
+      "filterEmailCheckedUnverified": "Non vérifié",
+      "empty": "Aucun utilisateur trouvé",
+      "viewDetail": "Voir le détail",
+      "columns": {
+        "identity": "Identité",
+        "roles": "Rôles",
+        "emailStatus": "Email",
+        "createdAt": "Créé le",
+        "actions": "Actions"
       }
     }
   },
