@@ -1,8 +1,8 @@
 # linked-me Admin
 
-![Angular](https://img.shields.io/badge/Angular-20-DD0031?logo=angular&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Angular Material](https://img.shields.io/badge/Angular_Material-20-757575?logo=angular&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Angular Material](https://img.shields.io/badge/Angular_Material-22-757575?logo=angular&logoColor=white)
 ![Railway](https://img.shields.io/badge/deploy-Railway-0B0D0E?logo=railway&logoColor=white)
 
 Interface d'administration pour la plateforme linked-me.
@@ -22,7 +22,10 @@ Interface d'administration pour la plateforme linked-me.
 
 ### Prerequisite
 
-- Node.js 22+
+- Node.js 24+
+
+> **macOS < 14**: the native Sass compiler (`sass-embedded`) requires macOS 14+ and hangs silently on older versions.
+> Set `NG_BUILD_SASS_EMBEDDED=false` (e.g. in `~/.zshrc` and in your IDE run configuration) to use the JavaScript Sass compiler instead.
 
 ### Installation
 
