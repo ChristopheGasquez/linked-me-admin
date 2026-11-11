@@ -77,6 +77,8 @@ export class UsersList implements OnInit {
     return { name: icon('name'), isEmailChecked: icon('isEmailChecked'), createdAt: icon('createdAt') };
   });
 
+  readonly totalPages = computed(() => Math.ceil(this.total() / this.limit()));
+
   ngOnInit(): void {
     this.loadRoles();
     this.loadUsers();

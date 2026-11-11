@@ -313,6 +313,73 @@
         "createdAt": "Created on",
         "actions": "Actions"
       }
+    },
+    "audit": {
+      "title": "Audit log",
+      "filterActorLabel": "Actor",
+      "filterActor": "User ID",
+      "clearActor": "Clear actor",
+      "filterActionLabel": "Action",
+      "filterActionAll": "All actions",
+      "filterTargetTypeLabel": "Target type",
+      "filterTargetTypeAll": "All types",
+      "empty": "No entries found",
+      "system": "System",
+      "columns": {
+        "createdAt": "Date",
+        "action": "Action",
+        "actor": "Actor",
+        "target": "Target",
+        "metadata": "Details"
+      },
+      "targetTypes": {
+        "user": "User",
+        "role": "Role",
+        "task": "Task"
+      },
+      "actions": {
+        "user": {
+          "create": "User created",
+          "delete": "User deleted",
+          "role": {
+            "assign": "Role assigned",
+            "revoke": "Role revoked"
+          }
+        },
+        "role": {
+          "create": "Role created",
+          "delete": "Role deleted",
+          "permission": {
+            "assign": "Permission added",
+            "revoke": "Permission removed"
+          }
+        },
+        "login": {
+          "failed": "Login failed",
+          "locked": "Account locked"
+        },
+        "email": {
+          "verified": "Email verified"
+        },
+        "password": {
+          "reset": "Password reset"
+        },
+        "profile": {
+          "update": "Profile updated",
+          "delete": "Profile deleted",
+          "password": {
+            "change": "Password changed"
+          }
+        },
+        "task": {
+          "cleanup": {
+            "unverified-users": "Cleanup: unverified accounts",
+            "expired-tokens": "Cleanup: expired tokens",
+            "audit-logs": "Cleanup: audit log",
+            "orphaned-permissions": "Cleanup: orphaned permissions"
+          }
+        }
+      }
     }
   },
   "errors": {

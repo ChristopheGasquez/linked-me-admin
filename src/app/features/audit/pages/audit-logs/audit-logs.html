@@ -1,0 +1,191 @@
+<ng-container *transloco="let t">
+  <div class="audit-logs">
+    <h2 class="audit-logs__title">{{ t('admin.audit.title') }}</h2>
+
+    <form
+      class="audit-logs__filters"
+      [formGroup]="filterForm">
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic">
+        <mat-label>{{ t('admin.audit.filterActorLabel') }}</mat-label>
+        <mat-icon matPrefix>person_search</mat-icon>
+        <input
+          matInput
+          type="number"
+          min="1"
+          formControlName="actorId"
+          [placeholder]="t('admin.audit.filterActor')" />
+        @if (filterForm.value.actorId) {
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            [attr.aria-label]="t('admin.audit.clearActor')"
+            (click)="clearActorId()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic">
+        <mat-label>{{ t('admin.audit.filterActionLabel') }}</mat-label>
+        <mat-select formControlName="action">
+          <mat-option value="">{{ t('admin.audit.filterActionAll') }}</mat-option>
+          @for (action of actions; track action) {
+            <mat-option [value]="action">{{ t('admin.audit.actions.' + action) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic">
+        <mat-label>{{ t('admin.audit.filterTargetTypeLabel') }}</mat-label>
+        <mat-select formControlName="targetType">
+          <mat-option value="">{{ t('admin.audit.filterTargetTypeAll') }}</mat-option>
+          @for (type of targetTypes; track type) {
+            <mat-option [value]="type">{{ t('admin.audit.targetTypes.' + type) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    @if (error()) {
+      <p
+        class="audit-logs__error"
+        role="alert">
+        {{ t('api.' + error()!.code, error()!.params ?? {}) }}
+      </p>
+    }
+
+    @if (!loading() && !error() && auditLogs().length === 0) {
+      <div class="audit-logs__empty">
+        <mat-icon>history</mat-icon>
+        <p>{{ t('admin.audit.empty') }}</p>
+      </div>
+    }
+
+    @if (auditLogs().length > 0) {
+      <div class="audit-logs__table-wrapper">
+        <table
+          mat-table
+          [dataSource]="auditLogs()"
+          matSort
+          [matSortActive]="sortBy()"
+          [matSortDirection]="sortOrder()"
+          (matSortChange)="onSortChange($event)"
+          class="audit-logs__table">
+          <ng-container matColumnDef="createdAt">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header="createdAt">
+              {{ t('admin.audit.columns.createdAt') }}
+              <mat-icon
+                class="audit-logs__table__sort-icon"
+                [class.audit-logs__table__sort-icon--active]="sortBy() === 'createdAt'">
+                {{ sortIcons().createdAt }}
+              </mat-icon>
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let log">
+              {{ log.createdAt | date: t('common.dateTimeFormat') }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+              {{ t('admin.audit.columns.action') }}
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let log">
+              <mat-chip-set>
+                <mat-chip>{{ t('admin.audit.actions.' + log.action) }}</mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actor">
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+              {{ t('admin.audit.columns.actor') }}
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let log">
+              {{ log.actorId ? '#' + log.actorId : t('admin.audit.system') }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="target">
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+              {{ t('admin.audit.columns.target') }}
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let log">
+              @if (log.targetType) {
+                {{ t('admin.audit.targetTypes.' + log.targetType) }}
+                @if (log.targetId) {
+                  #{{ log.targetId }}
+                }
+              } @else {
+                —
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="metadata">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="audit-logs__table__column--shrink">
+              {{ t('admin.audit.columns.metadata') }}
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let log"
+              class="audit-logs__table__column--shrink">
+              @if (log.metadata) {
+                <mat-icon
+                  class="audit-logs__metadata-icon"
+                  [matTooltip]="log.metadata | json"
+                  >info</mat-icon
+                >
+              }
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="limit()"
+        [pageIndex]="page() - 1"
+        [pageSizeOptions]="[10, 20, 50]"
+        [showFirstLastButtons]="totalPages() > 2"
+        (page)="onPageChange($event)" />
+    }
+  </div>
+</ng-container>
