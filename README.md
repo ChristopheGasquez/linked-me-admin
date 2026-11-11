@@ -1,8 +1,8 @@
 # linked-me Admin
 
-![Angular](https://img.shields.io/badge/Angular-20-DD0031?logo=angular&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Angular Material](https://img.shields.io/badge/Angular_Material-20-757575?logo=angular&logoColor=white)
+![Angular Material](https://img.shields.io/badge/Angular_Material-21-757575?logo=angular&logoColor=white)
 ![Railway](https://img.shields.io/badge/deploy-Railway-0B0D0E?logo=railway&logoColor=white)
 
 Interface d'administration pour la plateforme linked-me.
@@ -22,7 +22,7 @@ Interface d'administration pour la plateforme linked-me.
 
 ### Prerequisite
 
-- Node.js 22+
+- Node.js 24+
 
 ### Installation
 
