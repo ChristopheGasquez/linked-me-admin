@@ -12,10 +12,9 @@
   }
 
   @if (!loading() && !error() && sessions().length === 0) {
-    <div class="sessions-list__empty">
-      <mat-icon>devices_off</mat-icon>
-      <p>{{ t('me.sessions.empty') }}</p>
-    </div>
+    <app-empty-state
+      icon="devices_off"
+      titleKey="me.sessions.empty" />
   }
 
   @if (sessions().length > 0) {
