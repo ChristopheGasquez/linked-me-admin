@@ -1,9 +1,10 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EMPTY, merge, Subject } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, finalize, takeUntil, tap } from 'rxjs/operators';
+import { EMPTY, merge } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { UserAdminResponse } from '../../../../shared/models/user-admin.model';
@@ -42,14 +44,15 @@ import { RoleBasicResponse } from '../../../../shared/models/role.model';
     MatChipsModule,
     MatIconButton,
     MatTooltipModule,
+    EmptyState,
   ],
 })
-export class UsersList implements OnInit, OnDestroy {
+export class UsersList implements OnInit {
   #usersApi = inject(UsersApiService);
   #rolesApi = inject(RolesApiService);
   #router = inject(Router);
   #fb: FormBuilder = inject(FormBuilder);
-  #destroy$ = new Subject<void>();
+  #destroyRef = inject(DestroyRef);
 
   readonly displayedColumns = ['identity', 'roles', 'isEmailChecked', 'createdAt', 'actions'];
 
@@ -61,6 +64,7 @@ export class UsersList implements OnInit, OnDestroy {
   total = signal(0);
   sortBy = signal('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
+  hasActiveFilters = signal(false);
   availableRoles = signal<RoleBasicResponse[]>([]);
 
   filterForm: FormGroup = this.#fb.group({
@@ -76,6 +80,8 @@ export class UsersList implements OnInit, OnDestroy {
     return { name: icon('name'), isEmailChecked: icon('isEmailChecked'), createdAt: icon('createdAt') };
   });
 
+  readonly totalPages = computed(() => Math.ceil(this.total() / this.limit()));
+
   ngOnInit(): void {
     this.loadRoles();
     this.loadUsers();
@@ -88,7 +94,7 @@ export class UsersList implements OnInit, OnDestroy {
           this.page.set(1);
           this.loadUsers();
         }),
-        takeUntil(this.#destroy$),
+        takeUntilDestroyed(this.#destroyRef),
       )
       .subscribe();
 
@@ -101,14 +107,9 @@ export class UsersList implements OnInit, OnDestroy {
           this.page.set(1);
           this.loadUsers();
         }),
-        takeUntil(this.#destroy$),
+        takeUntilDestroyed(this.#destroyRef),
       )
       .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.#destroy$.next();
-    this.#destroy$.complete();
   }
 
   loadUsers(): void {
@@ -116,6 +117,7 @@ export class UsersList implements OnInit, OnDestroy {
     this.error.set(null);
 
     const { search, role, emailChecked } = this.filterForm.getRawValue();
+    this.hasActiveFilters.set(!!(search || role || emailChecked !== ''));
     const params = {
       page: this.page(),
       limit: this.limit(),
@@ -171,6 +173,12 @@ export class UsersList implements OnInit, OnDestroy {
 
   clearSearch(): void {
     this.filterForm.controls['search'].setValue('', { emitEvent: false });
+    this.page.set(1);
+    this.loadUsers();
+  }
+
+  resetFilters(): void {
+    this.filterForm.reset({ search: '', role: '', emailChecked: '' }, { emitEvent: false });
     this.page.set(1);
     this.loadUsers();
   }

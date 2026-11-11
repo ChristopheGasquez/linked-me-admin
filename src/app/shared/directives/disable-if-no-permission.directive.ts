@@ -1,39 +1,33 @@
-import { Directive, effect, ElementRef, inject, Input, Renderer2 } from '@angular/core';
+import { computed, Directive, effect, ElementRef, inject, input, Renderer2 } from '@angular/core';
 
 import { AuthService } from '../../core/services/auth.service';
 
 @Directive({
   selector: '[appDisableIfNoPermission]',
-  standalone: true,
 })
 export class DisableIfNoPermissionDirective {
-  @Input({ required: true }) set appDisableIfNoPermission(permissions: string | string[]) {
-    this.#permissions = Array.isArray(permissions) ? permissions : [permissions];
-    this.#update();
-  }
-
-  #permissions: string[] = [];
   #authService = inject(AuthService);
   #el = inject(ElementRef);
   #renderer = inject(Renderer2);
 
+  appDisableIfNoPermission = input.required<string | string[]>();
+
+  #hasAccess = computed(() => {
+    const user = this.#authService.currentUser();
+    const required = this.appDisableIfNoPermission();
+    const permissions = Array.isArray(required) ? required : [required];
+    return !!user && permissions.some((p) => user.permissions.includes(p));
+  });
+
   constructor() {
     effect(() => {
-      this.#authService.currentUser();
-      this.#update();
+      if (this.#hasAccess()) {
+        this.#renderer.removeAttribute(this.#el.nativeElement, 'disabled');
+        this.#renderer.setStyle(this.#el.nativeElement, 'pointer-events', null);
+      } else {
+        this.#renderer.setAttribute(this.#el.nativeElement, 'disabled', '');
+        this.#renderer.setStyle(this.#el.nativeElement, 'pointer-events', 'none');
+      }
     });
-  }
-
-  #update(): void {
-    const user = this.#authService.currentUser();
-    const hasAccess = !!user && this.#permissions.some((p) => user.permissions.includes(p));
-
-    if (hasAccess) {
-      this.#renderer.removeAttribute(this.#el.nativeElement, 'disabled');
-      this.#renderer.setStyle(this.#el.nativeElement, 'pointer-events', null);
-    } else {
-      this.#renderer.setAttribute(this.#el.nativeElement, 'disabled', '');
-      this.#renderer.setStyle(this.#el.nativeElement, 'pointer-events', 'none');
-    }
   }
 }

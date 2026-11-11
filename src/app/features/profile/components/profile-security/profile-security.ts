@@ -72,11 +72,17 @@ export class ProfileSecurity implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.securityForm.controls['newPassword'].valueChanges
-      .pipe(takeUntilDestroyed(this.#destroyRef))
-      .subscribe(() => this.#validatePasswordMatch());
+      .pipe(
+        tap(() => this.#validatePasswordMatch()),
+        takeUntilDestroyed(this.#destroyRef),
+      )
+      .subscribe();
     this.securityForm.controls['confirmPassword'].valueChanges
-      .pipe(takeUntilDestroyed(this.#destroyRef))
-      .subscribe(() => this.#validatePasswordMatch());
+      .pipe(
+        tap(() => this.#validatePasswordMatch()),
+        takeUntilDestroyed(this.#destroyRef),
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {

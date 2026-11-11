@@ -5,7 +5,11 @@
       "en": "Anglais"
     },
     "dateTimeFormat": "dd/MM/yyyy HH:mm",
-    "dateFormat": "dd/MM/yyyy"
+    "dateFormat": "dd/MM/yyyy",
+    "emptyFiltered": {
+      "hint": "Essayez de modifier ou d'effacer les filtres pour élargir la recherche.",
+      "reset": "Réinitialiser les filtres"
+    }
   },
   "auth": {
     "login": {
@@ -312,6 +316,73 @@
         "emailStatus": "Email",
         "createdAt": "Créé le",
         "actions": "Actions"
+      }
+    },
+    "audit": {
+      "title": "Journal d'audit",
+      "filterActorLabel": "Acteur",
+      "filterActor": "ID de l'utilisateur",
+      "clearActor": "Effacer l'acteur",
+      "filterActionLabel": "Action",
+      "filterActionAll": "Toutes les actions",
+      "filterTargetTypeLabel": "Type de cible",
+      "filterTargetTypeAll": "Tous les types",
+      "empty": "Aucune entrée trouvée",
+      "system": "Système",
+      "columns": {
+        "createdAt": "Date",
+        "action": "Action",
+        "actor": "Acteur",
+        "target": "Cible",
+        "metadata": "Détails"
+      },
+      "targetTypes": {
+        "user": "Utilisateur",
+        "role": "Rôle",
+        "task": "Tâche"
+      },
+      "actions": {
+        "user": {
+          "create": "Création d'utilisateur",
+          "delete": "Suppression d'utilisateur",
+          "role": {
+            "assign": "Attribution de rôle",
+            "revoke": "Retrait de rôle"
+          }
+        },
+        "role": {
+          "create": "Création de rôle",
+          "delete": "Suppression de rôle",
+          "permission": {
+            "assign": "Ajout de permission",
+            "revoke": "Retrait de permission"
+          }
+        },
+        "login": {
+          "failed": "Échec de connexion",
+          "locked": "Compte verrouillé"
+        },
+        "email": {
+          "verified": "Email vérifié"
+        },
+        "password": {
+          "reset": "Mot de passe réinitialisé"
+        },
+        "profile": {
+          "update": "Profil modifié",
+          "delete": "Profil supprimé",
+          "password": {
+            "change": "Mot de passe modifié"
+          }
+        },
+        "task": {
+          "cleanup": {
+            "unverified-users": "Nettoyage : comptes non vérifiés",
+            "expired-tokens": "Nettoyage : tokens expirés",
+            "audit-logs": "Nettoyage : journal d'audit",
+            "orphaned-permissions": "Nettoyage : permissions orphelines"
+          }
+        }
       }
     }
   },

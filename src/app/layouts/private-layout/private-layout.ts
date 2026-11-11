@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -43,10 +43,10 @@ import pkg from '../../../../package.json';
   styleUrl: './private-layout.scss',
 })
 export class PrivateLayout {
-  @ViewChild(MatSidenav) sidenav!: MatSidenav;
-
   #authService = inject(AuthService);
   #router = inject(Router);
+
+  readonly sidenav = viewChild.required(MatSidenav);
 
   readonly isDesktop = toSignal(
     inject(BreakpointObserver).observe('(min-width: 1200px)').pipe(map(r => r.matches)),
@@ -59,7 +59,7 @@ export class PrivateLayout {
     this.#router.events.pipe(
       filter(e => e instanceof NavigationEnd),
       filter(() => !this.isDesktop()),
-      tap(() => this.sidenav?.close()),
+      tap(() => this.sidenav().close()),
       takeUntilDestroyed(),
     ).subscribe();
   }

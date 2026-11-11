@@ -35,7 +35,7 @@ npm install
 
 ### Configuration
 
-The app loads its runtime configuration from `public/config.json` at startup (via `APP_INITIALIZER`).
+The app loads its runtime configuration from `public/config.json` at startup (via `provideAppInitializer`).
 
 | Key      | Description                   |
 | -------- | ----------------------------- |
@@ -75,19 +75,20 @@ npm run build
 src/
 ├── app/
 │   ├── core/               # Global services and guards
-│   │   └── services/       #   AppConfig, Theme
-│   ├── features/           # Lazy-loaded feature modules
+│   │   ├── guards/         #   Auth & permission guards
+│   │   ├── interceptors/   #   Auth interceptor (token refresh)
+│   │   └── services/       #   Auth, AppConfig, Theme, Profile, i18n loader
+│   ├── features/           # Lazy-loaded features
 │   │   ├── auth/           #   Authentication pages
-│   │   ├── admin/          #   Admin section
-│   │   │   ├── audit/      #     Audit logs
-│   │   │   ├── roles/      #     Roles management
-│   │   │   ├── tasks/      #     Scheduled tasks
-│   │   │   └── users/      #     Users management
+│   │   ├── audit/          #   Audit logs (/admin/audit)
 │   │   ├── dashboard/      #   Dashboard
 │   │   ├── errors/         #   Error pages (401, 403, 404, WIP)
-│   │   └── profile/        #   User profile
+│   │   ├── profile/        #   User profile (/me)
+│   │   ├── roles/          #   Roles management (/admin/roles)
+│   │   ├── tasks/          #   Scheduled tasks (/admin/tasks)
+│   │   └── users/          #   Users management (/admin/users)
 │   ├── layouts/            # Shell layouts (public / private)
-│   └── shared/             # Shared components, pipes, utils
+│   └── shared/             # Shared components, directives, models, API services, utils
 ├── styles/
 │   └── themes/             # Angular Material 3 theme (SCSS)
 └── public/
@@ -129,22 +130,20 @@ Full auth flow backed by the linked-me API:
 
 Protected routes — requires `realm:profile` permission.
 
-| Page            | Route          |
-| --------------- | -------------- |
-| Profile         | `/me`          |
-| Change password | `/me/password` |
-| Sessions        | `/me/sessions` |
+| Page                               | Route |
+| ---------------------------------- | ----- |
+| Profile (info, password, sessions) | `/me` |
 
 ### Admin
 
-Protected routes under `/admin` — requires admin-level permissions.
+Protected routes under `/admin` — each section requires its own realm permission.
 
-| Section    | Route          |
-| ---------- | -------------- |
-| Users      | `/admin/users` |
-| Roles      | `/admin/roles` |
-| Audit logs | `/admin/audit` |
-| Tasks      | `/admin/tasks` |
+| Section    | Route          | Permission    |
+| ---------- | -------------- | ------------- |
+| Users      | `/admin/users` | `realm:admin` |
+| Roles      | `/admin/roles` | `realm:admin` |
+| Audit logs | `/admin/audit` | `realm:audit` |
+| Tasks      | `/admin/tasks` | `realm:task`  |
 
 ## Internationalisation
 
