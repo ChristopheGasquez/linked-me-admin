@@ -18,6 +18,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { AuditApiService } from '../../../../shared/services/audit-api.service';
 import { AuditLogResponse } from '../../../../shared/models/audit-log.model';
 
@@ -41,6 +42,7 @@ import { AuditLogResponse } from '../../../../shared/models/audit-log.model';
     MatChipsModule,
     MatIconButton,
     MatTooltipModule,
+    EmptyState,
   ],
 })
 export class AuditLogs implements OnInit {
@@ -80,6 +82,7 @@ export class AuditLogs implements OnInit {
   total = signal(0);
   sortBy = signal('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
+  hasActiveFilters = signal(false);
 
   filterForm: FormGroup = this.#fb.group({
     actorId: [''],
@@ -130,6 +133,7 @@ export class AuditLogs implements OnInit {
     this.error.set(null);
 
     const { actorId, action, targetType } = this.filterForm.getRawValue();
+    this.hasActiveFilters.set(!!(actorId || action || targetType));
     const params = {
       page: this.page(),
       limit: this.limit(),
@@ -171,6 +175,12 @@ export class AuditLogs implements OnInit {
 
   clearActorId(): void {
     this.filterForm.controls['actorId'].setValue('', { emitEvent: false });
+    this.page.set(1);
+    this.loadAuditLogs();
+  }
+
+  resetFilters(): void {
+    this.filterForm.reset({ actorId: '', action: '', targetType: '' }, { emitEvent: false });
     this.page.set(1);
     this.loadAuditLogs();
   }

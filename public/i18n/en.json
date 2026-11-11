@@ -5,7 +5,11 @@
       "en": "English"
     },
     "dateTimeFormat": "MM/dd/yyyy hh:mm a",
-    "dateFormat": "MM/dd/yyyy"
+    "dateFormat": "MM/dd/yyyy",
+    "emptyFiltered": {
+      "hint": "Try adjusting or clearing the filters to broaden your search.",
+      "reset": "Reset filters"
+    }
   },
   "auth": {
     "login": {

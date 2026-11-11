@@ -5,11 +5,11 @@ import { catchError, finalize, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { AuthApiService } from '../../../../shared/services/auth-api.service';
 import { SessionResponse } from '../../../../shared/models/session.model';
 
@@ -21,10 +21,10 @@ import { SessionResponse } from '../../../../shared/models/session.model';
     TranslocoDirective,
     DatePipe,
     MatButton,
-    MatIcon,
     MatProgressBar,
     MatPaginator,
     MatTableModule,
+    EmptyState,
   ],
 })
 export class SessionsList implements OnInit {

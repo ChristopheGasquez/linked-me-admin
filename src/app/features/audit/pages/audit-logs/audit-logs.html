@@ -66,10 +66,12 @@
     }
 
     @if (!loading() && !error() && auditLogs().length === 0) {
-      <div class="audit-logs__empty">
-        <mat-icon>history</mat-icon>
-        <p>{{ t('admin.audit.empty') }}</p>
-      </div>
+      <app-empty-state
+        icon="history"
+        titleKey="admin.audit.empty"
+        [hintKey]="hasActiveFilters() ? 'common.emptyFiltered.hint' : undefined"
+        [actionLabelKey]="hasActiveFilters() ? 'common.emptyFiltered.reset' : undefined"
+        (action)="resetFilters()" />
     }
 
     @if (auditLogs().length > 0) {

@@ -1,0 +1,19 @@
+<ng-container *transloco="let t">
+  <div class="empty-state">
+    <div class="empty-state__icon">
+      <mat-icon>{{ icon() }}</mat-icon>
+    </div>
+    <p class="empty-state__title">{{ t(titleKey()) }}</p>
+    @if (hintKey()) {
+      <p class="empty-state__hint">{{ t(hintKey()!) }}</p>
+    }
+    @if (actionLabelKey()) {
+      <button
+        matButton="outlined"
+        type="button"
+        (click)="action.emit()">
+        {{ t(actionLabelKey()!) }}
+      </button>
+    }
+  </div>
+</ng-container>

@@ -32,20 +32,6 @@
       font-size: var(--lma-font-size--md);
     }
 
-    &__empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--lma-spacing-gap--md);
-      color: var(--mat-sys-on-surface-variant);
-
-      mat-icon {
-        font-size: var(--lma-icon-size--xl);
-        width: var(--lma-icon-size--xl);
-        height: var(--lma-icon-size--xl);
-      }
-    }
-
     &__table-wrapper {
       overflow-x: auto;
     }

@@ -19,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { UserAdminResponse } from '../../../../shared/models/user-admin.model';
@@ -43,6 +44,7 @@ import { RoleBasicResponse } from '../../../../shared/models/role.model';
     MatChipsModule,
     MatIconButton,
     MatTooltipModule,
+    EmptyState,
   ],
 })
 export class UsersList implements OnInit {
@@ -62,6 +64,7 @@ export class UsersList implements OnInit {
   total = signal(0);
   sortBy = signal('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
+  hasActiveFilters = signal(false);
   availableRoles = signal<RoleBasicResponse[]>([]);
 
   filterForm: FormGroup = this.#fb.group({
@@ -114,6 +117,7 @@ export class UsersList implements OnInit {
     this.error.set(null);
 
     const { search, role, emailChecked } = this.filterForm.getRawValue();
+    this.hasActiveFilters.set(!!(search || role || emailChecked !== ''));
     const params = {
       page: this.page(),
       limit: this.limit(),
@@ -169,6 +173,12 @@ export class UsersList implements OnInit {
 
   clearSearch(): void {
     this.filterForm.controls['search'].setValue('', { emitEvent: false });
+    this.page.set(1);
+    this.loadUsers();
+  }
+
+  resetFilters(): void {
+    this.filterForm.reset({ search: '', role: '', emailChecked: '' }, { emitEvent: false });
     this.page.set(1);
     this.loadUsers();
   }
