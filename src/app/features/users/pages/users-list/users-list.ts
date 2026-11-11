@@ -1,9 +1,10 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EMPTY, merge, Subject } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, finalize, takeUntil, tap } from 'rxjs/operators';
+import { EMPTY, merge } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,12 +45,12 @@ import { RoleBasicResponse } from '../../../../shared/models/role.model';
     MatTooltipModule,
   ],
 })
-export class UsersList implements OnInit, OnDestroy {
+export class UsersList implements OnInit {
   #usersApi = inject(UsersApiService);
   #rolesApi = inject(RolesApiService);
   #router = inject(Router);
   #fb: FormBuilder = inject(FormBuilder);
-  #destroy$ = new Subject<void>();
+  #destroyRef = inject(DestroyRef);
 
   readonly displayedColumns = ['identity', 'roles', 'isEmailChecked', 'createdAt', 'actions'];
 
@@ -88,7 +89,7 @@ export class UsersList implements OnInit, OnDestroy {
           this.page.set(1);
           this.loadUsers();
         }),
-        takeUntil(this.#destroy$),
+        takeUntilDestroyed(this.#destroyRef),
       )
       .subscribe();
 
@@ -101,14 +102,9 @@ export class UsersList implements OnInit, OnDestroy {
           this.page.set(1);
           this.loadUsers();
         }),
-        takeUntil(this.#destroy$),
+        takeUntilDestroyed(this.#destroyRef),
       )
       .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.#destroy$.next();
-    this.#destroy$.complete();
   }
 
   loadUsers(): void {

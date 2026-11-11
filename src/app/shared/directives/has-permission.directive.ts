@@ -1,40 +1,35 @@
-import { Directive, effect, inject, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { computed, Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 
 import { AuthService } from '../../core/services/auth.service';
 
 @Directive({
   selector: '[appHasPermission]',
-  standalone: true,
 })
 export class HasPermissionDirective {
-  @Input({ required: true }) set appHasPermission(permissions: string | string[]) {
-    this.#permissions = Array.isArray(permissions) ? permissions : [permissions];
-    this.#update();
-  }
-
-  #permissions: string[] = [];
   #authService = inject(AuthService);
   #templateRef = inject(TemplateRef);
   #viewContainer = inject(ViewContainerRef);
   #hasView = false;
 
+  appHasPermission = input.required<string | string[]>();
+
+  #hasAccess = computed(() => {
+    const user = this.#authService.currentUser();
+    const required = this.appHasPermission();
+    const permissions = Array.isArray(required) ? required : [required];
+    return !!user && permissions.some((p) => user.permissions.includes(p));
+  });
+
   constructor() {
     effect(() => {
-      this.#authService.currentUser();
-      this.#update();
+      const hasAccess = this.#hasAccess();
+      if (hasAccess && !this.#hasView) {
+        this.#viewContainer.createEmbeddedView(this.#templateRef);
+        this.#hasView = true;
+      } else if (!hasAccess && this.#hasView) {
+        this.#viewContainer.clear();
+        this.#hasView = false;
+      }
     });
-  }
-
-  #update(): void {
-    const user = this.#authService.currentUser();
-    const hasAccess = !!user && this.#permissions.some((p) => user.permissions.includes(p));
-
-    if (hasAccess && !this.#hasView) {
-      this.#viewContainer.createEmbeddedView(this.#templateRef);
-      this.#hasView = true;
-    } else if (!hasAccess && this.#hasView) {
-      this.#viewContainer.clear();
-      this.#hasView = false;
-    }
   }
 }
