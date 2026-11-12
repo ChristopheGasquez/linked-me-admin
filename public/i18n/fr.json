@@ -6,6 +6,8 @@
     },
     "dateTimeFormat": "dd/MM/yyyy HH:mm",
     "dateFormat": "dd/MM/yyyy",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
     "emptyFiltered": {
       "hint": "Essayez de modifier ou d'effacer les filtres pour élargir la recherche.",
       "reset": "Réinitialiser les filtres"
@@ -204,7 +206,7 @@
           "done": "{{ count }} compte(s) non vérifié(s) supprimé(s)"
         },
         "expired_tokens": {
-          "done": "{{ count }} token(s) expiré(s) supprimé(s)"
+          "done": "{{ count }} token(s) expiré(s) supprimé(s) ({{ refreshTokens }} refresh, {{ passwordResets }} réinitialisation)"
         },
         "orphaned_permissions": {
           "done": "{{ count }} permission(s) orpheline(s) supprimée(s)",
@@ -218,6 +220,7 @@
     "throttle": {
       "too_many_requests": "Trop de tentatives. Réessayez dans {{ retryAfter }}."
     },
+    "forbidden": "Vous n'avez pas la permission d'effectuer cette action",
     "unknown": "Une erreur est survenue, réessaie plus tard"
   },
   "me": {
@@ -397,6 +400,41 @@
             "audit-logs": "Nettoyage : journal d'audit",
             "orphaned-permissions": "Nettoyage : permissions orphelines"
           }
+        }
+      }
+    },
+    "tasks": {
+      "title": "Tâches",
+      "run": "Exécuter la tâche",
+      "nothingToClean": "Rien à nettoyer",
+      "items": {
+        "unverifiedUsers": {
+          "title": "Comptes non vérifiés",
+          "description": "Supprime définitivement les comptes dont l'email n'a pas été vérifié dans le délai prévu (24 h par défaut).",
+          "schedule": "Automatique : toutes les 6 h",
+          "confirm": "Les comptes non vérifiés seront supprimés définitivement. Continuer ?"
+        },
+        "expiredTokens": {
+          "title": "Tokens expirés",
+          "description": "Supprime les refresh tokens et les tokens de réinitialisation de mot de passe expirés. Sans impact pour les utilisateurs.",
+          "schedule": "Automatique : tous les jours à 2 h"
+        },
+        "auditLogs": {
+          "title": "Logs d'audit",
+          "description": "Supprime définitivement les logs d'audit plus anciens que le nombre de jours indiqué.",
+          "schedule": "Automatique : tous les jours à 3 h (rétention 30 jours)",
+          "daysLabel": "Supprimer les logs plus vieux que (jours)",
+          "daysRequired": "Le nombre de jours est requis",
+          "daysMin": "Minimum 1 jour",
+          "daysInteger": "Nombre entier attendu",
+          "daysWarning": "Attention : les logs de moins d'une semaine seront supprimés",
+          "confirm": "Les logs d'audit de plus de {{ days }} jour(s) seront supprimés définitivement. Continuer ?"
+        },
+        "orphanedPermissions": {
+          "title": "Permissions orphelines",
+          "description": "Supprime les permissions qui n'existent plus dans le code, ainsi que leurs liaisons aux rôles. À lancer après un déploiement qui retire des permissions.",
+          "schedule": "Manuel uniquement",
+          "confirm": "Les permissions orphelines seront supprimées, ainsi que leurs liaisons aux rôles. Continuer ?"
         }
       }
     }
