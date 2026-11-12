@@ -1,10 +1,9 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EMPTY } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, finalize, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
+import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { RoleResponse } from '../../../../shared/models/role.model';
 
 @Component({
@@ -41,27 +41,60 @@ import { RoleResponse } from '../../../../shared/models/role.model';
     EmptyState,
   ],
 })
-export class RolesList implements OnInit {
+export class RolesList {
   #rolesApi = inject(RolesApiService);
   #router = inject(Router);
   #fb: FormBuilder = inject(FormBuilder);
-  #destroyRef = inject(DestroyRef);
 
   readonly displayedColumns = ['name', 'permissions', 'createdAt', 'updatedAt', 'actions'];
 
-  roles = signal<RoleResponse[]>([]);
-  loading = signal(false);
-  error = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
-  page = signal(1);
   limit = signal(20);
-  total = signal(0);
   sortBy = signal('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
-  hasActiveFilters = signal(false);
 
   filterForm: FormGroup = this.#fb.group({
     search: [''],
   });
+
+  readonly #search = toSignal(
+    this.filterForm.controls['search'].valueChanges.pipe(debounceTime(300), distinctUntilChanged()),
+    { initialValue: '' },
+  );
+
+  // Back to first page whenever search or sort changes
+  page = linkedSignal({
+    source: () => [this.#search(), this.sortBy(), this.sortOrder()],
+    computation: () => 1,
+  });
+
+  readonly rolesResource = rxResource({
+    params: () => ({
+      page: this.page(),
+      limit: this.limit(),
+      sortBy: this.sortBy(),
+      sortOrder: this.sortOrder(),
+      ...(this.#search() ? { search: this.#search() } : {}),
+    }),
+    stream: ({ params }) => this.#rolesApi.getRoles(params),
+  });
+
+  // Keeps the last result while a new page/sort/search is loading (value() resets to undefined)
+  readonly #lastResult = linkedSignal<
+    PaginatedResponse<RoleResponse> | undefined,
+    PaginatedResponse<RoleResponse> | undefined
+  >({
+    source: () => (this.rolesResource.hasValue() ? this.rolesResource.value() : undefined),
+    computation: (result, previous) => result ?? previous?.value,
+  });
+
+  readonly roles = computed(() => this.#lastResult()?.data ?? []);
+  readonly total = computed(() => this.#lastResult()?.meta.total ?? 0);
+  readonly loading = this.rolesResource.isLoading;
+  readonly error = computed(() => {
+    const err = this.rolesResource.error() as HttpErrorResponse | undefined;
+    return err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
+  });
+  readonly hasActiveFilters = computed(() => !!this.#search());
 
   readonly sortIcons = computed(() => {
     const active = this.sortBy();
@@ -72,63 +105,14 @@ export class RolesList implements OnInit {
 
   readonly totalPages = computed(() => Math.ceil(this.total() / this.limit()));
 
-  ngOnInit(): void {
-    this.loadRoles();
-
-    this.filterForm.controls['search'].valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        tap(() => {
-          this.page.set(1);
-          this.loadRoles();
-        }),
-        takeUntilDestroyed(this.#destroyRef),
-      )
-      .subscribe();
-  }
-
-  loadRoles(): void {
-    this.loading.set(true);
-    this.error.set(null);
-
-    const { search } = this.filterForm.getRawValue();
-    this.hasActiveFilters.set(!!search);
-    const params = {
-      page: this.page(),
-      limit: this.limit(),
-      sortBy: this.sortBy(),
-      sortOrder: this.sortOrder(),
-      ...(search ? { search } : {}),
-    };
-
-    this.#rolesApi
-      .getRoles(params)
-      .pipe(
-        tap((res) => {
-          this.roles.set(res.data);
-          this.total.set(res.meta.total);
-        }),
-        catchError((err: HttpErrorResponse) => {
-          this.error.set({ code: err.error?.code ?? 'unknown' });
-          return EMPTY;
-        }),
-        finalize(() => this.loading.set(false)),
-      )
-      .subscribe();
-  }
-
   onPageChange(event: PageEvent): void {
     this.page.set(event.pageIndex + 1);
     this.limit.set(event.pageSize);
-    this.loadRoles();
   }
 
   onSortChange(sort: Sort): void {
     this.sortBy.set(sort.active || 'createdAt');
     this.sortOrder.set((sort.direction as 'asc' | 'desc') || 'desc');
-    this.page.set(1);
-    this.loadRoles();
   }
 
   navigateToRole(id: number): void {
@@ -136,14 +120,10 @@ export class RolesList implements OnInit {
   }
 
   clearSearch(): void {
-    this.filterForm.controls['search'].setValue('', { emitEvent: false });
-    this.page.set(1);
-    this.loadRoles();
+    this.filterForm.controls['search'].setValue('');
   }
 
   resetFilters(): void {
-    this.filterForm.reset({ search: '' }, { emitEvent: false });
-    this.page.set(1);
-    this.loadRoles();
+    this.filterForm.reset({ search: '' });
   }
 }
