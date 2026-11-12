@@ -126,14 +126,8 @@
             <th
               mat-header-cell
               *matHeaderCellDef
-              mat-sort-header="isEmailChecked"
               class="users-list__table__column--shrink">
               {{ t('admin.users.columns.emailStatus') }}
-              <mat-icon
-                class="users-list__table__sort-icon"
-                [class.users-list__table__sort-icon--active]="sortBy() === 'isEmailChecked'">
-                {{ sortIcons().isEmailChecked }}
-              </mat-icon>
             </th>
             <td
               mat-cell
