@@ -1,0 +1,106 @@
+:host {
+  display: contents;
+
+  .user-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lma-spacing-gap--xxl);
+    margin-inline: auto;
+    width: 100%;
+    min-width: var(--lma-container-width--xxxs);
+    max-width: var(--lma-container-width--md);
+
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: var(--lma-spacing-gap--sm);
+
+      &__title {
+        margin: 0;
+      }
+    }
+
+    &__section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--lma-spacing-gap--xl);
+
+      h2 {
+        margin: 0;
+      }
+    }
+
+    &__fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--lma-container-width--xxs)), 1fr));
+      column-gap: var(--lma-spacing-gap--md);
+
+      &__full {
+        grid-column: 1 / -1;
+      }
+    }
+
+    &__icon--verified {
+      color: var(--mat-sys-primary);
+    }
+
+    &__icon--unverified,
+    &__locked mat-icon {
+      color: var(--mat-sys-error);
+    }
+
+    &__locked ::ng-deep .mat-mdc-input-element:disabled {
+      color: var(--mat-sys-error);
+      -webkit-text-fill-color: var(--mat-sys-error);
+    }
+
+    &__error {
+      margin: 0;
+      color: var(--mat-sys-error);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__success {
+      margin: 0;
+      color: var(--mat-sys-primary);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__hint {
+      margin: 0;
+      color: var(--mat-sys-on-surface-variant);
+      font-size: var(--lma-font-size--sm);
+    }
+
+    &__assign {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--lma-spacing-gap--md);
+
+      mat-form-field {
+        flex: 1;
+        min-width: var(--lma-container-width--xxxs);
+      }
+    }
+
+    &__danger-title {
+      color: var(--mat-sys-error);
+    }
+
+    &__danger {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--lma-spacing-gap--md);
+      padding: var(--lma-spacing-padding--lg);
+      border: 1px solid var(--mat-sys-error);
+      border-radius: var(--mat-sys-corner-medium);
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+}

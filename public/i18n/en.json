@@ -319,6 +319,43 @@
         "emailStatus": "Email",
         "createdAt": "Created on",
         "actions": "Actions"
+      },
+      "detail": {
+        "back": "Back to list",
+        "sections": {
+          "info": "Information",
+          "security": "Security",
+          "roles": "Roles",
+          "danger": "Danger zone"
+        },
+        "fields": {
+          "id": "ID",
+          "emailStatus": "Email",
+          "name": "Name",
+          "email": "Email address",
+          "createdAt": "Created on",
+          "updatedAt": "Updated on",
+          "failedLoginAttempts": "Failed login attempts",
+          "lockedUntil": "Locked until"
+        },
+        "notLocked": "Not locked",
+        "noRoles": "No role assigned",
+        "assignLabel": "Role to assign",
+        "assign": "Assign",
+        "allRolesAssigned": "All roles are already assigned",
+        "removeRole": {
+          "title": "Remove role",
+          "confirm": "The {{ role }} role will be removed from this user. Continue?",
+          "confirmSelf": "You are about to remove the {{ role }} role from your own account. You may lose access to some features. Continue?"
+        },
+        "delete": {
+          "title": "Delete user",
+          "description": "Deletion is permanent.",
+          "button": "Delete",
+          "hasRolesHint": "Remove all their roles first to be able to delete them.",
+          "confirm": "User {{ name }} will be permanently deleted. Continue?",
+          "confirmSelf": "You are about to delete your own account. This action is permanent. Continue?"
+        }
       }
     },
     "roles": {

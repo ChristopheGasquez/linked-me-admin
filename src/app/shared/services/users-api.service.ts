@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { AppConfigService } from '../../core/services/app-config.service';
+import { ApiMessage } from '../models/api-response.model';
 import { PaginatedResponse } from '../models/pagination.model';
 import { UserAdminListParams, UserAdminResponse } from '../models/user-admin.model';
 
@@ -21,5 +22,17 @@ export class UsersApiService {
 
   getUserById(id: number): Observable<UserAdminResponse> {
     return this.#http.get<UserAdminResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  deleteUser(id: number): Observable<ApiMessage> {
+    return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}`);
+  }
+
+  assignRole(id: number, role: string): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/${id}/roles`, { role });
+  }
+
+  removeRole(id: number, roleId: number): Observable<ApiMessage> {
+    return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/roles/${roleId}`);
   }
 }
