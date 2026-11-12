@@ -319,6 +319,43 @@
         "emailStatus": "Email",
         "createdAt": "Créé le",
         "actions": "Actions"
+      },
+      "detail": {
+        "back": "Retour à la liste",
+        "sections": {
+          "info": "Informations",
+          "security": "Sécurité",
+          "roles": "Rôles",
+          "danger": "Zone de danger"
+        },
+        "fields": {
+          "id": "ID",
+          "emailStatus": "Email",
+          "name": "Nom",
+          "email": "Adresse email",
+          "createdAt": "Créé le",
+          "updatedAt": "Modifié le",
+          "failedLoginAttempts": "Tentatives de connexion échouées",
+          "lockedUntil": "Verrouillé jusqu'au"
+        },
+        "notLocked": "Non verrouillé",
+        "noRoles": "Aucun rôle attribué",
+        "assignLabel": "Rôle à attribuer",
+        "assign": "Attribuer",
+        "allRolesAssigned": "Tous les rôles sont déjà attribués",
+        "removeRole": {
+          "title": "Retirer le rôle",
+          "confirm": "Le rôle {{ role }} sera retiré de cet utilisateur. Continuer ?",
+          "confirmSelf": "Vous allez retirer le rôle {{ role }} de votre propre compte. Vous pourriez perdre l'accès à certaines fonctionnalités. Continuer ?"
+        },
+        "delete": {
+          "title": "Supprimer l'utilisateur",
+          "description": "La suppression est définitive.",
+          "button": "Supprimer",
+          "hasRolesHint": "Retirez d'abord tous ses rôles pour pouvoir le supprimer.",
+          "confirm": "L'utilisateur {{ name }} sera supprimé définitivement. Continuer ?",
+          "confirmSelf": "Vous allez supprimer votre propre compte. Cette action est définitive. Continuer ?"
+        }
       }
     },
     "roles": {
