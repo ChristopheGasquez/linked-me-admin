@@ -20,6 +20,7 @@ export interface ConfirmDialogData {
 @Component({
   selector: 'app-confirm-dialog',
   templateUrl: './confirm-dialog.html',
+  styles: '.confirm-dialog__message { white-space: pre-line; }',
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButton, TranslocoDirective],
 })
 export class ConfirmDialog {

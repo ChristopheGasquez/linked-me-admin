@@ -12,6 +12,14 @@
     gap: var(--lma-spacing-gap--xl);
     width: 100%;
 
+    &__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--lma-spacing-gap--md);
+    }
+
     &__title {
       margin: 0;
     }

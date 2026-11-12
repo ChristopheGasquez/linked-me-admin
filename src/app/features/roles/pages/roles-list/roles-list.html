@@ -1,6 +1,15 @@
 <ng-container *transloco="let t">
   <div class="roles-list">
-    <h2 class="roles-list__title">{{ t('admin.roles.title') }}</h2>
+    <div class="roles-list__header">
+      <h2 class="roles-list__title">{{ t('admin.roles.title') }}</h2>
+      <a
+        *appHasPermission="'admin:role:manage'"
+        matButton="filled"
+        routerLink="/admin/roles/new">
+        <mat-icon>add</mat-icon>
+        {{ t('admin.roles.create') }}
+      </a>
+    </div>
 
     <form class="roles-list__filters" [formGroup]="filterForm">
       <mat-form-field
