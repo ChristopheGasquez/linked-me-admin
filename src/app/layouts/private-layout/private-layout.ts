@@ -15,6 +15,7 @@ import { LangSwitcher } from '../../shared/components/lang-switcher/lang-switche
 import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
 import { HasPermissionDirective } from '../../shared/directives/has-permission.directive';
 import { AuthService } from '../../core/services/auth.service';
+import { HasUnsavedChanges } from '../../core/guards/unsaved-changes.guard';
 import pkg from '../../../../package.json';
 
 @Component({
@@ -41,12 +42,14 @@ import pkg from '../../../../package.json';
   ],
   templateUrl: './private-layout.html',
   styleUrl: './private-layout.scss',
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
 })
 export class PrivateLayout {
   #authService = inject(AuthService);
   #router = inject(Router);
 
   readonly sidenav = viewChild.required(MatSidenav);
+  private readonly outlet = viewChild.required(RouterOutlet);
 
   readonly isDesktop = toSignal(
     inject(BreakpointObserver).observe('(min-width: 1200px)').pipe(map(r => r.matches)),
@@ -62,6 +65,14 @@ export class PrivateLayout {
       tap(() => this.sidenav().close()),
       takeUntilDestroyed(),
     ).subscribe();
+  }
+
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    const outlet = this.outlet();
+    const page = outlet.isActivated ? (outlet.component as Partial<HasUnsavedChanges>) : null;
+    if (page?.hasUnsavedChanges?.()) {
+      event.preventDefault();
+    }
   }
 
   logout(): void {
