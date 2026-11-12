@@ -318,6 +318,21 @@
         "actions": "Actions"
       }
     },
+    "roles": {
+      "title": "Roles",
+      "searchLabel": "Search",
+      "search": "Search a role",
+      "clearSearch": "Clear search",
+      "empty": "No roles found",
+      "viewDetail": "View details",
+      "columns": {
+        "name": "Name",
+        "permissions": "Permissions",
+        "createdAt": "Created on",
+        "updatedAt": "Updated on",
+        "actions": "Actions"
+      }
+    },
     "audit": {
       "title": "Audit log",
       "filterActorLabel": "Actor",

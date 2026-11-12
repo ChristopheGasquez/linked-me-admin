@@ -318,6 +318,21 @@
         "actions": "Actions"
       }
     },
+    "roles": {
+      "title": "Rôles",
+      "searchLabel": "Recherche",
+      "search": "Rechercher un rôle",
+      "clearSearch": "Effacer la recherche",
+      "empty": "Aucun rôle trouvé",
+      "viewDetail": "Voir le détail",
+      "columns": {
+        "name": "Nom",
+        "permissions": "Permissions",
+        "createdAt": "Créé le",
+        "updatedAt": "Modifié le",
+        "actions": "Actions"
+      }
+    },
     "audit": {
       "title": "Journal d'audit",
       "filterActorLabel": "Acteur",
