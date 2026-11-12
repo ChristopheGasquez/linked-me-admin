@@ -117,7 +117,7 @@ export class UsersList {
     const active = this.sortBy();
     const icon = (col: string) =>
       active !== col ? 'unfold_more' : this.sortOrder() === 'asc' ? 'expand_less' : 'expand_more';
-    return { name: icon('name'), isEmailChecked: icon('isEmailChecked'), createdAt: icon('createdAt') };
+    return { name: icon('name'), createdAt: icon('createdAt') };
   });
 
   readonly totalPages = computed(() => Math.ceil(this.total() / this.limit()));
