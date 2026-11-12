@@ -2,7 +2,7 @@ import { Component, computed, inject, linkedSignal, signal } from '@angular/core
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
@@ -13,10 +13,11 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { RoleResponse } from '../../../../shared/models/role.model';
@@ -29,6 +30,7 @@ import { RoleResponse } from '../../../../shared/models/role.model';
     TranslocoDirective,
     DatePipe,
     ReactiveFormsModule,
+    RouterLink,
     MatFormFieldModule,
     MatInputModule,
     MatIcon,
@@ -36,9 +38,11 @@ import { RoleResponse } from '../../../../shared/models/role.model';
     MatPaginator,
     MatTableModule,
     MatSortModule,
+    MatButton,
     MatIconButton,
     MatTooltipModule,
     EmptyState,
+    HasPermissionDirective,
   ],
 })
 export class RolesList {
