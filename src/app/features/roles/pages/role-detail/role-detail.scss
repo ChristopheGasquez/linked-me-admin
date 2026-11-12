@@ -1,0 +1,123 @@
+:host {
+  display: contents;
+
+  .role-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lma-spacing-gap--xxl);
+    margin-inline: auto;
+    width: 100%;
+    min-width: var(--lma-container-width--xxxs);
+    max-width: var(--lma-container-width--md);
+
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: var(--lma-spacing-gap--sm);
+
+      &__title {
+        flex: 1;
+        margin: 0;
+      }
+
+      &__name {
+        flex: 1;
+
+        input {
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    &__section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--lma-spacing-gap--xl);
+
+      h2 {
+        margin: 0;
+      }
+    }
+
+    &__permissions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--lma-container-width--xxxs)), 1fr));
+      column-gap: var(--lma-spacing-gap--md);
+    }
+
+    &__info {
+      container-type: inline-size;
+
+      &__row {
+        display: flex;
+        column-gap: var(--lma-spacing-gap--md);
+
+        mat-form-field {
+          flex: 1 1 12rem;
+        }
+
+        .role-detail__info__id.mat-mdc-form-field {
+          flex: 0 0 6rem;
+        }
+
+        // Not enough room for one line: stack every field at full width
+        @container (max-width: 32rem) {
+          flex-direction: column;
+
+          mat-form-field,
+          .role-detail__info__id.mat-mdc-form-field {
+            flex-basis: auto;
+          }
+        }
+      }
+    }
+
+    &__group h3 {
+      margin: 0 0 var(--lma-spacing-margin--sm);
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: var(--lma-spacing-gap--sm);
+    }
+
+    &__error {
+      margin: 0;
+      color: var(--mat-sys-error);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__success {
+      margin: 0;
+      color: var(--mat-sys-primary);
+      font-size: var(--lma-font-size--md);
+    }
+
+    &__hint {
+      margin: 0;
+      color: var(--mat-sys-on-surface-variant);
+      font-size: var(--lma-font-size--sm);
+    }
+
+    &__danger-title {
+      color: var(--mat-sys-error);
+    }
+
+    &__danger {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--lma-spacing-gap--md);
+      padding: var(--lma-spacing-padding--lg);
+      border: 1px solid var(--mat-sys-error);
+      border-radius: var(--mat-sys-corner-medium);
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+}

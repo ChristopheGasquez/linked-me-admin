@@ -11,7 +11,8 @@
     "emptyFiltered": {
       "hint": "Try adjusting or clearing the filters to broaden your search.",
       "reset": "Reset filters"
-    }
+    },
+    "breadcrumb": "Breadcrumb"
   },
   "auth": {
     "login": {
@@ -189,7 +190,7 @@
       "role": {
         "not_found": "Role not found",
         "already_exists": "A role with this name already exists",
-        "has_users": "Cannot delete: users have this role",
+        "has_users": "Cannot delete: {{ count }} user(s) have this role",
         "deleted": "Role deleted",
         "permission": {
           "not_assigned": "This permission is not assigned to this role",
@@ -360,6 +361,7 @@
     },
     "roles": {
       "title": "Roles",
+      "create": "Create role",
       "searchLabel": "Search",
       "search": "Search a role",
       "clearSearch": "Clear search",
@@ -371,6 +373,44 @@
         "createdAt": "Created on",
         "updatedAt": "Updated on",
         "actions": "Actions"
+      },
+      "detail": {
+        "back": "Back to list",
+        "edit": "Edit",
+        "sections": {
+          "info": "Information",
+          "permissions": "Permissions",
+          "danger": "Danger zone"
+        },
+        "fields": {
+          "id": "ID",
+          "name": "Role name",
+          "nameRequired": "Role name is required",
+          "nameMaxlength": "50 characters maximum",
+          "createdAt": "Created on",
+          "updatedAt": "Updated on"
+        },
+        "noPermissions": "No permission",
+        "save": {
+          "title": "Save permissions",
+          "button": "Save",
+          "confirm": "Added: {{ added }}\nRemoved: {{ removed }}\n\nContinue?",
+          "confirmSelf": "Added: {{ added }}\nRemoved: {{ removed }}\n\nYou have this role: your own rights will change. Continue?",
+          "confirmAdminManage": "Added: {{ added }}\nRemoved: {{ removed }}\n\n⚠ You are about to remove admin:role:manage from the ADMIN role: nobody will be able to give it back through the application. Continue?",
+          "success": "Permissions saved"
+        },
+        "create": {
+          "title": "Create role",
+          "button": "Create",
+          "confirm": "Create role {{ name }} with {{ count }} permission(s)?"
+        },
+        "delete": {
+          "title": "Delete role",
+          "description": "Deletion is permanent. It is not possible while users have this role.",
+          "button": "Delete",
+          "confirm": "Role {{ name }} will be permanently deleted. Continue?",
+          "confirmSelf": "You have the {{ name }} role. It will be permanently deleted. Continue?"
+        }
       }
     },
     "audit": {

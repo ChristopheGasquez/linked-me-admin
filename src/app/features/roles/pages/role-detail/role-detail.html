@@ -1,0 +1,193 @@
+<ng-container *transloco="let t">
+  <app-breadcrumb [label]="role()?.name" />
+  <div class="role-detail">
+    <div class="role-detail__header">
+      <a
+        mat-icon-button
+        routerLink="/admin/roles"
+        [attr.aria-label]="t('admin.roles.detail.back')"
+        [matTooltip]="t('admin.roles.detail.back')">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      @if (isCreate()) {
+        <mat-form-field
+          class="role-detail__header__name"
+          appearance="outline"
+          subscriptSizing="dynamic">
+          <mat-label>{{ t('admin.roles.detail.fields.name') }}</mat-label>
+          <input
+            matInput
+            maxlength="50"
+            [formControl]="nameControl" />
+          @if (nameControl.hasError('required')) {
+            <mat-error>{{ t('admin.roles.detail.fields.nameRequired') }}</mat-error>
+          } @else if (nameControl.hasError('maxlength')) {
+            <mat-error>{{ t('admin.roles.detail.fields.nameMaxlength') }}</mat-error>
+          }
+        </mat-form-field>
+      } @else {
+        <h2 class="role-detail__header__title">{{ role()?.name }}</h2>
+        @if (role() && canListPermissions() && !editing()) {
+          <button
+            *appHasPermission="'admin:role:manage'"
+            matButton="filled"
+            type="button"
+            (click)="startEdit()">
+            <mat-icon>edit</mat-icon>
+            {{ t('admin.roles.detail.edit') }}
+          </button>
+        }
+      }
+    </div>
+
+    @if (roleResource.isLoading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    @if (loadError()) {
+      <p
+        class="role-detail__error"
+        role="alert">
+        {{ t('api.' + loadError()!.code, loadError()!.params ?? {}) }}
+      </p>
+    }
+
+    @if (role(); as role) {
+      <section class="role-detail__section">
+        <h2>{{ t('admin.roles.detail.sections.info') }}</h2>
+        <div class="role-detail__info">
+          <div class="role-detail__info__row">
+            <mat-form-field
+              class="input--readonly role-detail__info__id"
+              appearance="outline">
+              <mat-label>{{ t('admin.roles.detail.fields.id') }}</mat-label>
+              <input
+                matInput
+                [value]="role.id"
+                disabled />
+            </mat-form-field>
+            <mat-form-field
+              class="input--readonly"
+              appearance="outline">
+              <mat-label>{{ t('admin.roles.detail.fields.createdAt') }}</mat-label>
+              <input
+                matInput
+                [value]="role.createdAt | date: t('common.dateTimeFormat')"
+                disabled />
+            </mat-form-field>
+            <mat-form-field
+              class="input--readonly"
+              appearance="outline">
+              <mat-label>{{ t('admin.roles.detail.fields.updatedAt') }}</mat-label>
+              <input
+                matInput
+                [value]="role.updatedAt | date: t('common.dateTimeFormat')"
+                disabled />
+            </mat-form-field>
+          </div>
+        </div>
+      </section>
+    }
+
+    @if (isCreate() || role()) {
+      <section class="role-detail__section">
+        <h2>
+          {{ t('admin.roles.detail.sections.permissions') }}
+          ({{ checked().size }}{{ canListPermissions() ? '/' + allPermissions().length : '' }})
+        </h2>
+
+        @if (actionError()) {
+          <p
+            class="role-detail__error"
+            role="alert">
+            {{ t('api.' + actionError()!.code, actionError()!.params ?? {}) }}
+          </p>
+        } @else if (actionSuccess()) {
+          <p
+            class="role-detail__success"
+            role="status">
+            {{ t(actionSuccess()!) }}
+          </p>
+        }
+
+        @for (group of groups(); track group.name) {
+          <div class="role-detail__group">
+            <h3>{{ group.name }}</h3>
+            <div class="role-detail__permissions">
+              @for (permission of group.permissions; track permission.id) {
+                <mat-checkbox
+                  [checked]="checked().has(permission.name)"
+                  [disabled]="!isEditable() || saving()"
+                  (change)="toggle(permission.name, $event.checked)">
+                  {{ permission.name }}
+                </mat-checkbox>
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="role-detail__hint">{{ t('admin.roles.detail.noPermissions') }}</p>
+        }
+
+        @if (isEditable()) {
+          <div class="role-detail__actions">
+            @if (isCreate()) {
+              <a
+                matButton
+                routerLink="/admin/roles">
+                {{ t('common.cancel') }}
+              </a>
+              <button
+                matButton="filled"
+                type="button"
+                [disabled]="nameControl.invalid || saving()"
+                (click)="create()">
+                {{ t('admin.roles.detail.create.button') }}
+              </button>
+            } @else {
+              <button
+                matButton
+                type="button"
+                [disabled]="saving()"
+                (click)="cancelEdit()">
+                {{ t('common.cancel') }}
+              </button>
+              <button
+                matButton="filled"
+                type="button"
+                [disabled]="!hasChanges() || saving()"
+                (click)="save()">
+                {{ t('admin.roles.detail.save.button') }}
+              </button>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    @if (role() && !editing()) {
+      <section
+        *appHasPermission="'admin:role:manage'"
+        class="role-detail__section">
+        <h2 class="role-detail__danger-title">{{ t('admin.roles.detail.sections.danger') }}</h2>
+        @if (deleteError()) {
+          <p
+            class="role-detail__error"
+            role="alert">
+            {{ t('api.' + deleteError()!.code, deleteError()!.params ?? {}) }}
+          </p>
+        }
+        <div class="role-detail__danger">
+          <p>{{ t('admin.roles.detail.delete.description') }}</p>
+          <button
+            matButton="filled"
+            class="button--error"
+            type="button"
+            [disabled]="saving()"
+            (click)="deleteRole()">
+            {{ t('admin.roles.detail.delete.button') }}
+          </button>
+        </div>
+      </section>
+    }
+  </div>
+</ng-container>

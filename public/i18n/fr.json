@@ -11,7 +11,8 @@
     "emptyFiltered": {
       "hint": "Essayez de modifier ou d'effacer les filtres pour élargir la recherche.",
       "reset": "Réinitialiser les filtres"
-    }
+    },
+    "breadcrumb": "Fil d'Ariane"
   },
   "auth": {
     "login": {
@@ -189,7 +190,7 @@
       "role": {
         "not_found": "Rôle introuvable",
         "already_exists": "Un rôle avec ce nom existe déjà",
-        "has_users": "Impossible de supprimer : des utilisateurs ont ce rôle",
+        "has_users": "Impossible de supprimer : {{ count }} utilisateur(s) ont ce rôle",
         "deleted": "Rôle supprimé",
         "permission": {
           "not_assigned": "Cette permission n'est pas assignée à ce rôle",
@@ -360,6 +361,7 @@
     },
     "roles": {
       "title": "Rôles",
+      "create": "Créer un rôle",
       "searchLabel": "Recherche",
       "search": "Rechercher un rôle",
       "clearSearch": "Effacer la recherche",
@@ -371,6 +373,44 @@
         "createdAt": "Créé le",
         "updatedAt": "Modifié le",
         "actions": "Actions"
+      },
+      "detail": {
+        "back": "Retour à la liste",
+        "edit": "Modifier",
+        "sections": {
+          "info": "Informations",
+          "permissions": "Permissions",
+          "danger": "Zone de danger"
+        },
+        "fields": {
+          "id": "ID",
+          "name": "Nom du rôle",
+          "nameRequired": "Le nom du rôle est requis",
+          "nameMaxlength": "50 caractères maximum",
+          "createdAt": "Créé le",
+          "updatedAt": "Modifié le"
+        },
+        "noPermissions": "Aucune permission",
+        "save": {
+          "title": "Enregistrer les permissions",
+          "button": "Enregistrer",
+          "confirm": "Ajouts : {{ added }}\nRetraits : {{ removed }}\n\nContinuer ?",
+          "confirmSelf": "Ajouts : {{ added }}\nRetraits : {{ removed }}\n\nVous possédez ce rôle : vos propres droits seront modifiés. Continuer ?",
+          "confirmAdminManage": "Ajouts : {{ added }}\nRetraits : {{ removed }}\n\n⚠ Vous allez retirer admin:role:manage au rôle ADMIN : plus personne ne pourra la lui redonner via l'application. Continuer ?",
+          "success": "Permissions enregistrées"
+        },
+        "create": {
+          "title": "Créer le rôle",
+          "button": "Créer",
+          "confirm": "Créer le rôle {{ name }} avec {{ count }} permission(s) ?"
+        },
+        "delete": {
+          "title": "Supprimer le rôle",
+          "description": "La suppression est définitive. Elle est impossible tant que des utilisateurs ont ce rôle.",
+          "button": "Supprimer",
+          "confirm": "Le rôle {{ name }} sera supprimé définitivement. Continuer ?",
+          "confirmSelf": "Vous possédez le rôle {{ name }}. Il sera supprimé définitivement. Continuer ?"
+        }
       }
     },
     "audit": {
