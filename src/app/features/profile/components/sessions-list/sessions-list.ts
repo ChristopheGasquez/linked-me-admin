@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
@@ -11,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { AuthApiService } from '../../../../shared/services/auth-api.service';
+import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { SessionResponse } from '../../../../shared/models/session.model';
 
 @Component({
@@ -27,55 +29,53 @@ import { SessionResponse } from '../../../../shared/models/session.model';
     EmptyState,
   ],
 })
-export class SessionsList implements OnInit {
+export class SessionsList {
   #authApi = inject(AuthApiService);
-
-  sessions = signal<SessionResponse[]>([]);
-  loading = signal(false);
-  error = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
-  revoking = signal<number | null>(null);
-  page = signal(1);
-  limit = signal(10);
-  total = signal(0);
 
   readonly displayedColumns = ['createdAt', 'expiresAt', 'actions'];
 
-  ngOnInit(): void {
-    this.loadSessions();
-  }
+  revoking = signal<number | null>(null);
+  page = signal(1);
+  limit = signal(10);
+  #revokeError = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
 
-  loadSessions(): void {
-    this.loading.set(true);
-    this.error.set(null);
-    this.#authApi
-      .getSessions({
-        page: this.page(),
-        limit: this.limit(),
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
-      })
-      .pipe(
-        tap((res) => {
-          this.sessions.set(res.data);
-          this.total.set(res.meta.total);
-        }),
-        catchError((err: HttpErrorResponse) => {
-          this.error.set({ code: err.error?.code ?? 'unknown' });
-          return EMPTY;
-        }),
-        finalize(() => this.loading.set(false)),
-      )
-      .subscribe();
-  }
+  readonly sessionsResource = rxResource({
+    params: () => ({
+      page: this.page(),
+      limit: this.limit(),
+      sortBy: 'createdAt',
+      sortOrder: 'desc' as const,
+    }),
+    stream: ({ params }) => this.#authApi.getSessions(params),
+  });
+
+  // Keeps the last result while a new page is loading (value() resets to undefined)
+  readonly #lastResult = linkedSignal<
+    PaginatedResponse<SessionResponse> | undefined,
+    PaginatedResponse<SessionResponse> | undefined
+  >({
+    source: () => (this.sessionsResource.hasValue() ? this.sessionsResource.value() : undefined),
+    computation: (result, previous) => result ?? previous?.value,
+  });
+
+  readonly sessions = computed(() => this.#lastResult()?.data ?? []);
+  readonly total = computed(() => this.#lastResult()?.meta.total ?? 0);
+  readonly loading = this.sessionsResource.isLoading;
+  readonly error = computed(() => {
+    const err = this.sessionsResource.error() as HttpErrorResponse | undefined;
+    const loadError = err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
+    return this.#revokeError() ?? loadError;
+  });
 
   revokeSession(id: number): void {
     this.revoking.set(id);
+    this.#revokeError.set(null);
     this.#authApi
       .revokeSession(id)
       .pipe(
-        tap(() => this.loadSessions()),
+        tap(() => this.sessionsResource.reload()),
         catchError((err: HttpErrorResponse) => {
-          this.error.set({ code: err.error?.code ?? 'unknown' });
+          this.#revokeError.set({ code: err.error?.code ?? 'unknown' });
           return EMPTY;
         }),
         finalize(() => this.revoking.set(null)),
@@ -86,6 +86,5 @@ export class SessionsList implements OnInit {
   onPageChange(event: PageEvent): void {
     this.page.set(event.pageIndex + 1);
     this.limit.set(event.pageSize);
-    this.loadSessions();
   }
 }
