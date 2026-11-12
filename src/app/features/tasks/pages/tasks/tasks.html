@@ -1,0 +1,81 @@
+<ng-container *transloco="let t">
+  <div class="tasks">
+    <h2 class="tasks__title">{{ t('admin.tasks.title') }}</h2>
+
+    <div class="tasks__grid">
+      @for (task of tasks; track task.name) {
+        <mat-card
+          class="tasks__card"
+          appearance="outlined">
+          <mat-card-header>
+            <mat-icon
+              matCardAvatar
+              class="tasks__card__icon">
+              {{ task.icon }}
+            </mat-icon>
+            <mat-card-title>{{ t('admin.tasks.items.' + task.i18nKey + '.title') }}</mat-card-title>
+            <mat-card-subtitle>{{ t('admin.tasks.items.' + task.i18nKey + '.schedule') }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="tasks__card__content">
+            <p>{{ t('admin.tasks.items.' + task.i18nKey + '.description') }}</p>
+
+            @if (task.name === 'audit-logs') {
+              <mat-form-field
+                appearance="outline"
+                subscriptSizing="dynamic">
+                <mat-label>{{ t('admin.tasks.items.auditLogs.daysLabel') }}</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  min="1"
+                  step="1"
+                  [formControl]="olderThanDays" />
+                @if (olderThanDays.hasError('required')) {
+                  <mat-error>{{ t('admin.tasks.items.auditLogs.daysRequired') }}</mat-error>
+                } @else if (olderThanDays.hasError('min')) {
+                  <mat-error>{{ t('admin.tasks.items.auditLogs.daysMin') }}</mat-error>
+                } @else if (olderThanDays.hasError('pattern')) {
+                  <mat-error>{{ t('admin.tasks.items.auditLogs.daysInteger') }}</mat-error>
+                } @else if (olderThanDays.value < 7) {
+                  <mat-hint class="tasks__card__warning">{{ t('admin.tasks.items.auditLogs.daysWarning') }}</mat-hint>
+                }
+              </mat-form-field>
+            }
+
+            @if (results()[task.name]; as result) {
+              <p
+                role="status"
+                [class]="'tasks__card__result tasks__card__result--' + result.type">
+                {{ t(result.key, result.params ?? {}) }}
+              </p>
+              @if (task.name === 'orphaned-permissions' && $any(result.params?.['deleted'])?.length) {
+                <mat-chip-set>
+                  @for (permission of $any(result.params!['deleted']); track permission) {
+                    <mat-chip>{{ permission }}</mat-chip>
+                  }
+                </mat-chip-set>
+              }
+            }
+          </mat-card-content>
+
+          <mat-card-actions class="tasks__card__actions">
+            <button
+              *appHasPermission="task.permission"
+              matButton="filled"
+              type="button"
+              [disabled]="running()[task.name] || (task.name === 'audit-logs' && olderThanDays.invalid)"
+              (click)="run(task)">
+              @if (running()[task.name]) {
+                <mat-progress-spinner
+                  mode="indeterminate"
+                  diameter="18" />
+              }
+              {{ t('admin.tasks.run') }}
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  </div>
+</ng-container>

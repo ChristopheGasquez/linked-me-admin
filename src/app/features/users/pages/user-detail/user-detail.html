@@ -1,0 +1,217 @@
+<ng-container *transloco="let t">
+  <div class="user-detail">
+    <div class="user-detail__header">
+      <a
+        mat-icon-button
+        routerLink="/admin/users"
+        [attr.aria-label]="t('admin.users.detail.back')"
+        [matTooltip]="t('admin.users.detail.back')">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <h2 class="user-detail__header__title">{{ user()?.name }}</h2>
+    </div>
+
+    @if (userResource.isLoading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    @if (loadError()) {
+      <p
+        class="user-detail__error"
+        role="alert">
+        {{ t('api.' + loadError()!.code, loadError()!.params ?? {}) }}
+      </p>
+    }
+
+    @if (user(); as user) {
+      <section class="user-detail__section">
+        <h2>{{ t('admin.users.detail.sections.info') }}</h2>
+        <div class="user-detail__fields">
+          <mat-form-field
+            class="input--readonly"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.id') }}</mat-label>
+            <input
+              matInput
+              [value]="user.id"
+              disabled />
+          </mat-form-field>
+
+          <mat-form-field
+            class="input--readonly"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.emailStatus') }}</mat-label>
+            <mat-icon
+              matPrefix
+              [class]="user.isEmailChecked ? 'user-detail__icon--verified' : 'user-detail__icon--unverified'">
+              {{ user.isEmailChecked ? 'verified' : 'verified_off' }}
+            </mat-icon>
+            <input
+              matInput
+              [value]="
+                t(user.isEmailChecked ? 'admin.users.filterEmailCheckedVerified' : 'admin.users.filterEmailCheckedUnverified')
+              "
+              disabled />
+          </mat-form-field>
+
+          <mat-form-field
+            class="input--readonly user-detail__fields__full"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.name') }}</mat-label>
+            <input
+              matInput
+              [value]="user.name"
+              disabled />
+          </mat-form-field>
+
+          <mat-form-field
+            class="input--readonly user-detail__fields__full"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.email') }}</mat-label>
+            <input
+              matInput
+              [value]="user.email"
+              disabled />
+          </mat-form-field>
+
+          <mat-form-field
+            class="input--readonly"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.createdAt') }}</mat-label>
+            <input
+              matInput
+              [value]="user.createdAt | date: t('common.dateTimeFormat')"
+              disabled />
+          </mat-form-field>
+
+          <mat-form-field
+            class="input--readonly"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.updatedAt') }}</mat-label>
+            <input
+              matInput
+              [value]="user.updatedAt | date: t('common.dateTimeFormat')"
+              disabled />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section class="user-detail__section">
+        <h2>{{ t('admin.users.detail.sections.roles') }}</h2>
+
+        @if (actionError()) {
+          <p
+            class="user-detail__error"
+            role="alert">
+            {{ t('api.' + actionError()!.code, actionError()!.params ?? {}) }}
+          </p>
+        } @else if (actionSuccess()) {
+          <p
+            class="user-detail__success"
+            role="status">
+            {{ t('api.' + actionSuccess()!.code, actionSuccess()!.params ?? {}) }}
+          </p>
+        }
+
+        @if (user.roles.length) {
+          <mat-chip-set>
+            @for (role of user.roles; track role.id) {
+              <mat-chip
+                [disabled]="acting()"
+                (removed)="removeRole(role)">
+                {{ role.name }}
+                <button
+                  *appHasPermission="'admin:user:assign-role'"
+                  matChipRemove
+                  type="button"
+                  [attr.aria-label]="t('admin.users.detail.removeRole.title') + ' ' + role.name">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            }
+          </mat-chip-set>
+        } @else {
+          <p class="user-detail__hint">{{ t('admin.users.detail.noRoles') }}</p>
+        }
+
+        <div
+          *appHasPermission="'admin:user:assign-role'"
+          class="user-detail__assign">
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic">
+            <mat-label>{{ t('admin.users.detail.assignLabel') }}</mat-label>
+            <mat-select [formControl]="roleToAssign">
+              @for (role of assignableRoles(); track role.id) {
+                <mat-option [value]="role.name">{{ role.name }}</mat-option>
+              }
+            </mat-select>
+            @if (!assignableRoles().length) {
+              <mat-hint>{{ t('admin.users.detail.allRolesAssigned') }}</mat-hint>
+            }
+          </mat-form-field>
+          <button
+            matButton="filled"
+            type="button"
+            [disabled]="!roleToAssign.value || acting()"
+            (click)="assignRole()">
+            {{ t('admin.users.detail.assign') }}
+          </button>
+        </div>
+      </section>
+
+      <section class="user-detail__section">
+        <h2>{{ t('admin.users.detail.sections.security') }}</h2>
+        <div class="user-detail__fields">
+          <mat-form-field
+            class="input--readonly"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.failedLoginAttempts') }}</mat-label>
+            <input
+              matInput
+              [value]="user.failedLoginAttempts"
+              disabled />
+          </mat-form-field>
+
+          <mat-form-field
+            class="input--readonly"
+            [class.user-detail__locked]="isLocked()"
+            appearance="outline">
+            <mat-label>{{ t('admin.users.detail.fields.lockedUntil') }}</mat-label>
+            @if (isLocked()) {
+              <mat-icon matPrefix>lock</mat-icon>
+            }
+            <input
+              matInput
+              [value]="
+                isLocked() ? (user.lockedUntil | date: t('common.dateTimeFormat')) : t('admin.users.detail.notLocked')
+              "
+              disabled />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section
+        *appHasPermission="'admin:user:delete'"
+        class="user-detail__section">
+        <h2 class="user-detail__danger-title">{{ t('admin.users.detail.sections.danger') }}</h2>
+        <div class="user-detail__danger">
+          <div>
+            <p>{{ t('admin.users.detail.delete.description') }}</p>
+            @if (user.roles.length) {
+              <p class="user-detail__hint">{{ t('admin.users.detail.delete.hasRolesHint') }}</p>
+            }
+          </div>
+          <button
+            matButton="filled"
+            class="button--error"
+            type="button"
+            [disabled]="user.roles.length > 0 || acting()"
+            (click)="deleteUser()">
+            {{ t('admin.users.detail.delete.button') }}
+          </button>
+        </div>
+      </section>
+    }
+  </div>
+</ng-container>
