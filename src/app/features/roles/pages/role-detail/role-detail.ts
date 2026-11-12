@@ -17,6 +17,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
@@ -45,6 +46,7 @@ interface ActionError {
     MatProgressBar,
     MatTooltipModule,
     HasPermissionDirective,
+    Breadcrumb,
   ],
 })
 export class RoleDetail {

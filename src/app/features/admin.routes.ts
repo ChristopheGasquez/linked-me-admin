@@ -6,11 +6,13 @@ export const adminRoutes: Routes = [
   { path: '', redirectTo: 'users', pathMatch: 'full' },
   {
     path: 'users',
+    data: { breadcrumb: 'layout.private.sidenav.users' },
     canActivate: [hasPermissionGuard('realm:admin')],
     loadChildren: () => import('./users/users.routes').then((m) => m.usersRoutes),
   },
   {
     path: 'roles',
+    data: { breadcrumb: 'layout.private.sidenav.roles' },
     canActivate: [hasPermissionGuard('realm:admin')],
     loadChildren: () => import('./roles/roles.routes').then((m) => m.rolesRoutes),
   },
