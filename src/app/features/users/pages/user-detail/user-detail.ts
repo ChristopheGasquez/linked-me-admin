@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
@@ -48,7 +49,7 @@ import { RoleBasicResponse } from '../../../../shared/models/role.model';
     Breadcrumb,
   ],
 })
-export class UserDetail {
+export class UserDetail implements HasUnsavedChanges {
   #usersApi = inject(UsersApiService);
   #rolesApi = inject(RolesApiService);
   #authService = inject(AuthService);
@@ -87,6 +88,10 @@ export class UserDetail {
     const roles = this.#rolesResource.hasValue() ? this.#rolesResource.value().data : [];
     return roles.filter((role) => !owned.has(role.id));
   });
+
+  hasUnsavedChanges(): boolean {
+    return !this.acting() && !!this.roleToAssign.value;
+  }
 
   assignRole(): void {
     const role = this.roleToAssign.value;

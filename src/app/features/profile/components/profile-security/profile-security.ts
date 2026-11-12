@@ -89,6 +89,10 @@ export class ProfileSecurity implements OnInit, OnDestroy {
     this.#clearInterval();
   }
 
+  hasUnsavedChanges(): boolean {
+    return this.passwordEditing() && !this.passwordSuccess() && Object.values(this.securityForm.getRawValue()).some(Boolean);
+  }
+
   enable(): void {
     this.passwordEditing.set(true);
     this.securityForm.controls['currentPassword'].enable();

@@ -17,6 +17,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
@@ -49,7 +50,7 @@ interface ActionError {
     Breadcrumb,
   ],
 })
-export class RoleDetail {
+export class RoleDetail implements HasUnsavedChanges {
   #rolesApi = inject(RolesApiService);
   #authService = inject(AuthService);
   #dialog = inject(MatDialog);
@@ -123,6 +124,15 @@ export class RoleDetail {
       this.role()?.name === 'ADMIN' &&
       this.changes().removed.some((permission) => permission.name === 'admin:role:manage'),
   );
+
+  hasUnsavedChanges(): boolean {
+    if (this.saving()) {
+      return false;
+    }
+    return this.isCreate()
+      ? !!this.nameControl.value.trim() || this.selected().size > 0
+      : this.editing() && this.hasChanges();
+  }
 
   toggle(name: string, checked: boolean): void {
     this.selected.update((current) => {

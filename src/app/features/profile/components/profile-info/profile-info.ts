@@ -60,6 +60,10 @@ export class ProfileInfo {
     return ctrl.valid && ctrl.value !== this.#authService.currentUser()?.name;
   });
 
+  hasUnsavedChanges(): boolean {
+    return this.nameEditing() && this.infoForm.controls['name'].value !== this.#authService.currentUser()?.name;
+  }
+
   enable(): void {
     this.nameEditing.set(true);
     this.infoForm.controls['name'].enable();

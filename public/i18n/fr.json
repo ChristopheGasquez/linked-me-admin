@@ -12,7 +12,12 @@
       "hint": "Essayez de modifier ou d'effacer les filtres pour élargir la recherche.",
       "reset": "Réinitialiser les filtres"
     },
-    "breadcrumb": "Fil d'Ariane"
+    "breadcrumb": "Fil d'Ariane",
+    "unsavedChanges": {
+      "title": "Modifications non enregistrées",
+      "message": "Vos modifications seront perdues si vous quittez cette page.",
+      "leave": "Quitter la page"
+    }
   },
   "auth": {
     "login": {
