@@ -12,7 +12,12 @@
       "hint": "Try adjusting or clearing the filters to broaden your search.",
       "reset": "Reset filters"
     },
-    "breadcrumb": "Breadcrumb"
+    "breadcrumb": "Breadcrumb",
+    "unsavedChanges": {
+      "title": "Unsaved changes",
+      "message": "Your changes will be lost if you leave this page.",
+      "leave": "Leave page"
+    }
   },
   "auth": {
     "login": {
