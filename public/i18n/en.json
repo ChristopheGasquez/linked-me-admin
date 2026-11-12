@@ -6,6 +6,8 @@
     },
     "dateTimeFormat": "MM/dd/yyyy hh:mm a",
     "dateFormat": "MM/dd/yyyy",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "emptyFiltered": {
       "hint": "Try adjusting or clearing the filters to broaden your search.",
       "reset": "Reset filters"
@@ -204,7 +206,7 @@
           "done": "{{ count }} unverified account(s) deleted"
         },
         "expired_tokens": {
-          "done": "{{ count }} expired token(s) deleted"
+          "done": "{{ count }} expired token(s) deleted ({{ refreshTokens }} refresh, {{ passwordResets }} password reset)"
         },
         "orphaned_permissions": {
           "done": "{{ count }} orphaned permission(s) deleted",
@@ -218,6 +220,7 @@
     "throttle": {
       "too_many_requests": "Too many requests. Please try again in {{ retryAfter }}."
     },
+    "forbidden": "You are not allowed to perform this action",
     "unknown": "An error occurred, please try again later"
   },
   "me": {
@@ -397,6 +400,41 @@
             "audit-logs": "Cleanup: audit log",
             "orphaned-permissions": "Cleanup: orphaned permissions"
           }
+        }
+      }
+    },
+    "tasks": {
+      "title": "Tasks",
+      "run": "Run task",
+      "nothingToClean": "Nothing to clean up",
+      "items": {
+        "unverifiedUsers": {
+          "title": "Unverified accounts",
+          "description": "Permanently deletes accounts whose email was not verified within the allowed delay (24 h by default).",
+          "schedule": "Automatic: every 6 h",
+          "confirm": "Unverified accounts will be permanently deleted. Continue?"
+        },
+        "expiredTokens": {
+          "title": "Expired tokens",
+          "description": "Deletes expired refresh tokens and password reset tokens. No impact for users.",
+          "schedule": "Automatic: every day at 2 AM"
+        },
+        "auditLogs": {
+          "title": "Audit logs",
+          "description": "Permanently deletes audit logs older than the given number of days.",
+          "schedule": "Automatic: every day at 3 AM (30-day retention)",
+          "daysLabel": "Delete logs older than (days)",
+          "daysRequired": "Number of days is required",
+          "daysMin": "Minimum 1 day",
+          "daysInteger": "Whole number expected",
+          "daysWarning": "Warning: logs less than a week old will be deleted",
+          "confirm": "Audit logs older than {{ days }} day(s) will be permanently deleted. Continue?"
+        },
+        "orphanedPermissions": {
+          "title": "Orphaned permissions",
+          "description": "Deletes permissions that no longer exist in the code, along with their role links. Run it after a deployment that removes permissions.",
+          "schedule": "Manual only",
+          "confirm": "Orphaned permissions and their role links will be deleted. Continue?"
         }
       }
     }
