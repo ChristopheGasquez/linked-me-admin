@@ -11,7 +11,8 @@
     "emptyFiltered": {
       "hint": "Essayez de modifier ou d'effacer les filtres pour élargir la recherche.",
       "reset": "Réinitialiser les filtres"
-    }
+    },
+    "breadcrumb": "Fil d'Ariane"
   },
   "auth": {
     "login": {
@@ -374,7 +375,6 @@
         "actions": "Actions"
       },
       "detail": {
-        "title": "Rôle : {{ name }}",
         "back": "Retour à la liste",
         "edit": "Modifier",
         "sections": {

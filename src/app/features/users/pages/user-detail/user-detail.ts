@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { UsersApiService } from '../../../../shared/services/users-api.service';
@@ -44,6 +45,7 @@ import { RoleBasicResponse } from '../../../../shared/models/role.model';
     MatSelectModule,
     MatTooltipModule,
     HasPermissionDirective,
+    Breadcrumb,
   ],
 })
 export class UserDetail {

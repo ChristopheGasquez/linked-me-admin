@@ -11,7 +11,8 @@
     "emptyFiltered": {
       "hint": "Try adjusting or clearing the filters to broaden your search.",
       "reset": "Reset filters"
-    }
+    },
+    "breadcrumb": "Breadcrumb"
   },
   "auth": {
     "login": {
@@ -374,7 +375,6 @@
         "actions": "Actions"
       },
       "detail": {
-        "title": "Role: {{ name }}",
         "back": "Back to list",
         "edit": "Edit",
         "sections": {
