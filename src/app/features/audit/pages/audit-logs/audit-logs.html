@@ -127,7 +127,17 @@
             <td
               mat-cell
               *matCellDef="let log">
-              {{ log.actorId ? '#' + log.actorId : t('admin.audit.system') }}
+              @if (!log.actorId) {
+                {{ t('admin.audit.system') }}
+              } @else if (canViewAdmin()) {
+                <a
+                  class="audit-logs__link"
+                  [routerLink]="['users', log.actorId]"
+                  >#{{ log.actorId }}</a
+                >
+              } @else {
+                #{{ log.actorId }}
+              }
             </td>
           </ng-container>
 
@@ -142,7 +152,13 @@
               *matCellDef="let log">
               @if (log.targetType) {
                 {{ t('admin.audit.targetTypes.' + log.targetType) }}
-                @if (log.targetId) {
+                @if (log.targetId && canViewAdmin() && targetRoutes[log.targetType]) {
+                  <a
+                    class="audit-logs__link"
+                    [routerLink]="[targetRoutes[log.targetType], log.targetId]"
+                    >#{{ log.targetId }}</a
+                  >
+                } @else if (log.targetId) {
                   #{{ log.targetId }}
                 }
               } @else {

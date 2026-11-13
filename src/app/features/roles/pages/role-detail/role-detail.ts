@@ -2,7 +2,7 @@ import { Component, computed, inject, input, numberAttribute, signal } from '@an
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { concat, EMPTY, Observable, of } from 'rxjs';
 import { catchError, filter, last, map, switchMap, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -23,6 +23,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { PermissionResponse } from '../../../../shared/models/permission.model';
+import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
 
 interface ActionError {
   code: string;
@@ -55,6 +56,9 @@ export class RoleDetail implements HasUnsavedChanges {
   #authService = inject(AuthService);
   #dialog = inject(MatDialog);
   #router = inject(Router);
+  #route = inject(ActivatedRoute);
+
+  readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
 
   // undefined on /admin/roles/new (create mode)
   id = input<number | undefined, string | undefined>(undefined, {
@@ -220,7 +224,7 @@ export class RoleDetail implements HasUnsavedChanges {
             catchError((err: HttpErrorResponse) => of({ id: role.id, error: this.#toError(err) })),
           );
         }),
-        tap(({ id, error }) => this.#router.navigate(['/admin/roles', id], { state: { error } })),
+        tap(({ id, error }) => this.#router.navigate([this.backUrl, id], { state: { error } })),
         catchError((err: HttpErrorResponse) => {
           this.saving.set(false);
           this.actionError.set(this.#toError(err));
@@ -248,7 +252,7 @@ export class RoleDetail implements HasUnsavedChanges {
           this.deleteError.set(null);
         }),
         switchMap(() => this.#rolesApi.deleteRole(role.id)),
-        tap(() => this.#router.navigate(['/admin/roles'])),
+        tap(() => this.#router.navigate([this.backUrl])),
         catchError((err: HttpErrorResponse) => {
           this.saving.set(false);
           this.deleteError.set(this.#toError(err));

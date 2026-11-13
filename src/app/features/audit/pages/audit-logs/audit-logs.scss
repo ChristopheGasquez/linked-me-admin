@@ -73,5 +73,14 @@
       color: var(--mat-sys-on-surface-variant);
       cursor: help;
     }
+
+    &__link {
+      color: var(--mat-sys-primary);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
