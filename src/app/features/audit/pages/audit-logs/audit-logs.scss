@@ -23,7 +23,7 @@
 
       mat-form-field {
         flex: 1;
-        min-width: 180px;
+        min-width: var(--lma-input-min-width);
       }
     }
 
@@ -46,9 +46,9 @@
       }
 
       &__sort-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
+        font-size: var(--lma-icon-size--xs);
+        width: var(--lma-icon-size--xs);
+        height: var(--lma-icon-size--xs);
         vertical-align: middle;
         margin-left: var(--lma-spacing-gap--xs);
         color: var(--mat-sys-on-surface-variant);
