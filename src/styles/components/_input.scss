@@ -1,3 +1,7 @@
+:root {
+  --lma-input-min-width: 180px;
+}
+
 .input--readonly {
   .mat-mdc-input-element:disabled,
   .mat-mdc-input-element[disabled] {

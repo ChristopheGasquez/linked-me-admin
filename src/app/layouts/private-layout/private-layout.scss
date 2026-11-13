@@ -27,7 +27,7 @@
       bottom: 0;
       z-index: 1;
       padding: var(--lma-spacing-padding--sm);
-      font-size: 0.8rem;
+      font-size: var(--lma-font-size--sm);
       color: var(--mat-sys-outline);
       opacity: 0.5;
     }
@@ -57,7 +57,7 @@
     &__body {
       // Material content hack: Header height + padding;
       height: calc(
-        100dvh - var(--lma-spacing-padding--xxl) - var(--lma-spacing-padding--xxl) - 64px
+        100dvh - var(--lma-spacing-padding--xxl) - var(--lma-spacing-padding--xxl) - var(--lma-header-height)
       );
       padding: var(--lma-spacing-padding--xxl);
     }
