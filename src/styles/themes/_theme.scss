@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
 
 html {
+  color-scheme: light;
   @include mat.theme(
     (
       color: (
@@ -14,6 +15,7 @@ html {
 }
 
 html.dark {
+  color-scheme: dark;
   @include mat.theme(
     (
       color: (
