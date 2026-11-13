@@ -18,6 +18,7 @@ export const adminRoutes: Routes = [
   },
   {
     path: 'audit',
+    data: { breadcrumb: 'layout.private.sidenav.audit' },
     canActivate: [hasPermissionGuard('realm:audit')],
     loadChildren: () => import('./audit/audit.routes').then((m) => m.auditRoutes),
   },

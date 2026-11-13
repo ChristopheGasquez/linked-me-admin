@@ -16,7 +16,9 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../../../core/services/auth.service';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { AuditApiService } from '../../../../shared/services/audit-api.service';
 import { PaginatedResponse } from '../../../../shared/models/pagination.model';
@@ -42,11 +44,13 @@ import { AuditLogResponse } from '../../../../shared/models/audit-log.model';
     MatChipsModule,
     MatIconButton,
     MatTooltipModule,
+    RouterLink,
     EmptyState,
   ],
 })
 export class AuditLogs {
   #auditApi = inject(AuditApiService);
+  #authService = inject(AuthService);
   #fb: FormBuilder = inject(FormBuilder);
 
   readonly displayedColumns = ['createdAt', 'action', 'actor', 'target', 'metadata'];
@@ -72,6 +76,7 @@ export class AuditLogs {
     'task.cleanup.orphaned-permissions',
   ];
   readonly targetTypes = ['user', 'role', 'task'];
+  readonly targetRoutes: Record<string, string> = { user: 'users', role: 'roles' };
 
   limit = signal(20);
   sortBy = signal('createdAt');
@@ -135,6 +140,7 @@ export class AuditLogs {
   });
 
   readonly totalPages = computed(() => Math.ceil(this.total() / this.limit()));
+  readonly canViewAdmin = computed(() => !!this.#authService.currentUser()?.permissions.includes('realm:admin'));
 
   onPageChange(event: PageEvent): void {
     this.page.set(event.pageIndex + 1);

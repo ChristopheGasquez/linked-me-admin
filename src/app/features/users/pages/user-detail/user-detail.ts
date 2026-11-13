@@ -2,7 +2,7 @@ import { Component, computed, inject, input, numberAttribute, signal } from '@an
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -26,6 +26,7 @@ import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { ApiMessage } from '../../../../shared/models/api-response.model';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
+import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
 
 @Component({
   selector: 'app-user-detail',
@@ -55,6 +56,9 @@ export class UserDetail implements HasUnsavedChanges {
   #authService = inject(AuthService);
   #dialog = inject(MatDialog);
   #router = inject(Router);
+  #route = inject(ActivatedRoute);
+
+  readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
 
   id = input.required({ transform: numberAttribute });
 
@@ -133,7 +137,7 @@ export class UserDetail implements HasUnsavedChanges {
     })
       .pipe(
         switchMap(() =>
-          this.#mutate(this.#usersApi.deleteUser(this.id()), () => this.#router.navigate(['/admin/users'])),
+          this.#mutate(this.#usersApi.deleteUser(this.id()), () => this.#router.navigate([this.backUrl])),
         ),
       )
       .subscribe();
