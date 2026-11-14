@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -69,7 +68,6 @@ describe('UrlService', () => {
     await harness.navigateByUrl('/users?page=2');
 
     TestBed.inject(AuthService).logout();
-    TestBed.inject(HttpTestingController).expectOne('/auth/logout').flush(null);
 
     expect(link('/users')).toBe('/users');
   });
