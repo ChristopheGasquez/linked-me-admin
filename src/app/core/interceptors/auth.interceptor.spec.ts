@@ -93,6 +93,20 @@ describe('authInterceptor', () => {
     expect([first.value, second.value]).toEqual(['A', 'B']);
   });
 
+  it('fails every request waiting for a refresh that fails', () => {
+    setTokens('expired', 'refresh-1');
+    const first = run(http.get('/a'));
+    const second = run(http.get('/b'));
+
+    backend.expectOne('/a').flush(null, unauthorized);
+    backend.expectOne('/b').flush(null, unauthorized);
+    backend.expectOne('/auth/refresh').flush({ code: 'auth.refresh.invalid_token' }, unauthorized);
+    backend.expectOne('/auth/logout').flush(null);
+
+    expect(first.error).toBeDefined();
+    expect(second.error).toBeDefined();
+  });
+
   it('logs out and redirects to login when the refresh fails', () => {
     setTokens('expired', 'refresh-1');
     const authService = TestBed.inject(AuthService);
