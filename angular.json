@@ -73,7 +73,8 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "setupFiles": ["src/test-setup.ts"]
+            "setupFiles": ["src/test-setup.ts"],
+            "coverageInclude": ["src/app/**/*.ts"]
           }
         },
         "lint": {
