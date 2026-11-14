@@ -27,6 +27,7 @@ import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { ApiMessage } from '../../../../shared/models/api-response.model';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
 import { UrlService } from '../../../../core/services/url.service';
+import { toApiError } from '../../../../shared/utils/api-error';
 import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
 
 @Component({
@@ -83,7 +84,7 @@ export class UserDetail implements HasUnsavedChanges {
   readonly user = computed(() => (this.userResource.hasValue() ? this.userResource.value() : undefined));
   readonly loadError = computed(() => {
     const err = this.userResource.error() as HttpErrorResponse | undefined;
-    return err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
+    return err ? toApiError(err) : null;
   });
   readonly isSelf = computed(() => this.user()?.id === this.#authService.currentUser()?.id);
   readonly isLocked = computed(() => {
@@ -161,10 +162,7 @@ export class UserDetail implements HasUnsavedChanges {
       }),
       catchError((err: HttpErrorResponse) => {
         this.acting.set(false);
-        this.actionError.set({
-          code: err.error?.code ?? (err.status === 403 ? 'forbidden' : 'unknown'),
-          params: err.error?.params,
-        });
+        this.actionError.set(toApiError(err));
         return EMPTY;
       }),
     );

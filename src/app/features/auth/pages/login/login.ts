@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { ApiError } from '../../../../shared/models/api-response.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -20,7 +19,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
-import { formatRetryAfter } from '../../../../shared/utils/api-error';
+import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
 @Component({
@@ -76,12 +75,11 @@ export class Login {
       .pipe(
         tap(() => this.#router.navigate(['/dashboard'])),
         catchError((err: HttpErrorResponse) => {
-          const apiError = err.error as ApiError;
-          if (apiError?.code === 'validation.failed') {
-            applyValidationErrors(this.form, apiError);
+          if (err.error?.code === 'validation.failed') {
+            applyValidationErrors(this.form, err.error);
           } else {
-            this.error.set(this.#toError(err));
-            if (apiError?.code === 'auth.login.email_not_verified') {
+            this.error.set(toApiError(err));
+            if (err.error?.code === 'auth.login.email_not_verified') {
               this.emailToResend.set(email);
             }
           }
@@ -106,21 +104,11 @@ export class Login {
           this.emailToResend.set(null);
         }),
         catchError((err: HttpErrorResponse) => {
-          this.error.set(this.#toError(err));
+          this.error.set(toApiError(err));
           return EMPTY;
         }),
         finalize(() => this.loading.set(false)),
       )
       .subscribe();
-  }
-
-  #toError(err: HttpErrorResponse): { code: string; params?: Record<string, unknown> } {
-    const apiError = err.error as ApiError;
-    const rawParams = apiError?.params as Record<string, unknown> | undefined;
-    const params =
-      rawParams?.['retryAfter'] !== undefined
-        ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
-        : rawParams;
-    return { code: apiError?.code ?? 'unknown', params };
   }
 }

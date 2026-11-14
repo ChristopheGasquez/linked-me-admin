@@ -25,6 +25,7 @@ import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { UserAdminResponse } from '../../../../shared/models/user-admin.model';
+import { toApiError } from '../../../../shared/utils/api-error';
 import {
   isCanonical,
   parseOption,
@@ -176,7 +177,7 @@ export class UsersList {
   readonly loading = this.usersResource.isLoading;
   readonly error = computed(() => {
     const err = this.usersResource.error() as HttpErrorResponse | undefined;
-    return err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
+    return err ? toApiError(err) : null;
   });
   // Filtered view or page out of range: the empty state offers a reset to the base view
   readonly canResetView = computed(() => {
