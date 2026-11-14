@@ -19,6 +19,11 @@
       color: var(--mat-sys-error);
       font-size: var(--lma-font-size--md);
     }
+    &__success {
+      text-align: center;
+      color: var(--mat-sys-tertiary);
+      font-size: var(--lma-font-size--md);
+    }
 
     &__actions {
       gap: var(--lma-spacing-gap--md);
