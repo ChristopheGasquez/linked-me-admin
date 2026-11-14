@@ -134,4 +134,19 @@ describe('authInterceptor', () => {
     expect(result.error?.error.code).toBe('profile.password.incorrect');
     expect(TestBed.inject(Router).navigate).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['with a stale token', 'access-1'],
+    ['without token', null],
+  ])('passes a business 401 through without refreshing (%s)', (_, access) => {
+    setTokens(access, 'refresh-1');
+    const result = run(http.post('/auth/login', {}));
+
+    backend
+      .expectOne('/auth/login')
+      .flush({ code: 'auth.login.invalid_credentials' }, unauthorized);
+
+    expect(result.error?.error.code).toBe('auth.login.invalid_credentials');
+    expect(TestBed.inject(Router).navigate).not.toHaveBeenCalled();
+  });
 });
