@@ -24,6 +24,7 @@ import { HasPermissionDirective } from '../../../../shared/directives/has-permis
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { PermissionResponse } from '../../../../shared/models/permission.model';
 import { UrlService } from '../../../../core/services/url.service';
+import { toApiError } from '../../../../shared/utils/api-error';
 import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
 
 interface ActionError {
@@ -99,7 +100,7 @@ export class RoleDetail implements HasUnsavedChanges {
   readonly role = computed(() => (this.roleResource.hasValue() ? this.roleResource.value() : undefined));
   readonly loadError = computed(() => {
     const err = this.roleResource.error() as HttpErrorResponse | undefined;
-    return err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
+    return err ? toApiError(err) : null;
   });
 
   readonly isEditable = computed(() => this.editing() || this.isCreate());
@@ -191,7 +192,7 @@ export class RoleDetail implements HasUnsavedChanges {
         switchMap(() => concat(...requests).pipe(last())),
         tap(() => this.actionSuccess.set('admin.roles.detail.save.success')),
         catchError((err: HttpErrorResponse) => {
-          this.actionError.set(this.#toError(err));
+          this.actionError.set(toApiError(err));
           return of(null);
         }),
         // Reload in both cases: a partial failure may have applied some changes
@@ -224,13 +225,13 @@ export class RoleDetail implements HasUnsavedChanges {
             : of(null);
           return addPermissions$.pipe(
             map(() => ({ id: role.id, error: null as ActionError | null })),
-            catchError((err: HttpErrorResponse) => of({ id: role.id, error: this.#toError(err) })),
+            catchError((err: HttpErrorResponse) => of({ id: role.id, error: toApiError(err) })),
           );
         }),
         tap(({ id, error }) => this.#router.navigate([this.backUrl, id], { state: { error } })),
         catchError((err: HttpErrorResponse) => {
           this.saving.set(false);
-          this.actionError.set(this.#toError(err));
+          this.actionError.set(toApiError(err));
           return EMPTY;
         }),
       )
@@ -258,7 +259,7 @@ export class RoleDetail implements HasUnsavedChanges {
         tap(() => this.#router.navigateByUrl(this.backLink)),
         catchError((err: HttpErrorResponse) => {
           this.saving.set(false);
-          this.deleteError.set(this.#toError(err));
+          this.deleteError.set(toApiError(err));
           return EMPTY;
         }),
       )
@@ -279,9 +280,5 @@ export class RoleDetail implements HasUnsavedChanges {
     this.saving.set(false);
     this.editing.set(false);
     this.roleResource.reload();
-  }
-
-  #toError(err: HttpErrorResponse): ActionError {
-    return { code: err.error?.code ?? (err.status === 403 ? 'forbidden' : 'unknown'), params: err.error?.params };
   }
 }

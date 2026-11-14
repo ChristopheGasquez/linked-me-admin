@@ -14,6 +14,7 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
 import { AuthApiService } from '../../../../shared/services/auth-api.service';
 import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { SessionResponse } from '../../../../shared/models/session.model';
+import { toApiError } from '../../../../shared/utils/api-error';
 
 @Component({
   selector: 'app-sessions-list',
@@ -63,8 +64,7 @@ export class SessionsList {
   readonly loading = this.sessionsResource.isLoading;
   readonly error = computed(() => {
     const err = this.sessionsResource.error() as HttpErrorResponse | undefined;
-    const loadError = err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
-    return this.#revokeError() ?? loadError;
+    return this.#revokeError() ?? (err ? toApiError(err) : null);
   });
 
   revokeSession(id: number): void {
@@ -75,7 +75,7 @@ export class SessionsList {
       .pipe(
         tap(() => this.sessionsResource.reload()),
         catchError((err: HttpErrorResponse) => {
-          this.#revokeError.set({ code: err.error?.code ?? 'unknown' });
+          this.#revokeError.set(toApiError(err));
           return EMPTY;
         }),
         finalize(() => this.revoking.set(null)),
