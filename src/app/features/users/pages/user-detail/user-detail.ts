@@ -26,6 +26,7 @@ import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { ApiMessage } from '../../../../shared/models/api-response.model';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
+import { UrlService } from '../../../../core/services/url.service';
 import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
 
 @Component({
@@ -57,8 +58,10 @@ export class UserDetail implements HasUnsavedChanges {
   #dialog = inject(MatDialog);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
+  #urlService = inject(UrlService);
 
   readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
+  readonly backLink = this.#urlService.listLink(this.backUrl);
 
   id = input.required({ transform: numberAttribute });
 
@@ -137,7 +140,7 @@ export class UserDetail implements HasUnsavedChanges {
     })
       .pipe(
         switchMap(() =>
-          this.#mutate(this.#usersApi.deleteUser(this.id()), () => this.#router.navigate([this.backUrl])),
+          this.#mutate(this.#usersApi.deleteUser(this.id()), () => this.#router.navigateByUrl(this.backLink)),
         ),
       )
       .subscribe();

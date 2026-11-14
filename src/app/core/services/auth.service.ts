@@ -6,6 +6,7 @@ import { AuthApiService } from '../../shared/services/auth-api.service';
 import { RegisterResponse } from '../../shared/models/auth.model';
 import { ApiMessage } from '../../shared/models/api-response.model';
 import { MeResponse } from '../../shared/models/me.model';
+import { UrlService } from './url.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
 
   #authApi = inject(AuthApiService);
+  #urlService = inject(UrlService);
 
   private isRefreshing = false;
   private refreshTokenSubject = new BehaviorSubject<string | null>(null);
@@ -66,6 +68,7 @@ export class AuthService {
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
+    this.#urlService.clearListUrl();
   }
 
   refreshTokens(): Observable<string> {

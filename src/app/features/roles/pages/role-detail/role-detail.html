@@ -4,7 +4,7 @@
     <div class="role-detail__header">
       <a
         mat-icon-button
-        [routerLink]="backUrl"
+        [routerLink]="backLink"
         [attr.aria-label]="t('admin.roles.detail.back')"
         [matTooltip]="t('admin.roles.detail.back')">
         <mat-icon>arrow_back</mat-icon>
@@ -133,7 +133,7 @@
             @if (isCreate()) {
               <a
                 matButton
-                [routerLink]="backUrl">
+                [routerLink]="backLink">
                 {{ t('common.cancel') }}
               </a>
               <button
