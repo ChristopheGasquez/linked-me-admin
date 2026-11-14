@@ -55,6 +55,7 @@ export class Login {
   showPassword = signal(false);
   loading = signal(false);
   error = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
+  success = signal<string | null>(null);
   emailToResend = signal<string | null>(null);
 
   form: FormGroup = this.#formBuilder.group({
@@ -67,6 +68,7 @@ export class Login {
 
     const { email, password } = this.form.getRawValue();
     this.error.set(null);
+    this.success.set(null);
     this.emailToResend.set(null);
     this.loading.set(true);
     this.#authService
@@ -78,11 +80,7 @@ export class Login {
           if (apiError?.code === 'validation.failed') {
             applyValidationErrors(this.form, apiError);
           } else {
-            const rawParams = apiError?.params as Record<string, unknown> | undefined;
-            const params = rawParams?.['retryAfter'] !== undefined
-              ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
-              : rawParams;
-            this.error.set({ code: apiError?.code ?? 'unknown', params });
+            this.error.set(this.#toError(err));
             if (apiError?.code === 'auth.login.email_not_verified') {
               this.emailToResend.set(email);
             }
@@ -98,12 +96,31 @@ export class Login {
     const email = this.emailToResend();
     if (!email) return;
 
+    this.error.set(null);
     this.loading.set(true);
     this.#authService
       .resendVerificationEmail(email)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: () => this.emailToResend.set(null),
-      });
+      .pipe(
+        tap((response) => {
+          this.success.set(response.code);
+          this.emailToResend.set(null);
+        }),
+        catchError((err: HttpErrorResponse) => {
+          this.error.set(this.#toError(err));
+          return EMPTY;
+        }),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe();
+  }
+
+  #toError(err: HttpErrorResponse): { code: string; params?: Record<string, unknown> } {
+    const apiError = err.error as ApiError;
+    const rawParams = apiError?.params as Record<string, unknown> | undefined;
+    const params =
+      rawParams?.['retryAfter'] !== undefined
+        ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
+        : rawParams;
+    return { code: apiError?.code ?? 'unknown', params };
   }
 }
