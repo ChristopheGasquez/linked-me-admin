@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
-import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { EMPTY, Observable, throwError } from 'rxjs';
+import { catchError, finalize, map, share, switchMap, tap } from 'rxjs/operators';
 
 import { AuthApiService } from '../../shared/services/auth-api.service';
 import { RegisterResponse } from '../../shared/models/auth.model';
@@ -16,8 +16,8 @@ export class AuthService {
   #authApi = inject(AuthApiService);
   #urlService = inject(UrlService);
 
-  private isRefreshing = false;
-  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  // Refresh in progress, shared by every request waiting for it (success or failure)
+  #refresh$: Observable<string> | null = null;
 
   readonly isAuthenticated = signal<boolean>(!!localStorage.getItem(this.ACCESS_TOKEN_KEY));
   readonly currentUser = signal<MeResponse | null>(null);
@@ -75,11 +75,8 @@ export class AuthService {
   }
 
   refreshTokens(): Observable<string> {
-    if (this.isRefreshing) {
-      return this.refreshTokenSubject.pipe(
-        filter((token) => token !== null),
-        take(1),
-      ) as Observable<string>;
+    if (this.#refresh$) {
+      return this.#refresh$;
     }
 
     const refreshToken = this.getRefreshToken();
@@ -88,23 +85,20 @@ export class AuthService {
       return throwError(() => new Error('No refresh token'));
     }
 
-    this.isRefreshing = true;
-    this.refreshTokenSubject.next(null);
-
-    return this.#authApi.refresh(refreshToken).pipe(
+    this.#refresh$ = this.#authApi.refresh(refreshToken).pipe(
       tap((tokens) => {
-        this.isRefreshing = false;
         localStorage.setItem(this.ACCESS_TOKEN_KEY, tokens.access_token);
         localStorage.setItem(this.REFRESH_TOKEN_KEY, tokens.refresh_token);
-        this.refreshTokenSubject.next(tokens.access_token);
       }),
       map((tokens) => tokens.access_token),
       catchError((err) => {
-        this.isRefreshing = false;
         this.logout();
         return throwError(() => err);
       }),
+      finalize(() => (this.#refresh$ = null)),
+      share(),
     );
+    return this.#refresh$;
   }
 
   getAccessToken(): string | null {
