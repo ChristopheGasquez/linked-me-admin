@@ -4,7 +4,7 @@
   [attr.aria-label]="t('common.breadcrumb')">
   <ol class="breadcrumb__list">
     @for (item of parents; track item.url) {
-      <li><a [routerLink]="item.url">{{ t(item.labelKey) }}</a></li>
+      <li><a [routerLink]="item.link">{{ t(item.labelKey) }}</a></li>
     }
     @let current = label() ?? (currentKey ? t(currentKey) : null);
     @if (current) {

@@ -23,6 +23,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { PermissionResponse } from '../../../../shared/models/permission.model';
+import { UrlService } from '../../../../core/services/url.service';
 import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
 
 interface ActionError {
@@ -57,8 +58,10 @@ export class RoleDetail implements HasUnsavedChanges {
   #dialog = inject(MatDialog);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
+  #urlService = inject(UrlService);
 
   readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
+  readonly backLink = this.#urlService.listLink(this.backUrl);
 
   // undefined on /admin/roles/new (create mode)
   id = input<number | undefined, string | undefined>(undefined, {
@@ -252,7 +255,7 @@ export class RoleDetail implements HasUnsavedChanges {
           this.deleteError.set(null);
         }),
         switchMap(() => this.#rolesApi.deleteRole(role.id)),
-        tap(() => this.#router.navigate([this.backUrl])),
+        tap(() => this.#router.navigateByUrl(this.backLink)),
         catchError((err: HttpErrorResponse) => {
           this.saving.set(false);
           this.deleteError.set(this.#toError(err));

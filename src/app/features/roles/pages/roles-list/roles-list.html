@@ -11,7 +11,9 @@
       </a>
     </div>
 
-    <form class="roles-list__filters" [formGroup]="filterForm">
+    <form
+      class="roles-list__filters"
+      [formGroup]="filterForm">
       <mat-form-field
         appearance="outline"
         subscriptSizing="dynamic">
@@ -50,9 +52,9 @@
       <app-empty-state
         icon="admin_panel_settings"
         titleKey="admin.roles.empty"
-        [hintKey]="hasActiveFilters() ? 'common.emptyFiltered.hint' : undefined"
-        [actionLabelKey]="hasActiveFilters() ? 'common.emptyFiltered.reset' : undefined"
-        (action)="resetFilters()" />
+        [hintKey]="canResetView() ? 'common.emptyFiltered.hint' : undefined"
+        [actionLabelKey]="canResetView() ? 'common.emptyFiltered.reset' : undefined"
+        (action)="resetView()" />
     }
 
     @if (roles().length > 0) {
@@ -61,8 +63,8 @@
           mat-table
           [dataSource]="roles()"
           matSort
-          [matSortActive]="sortBy()"
-          [matSortDirection]="sortOrder()"
+          [matSortActive]="query().sortBy"
+          [matSortDirection]="query().sortOrder"
           (matSortChange)="onSortChange($event)"
           class="roles-list__table">
           <ng-container matColumnDef="name">
@@ -73,7 +75,7 @@
               {{ t('admin.roles.columns.name') }}
               <mat-icon
                 class="roles-list__table__sort-icon"
-                [class.roles-list__table__sort-icon--active]="sortBy() === 'name'">
+                [class.roles-list__table__sort-icon--active]="query().sortBy === 'name'">
                 {{ sortIcons().name }}
               </mat-icon>
             </th>
@@ -107,7 +109,7 @@
               {{ t('admin.roles.columns.createdAt') }}
               <mat-icon
                 class="roles-list__table__sort-icon"
-                [class.roles-list__table__sort-icon--active]="sortBy() === 'createdAt'">
+                [class.roles-list__table__sort-icon--active]="query().sortBy === 'createdAt'">
                 {{ sortIcons().createdAt }}
               </mat-icon>
             </th>
@@ -126,7 +128,7 @@
               {{ t('admin.roles.columns.updatedAt') }}
               <mat-icon
                 class="roles-list__table__sort-icon"
-                [class.roles-list__table__sort-icon--active]="sortBy() === 'updatedAt'">
+                [class.roles-list__table__sort-icon--active]="query().sortBy === 'updatedAt'">
                 {{ sortIcons().updatedAt }}
               </mat-icon>
             </th>
@@ -170,9 +172,9 @@
 
       <mat-paginator
         [length]="total()"
-        [pageSize]="limit()"
-        [pageIndex]="page() - 1"
-        [pageSizeOptions]="[10, 20, 50]"
+        [pageSize]="query().limit"
+        [pageIndex]="query().page - 1"
+        [pageSizeOptions]="pageSizes"
         [showFirstLastButtons]="totalPages() > 2"
         (page)="onPageChange($event)" />
     }
