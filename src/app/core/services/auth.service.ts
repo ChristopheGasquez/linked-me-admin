@@ -60,10 +60,13 @@ export class AuthService {
   }
 
   logout(): void {
-    this.#authApi
-      .logout()
-      .pipe(catchError(() => EMPTY))
-      .subscribe();
+    const refreshToken = this.getRefreshToken();
+    if (refreshToken) {
+      this.#authApi
+        .logout(refreshToken)
+        .pipe(catchError(() => EMPTY))
+        .subscribe();
+    }
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     this.isAuthenticated.set(false);

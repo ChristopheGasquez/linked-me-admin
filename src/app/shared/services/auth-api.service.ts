@@ -56,8 +56,8 @@ export class AuthApiService {
     return this.#http.post<ApiMessage>(`${this.baseUrl}/reset-password`, { token, password });
   }
 
-  logout(): Observable<void> {
-    return this.#http.post<void>(`${this.baseUrl}/logout`, {});
+  logout(refreshToken: string): Observable<void> {
+    return this.#http.post<void>(`${this.baseUrl}/logout`, { refresh_token: refreshToken });
   }
 
   logoutAll(): Observable<void> {

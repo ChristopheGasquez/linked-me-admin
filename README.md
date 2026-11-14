@@ -11,6 +11,7 @@ Interface d'administration pour la plateforme linked-me.
 
 - [Getting started](#getting-started)
 - [Scripts](#scripts)
+- [Tests](#tests)
 - [Configuration](#configuration)
 - [Architecture](#architecture)
 - [Features](#features)
@@ -61,13 +62,24 @@ npm run build
 
 ## Scripts
 
-| Script          | Description                       |
-| --------------- | --------------------------------- |
-| `npm start`     | Start dev server (`ng serve`)     |
-| `npm run build` | Production build                  |
-| `npm run watch` | Build in watch mode (development) |
-| `npm test`      | Run unit tests (Karma + Jasmine)  |
-| `npm run lint`  | Run ESLint                        |
+| Script                  | Description                                  |
+| ----------------------- | -------------------------------------------- |
+| `npm start`             | Start dev server (`ng serve`)                |
+| `npm run build`         | Production build                             |
+| `npm run watch`         | Build in watch mode (development)            |
+| `npm test`              | Run unit tests (Vitest, watch mode in a TTY) |
+| `npm run test:ui`       | Run unit tests with the Vitest UI (browser)  |
+| `npm run test:coverage` | Run unit tests once with a coverage report   |
+| `npm run lint`          | Run ESLint                                   |
+
+## Tests
+
+Unit tests run with [Vitest](https://vitest.dev/) in a [jsdom](https://github.com/jsdom/jsdom) environment, through the Angular CLI (`@angular/build:unit-test`).
+
+- Spec files (`*.spec.ts`) live next to the file they test.
+- `src/test-setup.ts` is loaded before every spec (stubs browser APIs missing in jsdom, e.g. `matchMedia`).
+- The app is zoneless: use `await fixture.whenStable()` and `TestBed.tick()` instead of `fakeAsync`, and Vitest fake timers for debounces.
+- Coverage covers every file under `src/app` (not only the ones loaded by tests); the HTML report is written to `coverage/linked-me-admin/index.html`.
 
 ## Architecture
 

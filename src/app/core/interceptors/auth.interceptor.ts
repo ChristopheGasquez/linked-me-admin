@@ -26,7 +26,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      if (req.method === 'PATCH' && error.error?.code === 'profile.password.incorrect') {
+      // Business 401s (wrong credentials, invalid link, wrong current password...) carry a code;
+      // only the API's token check answers 401 without code (API convention, covered by an API test)
+      if (error.error?.code) {
         return throwError(() => error);
       }
 
