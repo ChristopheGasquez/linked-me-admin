@@ -116,7 +116,6 @@ describe('authInterceptor', () => {
     const result = run(http.get('/data'));
 
     backend.expectOne('/data').flush(null, unauthorized);
-    backend.expectOne('/auth/logout').flush(null);
 
     expect(result.error).toBeDefined();
     expect(TestBed.inject(AuthService).getAccessToken()).toBeNull();

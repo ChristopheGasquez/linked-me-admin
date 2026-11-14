@@ -31,7 +31,10 @@ describe('isAuthenticatedGuard', () => {
   });
 
   describe('with an access token', () => {
-    beforeEach(() => localStorage.setItem('access_token', 'access-1'));
+    beforeEach(() => {
+      localStorage.setItem('access_token', 'access-1');
+      localStorage.setItem('refresh_token', 'refresh-1');
+    });
 
     it('allows navigation when the user is already loaded', () => {
       authService.currentUser.set(testUser());
