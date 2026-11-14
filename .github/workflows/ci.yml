@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npx ng test --watch=false --browsers=ChromeHeadlessNoSandbox
+        run: npx ng test --watch=false
 
       - name: Lint
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop'
