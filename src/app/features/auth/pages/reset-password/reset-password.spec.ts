@@ -116,17 +116,18 @@ describe('ResetPassword', () => {
     const button = await submitButton();
     expect(await button.isDisabled()).toBe(true);
 
-    await failReset(400, { code: 'auth.password_reset.invalid_token' });
+    await failReset(429, { code: 'throttle.too_many_requests', params: { retryAfter: 60 } });
     expect(await button.isDisabled()).toBe(false);
   });
 
-  it('shows the expired link message from the API and keeps the form', async () => {
+  it('switches to the invalid link state when the API rejects the token', async () => {
     await open();
     await submit();
-    await failReset(400, { code: 'auth.password_reset.invalid_token' });
+    await failReset(401, { code: 'auth.password_reset.invalid_token' });
 
-    expect(header()).toContain(fr.api.auth.password_reset.invalid_token);
-    expect(card().querySelector('form')).not.toBeNull();
+    expect(header()).toContain(fr.auth.resetPassword.error.title);
+    expect(card().textContent).toContain(fr.api.auth.password_reset.invalid_token);
+    expect(card().querySelector('form')).toBeNull();
   });
 
   it('shows server validation errors under the password field', async () => {

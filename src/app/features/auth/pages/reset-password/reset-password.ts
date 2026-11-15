@@ -97,6 +97,7 @@ export class ResetPassword implements OnInit, OnDestroy {
             applyValidationErrors(this.form, err.error);
           } else {
             this.error.set(toApiError(err));
+            if (err.error?.code === 'auth.password_reset.invalid_token') this.hasToken.set(false);
           }
           return EMPTY;
         }),
