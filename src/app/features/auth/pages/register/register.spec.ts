@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatFormFieldHarness } from '@angular/material/form-field/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
+import { Router } from '@angular/router';
 
 import { fr, provideTestDefaults } from '../../../../../testing/test-providers';
 import { Register } from './register';
@@ -15,6 +17,12 @@ describe('Register', () => {
 
   const header = () =>
     (fixture.nativeElement as HTMLElement).querySelector('mat-card-header')!.textContent!;
+  const submitButton = () =>
+    loader.getHarness(MatButtonHarness.with({ text: fr.auth.register.submit }));
+  const fieldErrors = async () =>
+    Promise.all(
+      (await loader.getAllHarnesses(MatFormFieldHarness)).map((field) => field.getTextErrors()),
+    );
 
   // Fills the form like a user and submits it
   async function submit(name = 'Jo', email = 'jo@test.dev', password = 'secret-123') {
@@ -22,7 +30,7 @@ describe('Register', () => {
     await nameInput.setValue(name);
     await emailInput.setValue(email);
     await passwordInput.setValue(password);
-    await (await loader.getHarness(MatButtonHarness.with({ text: fr.auth.register.submit }))).click();
+    await (await submitButton()).click();
   }
 
   // Answers the pending register request with an API error
@@ -42,10 +50,85 @@ describe('Register', () => {
 
   afterEach(() => backend.verify());
 
+  it('shows required errors and sends nothing when submitted empty', async () => {
+    await submit('', '', '');
+
+    expect(await fieldErrors()).toEqual([
+      [fr.auth.register.name.required],
+      [fr.auth.register.email.required],
+      [fr.auth.register.password.required],
+    ]);
+  });
+
+  it('enforces the minimum lengths and the email format without calling the API', async () => {
+    await submit('J', 'not-an-email', 'short');
+
+    expect(await fieldErrors()).toEqual([
+      [fr.auth.register.name.minlength],
+      [fr.auth.register.email.invalid],
+      [fr.auth.register.password.minlength],
+    ]);
+  });
+
+  it('creates the account and goes to the verify-email page', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    await submit();
+
+    const request = backend.expectOne('/auth/register');
+    expect(request.request.body).toEqual({
+      name: 'Jo',
+      email: 'jo@test.dev',
+      password: 'secret-123',
+      callbackUrl: `${window.location.origin}/auth/email-confirmed`,
+    });
+    request.flush({ id: 1 });
+    await fixture.whenStable();
+
+    expect(navigate).toHaveBeenCalledWith(['/', 'auth', 'verify-email'], {
+      queryParams: { email: 'jo@test.dev' },
+    });
+  });
+
+  it('disables the submit button while registering', async () => {
+    await submit();
+
+    const button = await submitButton();
+    expect(await button.isDisabled()).toBe(true);
+
+    await failRegister(409, { code: 'auth.register.conflict' });
+    expect(await button.isDisabled()).toBe(false);
+  });
+
+  it('shows the conflict message when the email is taken', async () => {
+    await submit();
+    await failRegister(409, { code: 'auth.register.conflict' });
+
+    expect(header()).toContain(fr.api.auth.register.conflict);
+  });
+
   it('shows the throttle delay in minutes', async () => {
     await submit();
     await failRegister(429, { code: 'throttle.too_many_requests', params: { retryAfter: 120 } });
 
     expect(header()).toContain('2 min');
+  });
+
+  it('shows server validation errors under the fields', async () => {
+    await submit();
+    await failRegister(400, {
+      code: 'validation.failed',
+      params: { fields: [{ key: 'email', code: 'validation.email.isEmail' }] },
+    });
+
+    expect((await fieldErrors())[1]).toEqual([fr.validation.email.isEmail]);
+  });
+
+  it('toggles the password visibility', async () => {
+    const password = (await loader.getAllHarnesses(MatInputHarness))[2];
+    expect(await password.getType()).toBe('password');
+
+    await (await loader.getHarness(MatButtonHarness.with({ text: 'visibility' }))).click();
+
+    expect(await password.getType()).toBe('text');
   });
 });
