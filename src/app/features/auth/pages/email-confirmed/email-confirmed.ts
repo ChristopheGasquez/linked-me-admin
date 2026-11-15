@@ -8,7 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 import { AuthApiService } from '../../../../shared/services/auth-api.service';
-import { ApiError } from '../../../../shared/models/api-response.model';
+import { toApiError } from '../../../../shared/utils/api-error';
 
 @Component({
   selector: 'app-email-confirmed',
@@ -48,11 +48,7 @@ export class EmailConfirmed implements OnInit, OnDestroy {
       .pipe(
         tap(() => this.#startCountdown()),
         catchError((err: HttpErrorResponse) => {
-          const apiError = err.error as ApiError;
-          this.error.set({
-            code: apiError?.code ?? 'unknown',
-            params: apiError?.params as Record<string, unknown>,
-          });
+          this.error.set(toApiError(err));
           return EMPTY;
         }),
         finalize(() => this.loading.set(false)),

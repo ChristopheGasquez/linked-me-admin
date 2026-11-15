@@ -13,7 +13,7 @@ import { MatInput } from '@angular/material/input';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { ProfileService } from '../../../../core/services/profile.service';
-import { ApiError } from '../../../../shared/models/api-response.model';
+import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
 @Component({
@@ -121,14 +121,10 @@ export class ProfileSecurity implements OnInit, OnDestroy {
           this.#startCountdown();
         }),
         catchError((err: HttpErrorResponse) => {
-          const apiError = err.error as ApiError;
-          if (apiError?.code === 'validation.failed') {
-            applyValidationErrors(this.securityForm, apiError);
+          if (err.error?.code === 'validation.failed') {
+            applyValidationErrors(this.securityForm, err.error);
           } else {
-            this.error.set({
-              code: apiError?.code ?? 'unknown',
-              params: apiError?.params as Record<string, unknown>,
-            });
+            this.error.set(toApiError(err));
           }
           return EMPTY;
         }),

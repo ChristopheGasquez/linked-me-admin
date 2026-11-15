@@ -26,6 +26,7 @@ import { DigitsOnlyDirective } from '../../../../shared/directives/digits-only.d
 import { AuditApiService } from '../../../../shared/services/audit-api.service';
 import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { AuditLogResponse } from '../../../../shared/models/audit-log.model';
+import { toApiError } from '../../../../shared/utils/api-error';
 import {
   isCanonical,
   parseOption,
@@ -188,7 +189,7 @@ export class AuditLogs {
   readonly loading = this.auditResource.isLoading;
   readonly error = computed(() => {
     const err = this.auditResource.error() as HttpErrorResponse | undefined;
-    return err ? { code: err.error?.code ?? 'unknown', params: err.error?.params } : null;
+    return err ? toApiError(err) : null;
   });
   // Filtered view or page out of range: the empty state offers a reset to the base view
   readonly canResetView = computed(() => {

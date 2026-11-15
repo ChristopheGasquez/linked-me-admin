@@ -17,6 +17,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { TasksApiService } from '../../../../shared/services/tasks-api.service';
 import { TaskName } from '../../../../shared/models/task.model';
+import { toApiError } from '../../../../shared/utils/api-error';
 
 interface TaskDefinition {
   name: TaskName;
@@ -99,8 +100,8 @@ export class Tasks {
           }),
         ),
         catchError((err: HttpErrorResponse) => {
-          const code = err.error?.code ?? (err.status === 403 ? 'forbidden' : 'unknown');
-          this.#setState(task.name, false, { type: 'error', key: `api.${code}`, params: err.error?.params });
+          const { code, params } = toApiError(err);
+          this.#setState(task.name, false, { type: 'error', key: `api.${code}`, params });
           return EMPTY;
         }),
       )

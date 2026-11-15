@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { ApiError } from '../../../../shared/models/api-response.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -20,6 +19,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
 @Component({
@@ -72,14 +72,10 @@ export class Register {
       .pipe(
         tap(() => this.#router.navigate(['/', 'auth', 'verify-email'], { queryParams: { email } })),
         catchError((err: HttpErrorResponse) => {
-          const apiError = err.error as ApiError;
-          if (apiError?.code === 'validation.failed') {
-            applyValidationErrors(this.form, apiError);
+          if (err.error?.code === 'validation.failed') {
+            applyValidationErrors(this.form, err.error);
           } else {
-            this.error.set({
-              code: apiError?.code ?? 'unknown',
-              params: apiError?.params as Record<string, unknown>,
-            });
+            this.error.set(toApiError(err));
           }
           return EMPTY;
         }),

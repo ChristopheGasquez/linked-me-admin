@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
-import { ApiError, ApiMessage } from '../../../../shared/models/api-response.model';
+import { ApiMessage } from '../../../../shared/models/api-response.model';
 import { AuthService } from '../../../../core/services/auth.service';
-import { formatRetryAfter } from '../../../../shared/utils/api-error';
+import { toApiError } from '../../../../shared/utils/api-error';
 import {
   InfoCard,
   InfoCardAction,
@@ -58,12 +58,8 @@ export class VerifyEmail {
       .pipe(
         tap((response: ApiMessage) => this.notifications.set([{ type: 'success', key: 'api.' + response.code }])),
         catchError((err: HttpErrorResponse) => {
-          const apiError = err.error as ApiError;
-          const rawParams = apiError?.params as Record<string, unknown> | undefined;
-          const params = rawParams?.['retryAfter'] !== undefined
-            ? { ...rawParams, retryAfter: formatRetryAfter(rawParams['retryAfter'] as number) }
-            : rawParams;
-          this.notifications.set([{ type: 'error', key: 'api.' + (apiError?.code ?? 'unknown'), params }]);
+          const { code, params } = toApiError(err);
+          this.notifications.set([{ type: 'error', key: 'api.' + code, params }]);
           return EMPTY;
         }),
         finalize(() => this.loading.set(false)),
