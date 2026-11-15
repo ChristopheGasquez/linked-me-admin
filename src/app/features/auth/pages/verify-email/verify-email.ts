@@ -33,7 +33,7 @@ export class VerifyEmail {
   notifications = signal<InfoCardNotification[]>([]);
 
   actions = computed<InfoCardAction[]>(() => [
-    ...(!this.#email || this.notifications().length
+    ...(!this.#email || this.notifications().some((notification) => notification.type === 'success')
       ? []
       : [
           {
@@ -56,7 +56,9 @@ export class VerifyEmail {
     this.#authService
       .resendVerificationEmail(this.#email!)
       .pipe(
-        tap((response: ApiMessage) => this.notifications.set([{ type: 'success', key: 'api.' + response.code }])),
+        tap((response: ApiMessage) =>
+          this.notifications.set([{ type: 'success', key: 'api.' + response.code }]),
+        ),
         catchError((err: HttpErrorResponse) => {
           const { code, params } = toApiError(err);
           this.notifications.set([{ type: 'error', key: 'api.' + code, params }]);

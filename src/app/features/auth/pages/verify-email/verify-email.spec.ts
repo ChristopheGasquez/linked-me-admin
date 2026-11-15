@@ -87,11 +87,17 @@ describe('VerifyEmail', () => {
     expect(await backToLogin()).not.toBeNull();
   });
 
-  it('shows the throttle delay in minutes and hides the resend button', async () => {
+  it('shows the throttle delay in minutes and lets the user retry', async () => {
     await open();
     await resend({ code: 'throttle.too_many_requests', params: { retryAfter: 120 } }, 429);
 
     expect(header()).toContain('2 min');
+    expect(await (await resendButton())!.isDisabled()).toBe(false);
+
+    await resend({ code: 'auth.email.resend_sent' });
+
+    expect(header()).toContain(fr.api.auth.email.resend_sent);
+    expect(header()).not.toContain('2 min');
     expect(await resendButton()).toBeNull();
   });
 });
