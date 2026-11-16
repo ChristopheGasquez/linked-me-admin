@@ -131,6 +131,9 @@
     }
   },
   "api": {
+    "validation": {
+      "failed": "Invalid data"
+    },
     "auth": {
       "register": {
         "conflict": "An account already exists with this email"
@@ -184,8 +187,8 @@
       "user": {
         "not_found": "User not found",
         "has_roles": "Cannot delete: user has assigned roles",
+        "role_already_assigned": "This role is already assigned to this user",
         "role": {
-          "already_assigned": "This role is already assigned to this user",
           "not_assigned": "This role is not assigned to this user",
           "assigned": "Role assigned successfully",
           "removed": "Role removed successfully"
@@ -239,7 +242,8 @@
         "label": "Username",
         "edit": "Edit username",
         "required": "Username is required",
-        "minlength": "Username must be at least 2 characters"
+        "minlength": "Username must be at least 2 characters",
+        "maxlength": "Username cannot exceed 100 characters"
       },
       "password": {
         "label": "Password",
@@ -392,6 +396,7 @@
           "name": "Role name",
           "nameRequired": "Role name is required",
           "nameMaxlength": "50 characters maximum",
+          "namePattern": "Letters, digits and _ only, starting with a letter",
           "createdAt": "Created on",
           "updatedAt": "Updated on"
         },

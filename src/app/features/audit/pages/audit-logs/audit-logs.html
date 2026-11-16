@@ -81,6 +81,7 @@
           mat-table
           [dataSource]="auditLogs()"
           matSort
+          matSortDisableClear
           [matSortActive]="query().sortBy"
           [matSortDirection]="query().sortOrder"
           (matSortChange)="onSortChange($event)"

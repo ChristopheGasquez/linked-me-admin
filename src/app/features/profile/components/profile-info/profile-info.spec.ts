@@ -77,6 +77,13 @@ describe('ProfileInfo', () => {
     expect(await (await saveButton())!.isDisabled()).toBe(true);
   });
 
+  it('shows the maximum length error', async () => {
+    await rename('J'.repeat(101));
+
+    expect(await nameErrors()).toEqual([fr.me.profile.name.maxlength]);
+    expect(await (await saveButton())!.isDisabled()).toBe(true);
+  });
+
   it('saves the new name, updates the signed-in user and goes back to read-only', async () => {
     await submit();
 
@@ -91,6 +98,17 @@ describe('ProfileInfo', () => {
     expect(await input.isDisabled()).toBe(true);
     expect(authService.currentUser()!.name).toBe('Jo Doe');
     expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+  });
+
+  it('shows the success message after saving the name', async () => {
+    await submit();
+    backend.expectOne('/profiles/me').flush({ ...testUser(), name: 'Jo Doe' });
+    await fixture.whenStable();
+
+    expect(text()).toContain(fr.me.profile.nameSuccess);
+
+    await (await button('edit'))!.click();
+    expect(text()).not.toContain(fr.me.profile.nameSuccess);
   });
 
   it('disables save while saving', async () => {
