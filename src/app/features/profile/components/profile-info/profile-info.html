@@ -2,20 +2,18 @@
   <form
     [formGroup]="infoForm"
     (ngSubmit)="onSubmit()">
-    @if (nameEditing()) {
-      @if (error()) {
-        <p
-          class="profile-info__error"
-          role="alert">
-          {{ t('api.' + error()!.code, error()!.params ?? {}) }}
-        </p>
-      } @else if (nameSuccess()) {
-        <p
-          class="profile-info__success"
-          role="status">
-          {{ t('me.profile.nameSuccess') }}
-        </p>
-      }
+    @if (error()) {
+      <p
+        class="profile-info__error"
+        role="alert">
+        {{ t('api.' + error()!.code, error()!.params ?? {}) }}
+      </p>
+    } @else if (nameSuccess()) {
+      <p
+        class="profile-info__success"
+        role="status">
+        {{ t('me.profile.nameSuccess') }}
+      </p>
     }
 
     <mat-form-field
@@ -39,6 +37,8 @@
         <mat-error>{{ t('me.profile.name.required') }}</mat-error>
       } @else if (infoForm.controls['name'].hasError('minlength')) {
         <mat-error>{{ t('me.profile.name.minlength') }}</mat-error>
+      } @else if (infoForm.controls['name'].hasError('maxlength')) {
+        <mat-error>{{ t('me.profile.name.maxlength') }}</mat-error>
       } @else if (infoForm.controls['name'].hasError('serverError')) {
         <mat-error>{{ t(infoForm.controls['name'].errors!['serverError']) }}</mat-error>
       }
