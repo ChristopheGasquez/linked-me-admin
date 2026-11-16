@@ -316,6 +316,12 @@ describe('UserDetail', () => {
   });
 
   describe('deletion', () => {
+    it('says in the danger zone that deletion is permanent', async () => {
+      await open();
+
+      expect(text()).toContain(fr.admin.users.detail.delete.description);
+    });
+
     it('only allows deleting a user without roles', async () => {
       await open(target({ roles: [EDITOR] }));
 

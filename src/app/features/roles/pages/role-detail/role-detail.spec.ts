@@ -490,6 +490,14 @@ describe('RoleDetail', () => {
   });
 
   describe('deletion', () => {
+    it('explains in the danger zone that deletion is permanent and needs no user', async () => {
+      await open();
+
+      const danger = element().querySelector('.role-detail__danger')!.textContent;
+      expect(danger).toContain(fr.admin.roles.detail.delete.description);
+      expect(danger).toContain(fr.admin.roles.detail.delete.hasUsersHint);
+    });
+
     it('deletes the role once confirmed and goes back to the list', async () => {
       await open();
       await (await deleteButton())!.click();
