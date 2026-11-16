@@ -254,6 +254,24 @@ describe('UsersList', () => {
       await answer(request);
     });
 
+    it('sorts by date ascending on the first click, then back to the default descending', async () => {
+      await answer(await open());
+
+      click('th[mat-sort-header="createdAt"]');
+
+      await urlBecomes('/admin/users?sortOrder=asc');
+      const ascending = usersRequest();
+      expect(paramsOf(ascending)).toMatchObject({ sortBy: 'createdAt', sortOrder: 'asc' });
+      await answer(ascending);
+
+      click('th[mat-sort-header="createdAt"]');
+
+      await urlBecomes('/admin/users');
+      const descending = usersRequest();
+      expect(paramsOf(descending)).toMatchObject({ sortBy: 'createdAt', sortOrder: 'desc' });
+      await answer(descending);
+    });
+
     it('goes to the next page and keeps the rows while it loads', async () => {
       await answer(await open(), [JO, ANN], 45);
 
