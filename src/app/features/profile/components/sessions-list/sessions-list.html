@@ -76,12 +76,17 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+  }
 
-    <mat-paginator
-      [length]="total()"
-      [pageSize]="limit()"
-      [pageIndex]="page() - 1"
-      [pageSizeOptions]="[5, 10, 20]"
-      (page)="onPageChange($event)" />
+  @if (sessions().length > 1) {
+    <div class="sessions-list__actions">
+      <button
+        matButton="outlined"
+        type="button"
+        [disabled]="loggingOutAll()"
+        (click)="logoutAll()">
+        {{ t('me.sessions.logoutAll.button') }}
+      </button>
+    </div>
   }
 </ng-container>

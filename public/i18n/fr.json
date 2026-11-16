@@ -275,7 +275,12 @@
         "expiresAt": "Expire le",
         "actions": "Actions"
       },
-      "disconnect": "Déconnecter"
+      "disconnect": "Déconnecter",
+      "logoutAll": {
+        "button": "Déconnecter toutes les sessions",
+        "title": "Déconnecter toutes les sessions",
+        "confirm": "Toutes vos sessions seront fermées, y compris sur cet appareil : vous devrez vous reconnecter.\nSi vous pensez que votre compte est compromis, changez plutôt votre mot de passe : cela ferme aussi toutes les sessions."
+      }
     }
   },
   "layout": {
@@ -360,7 +365,7 @@
         },
         "delete": {
           "title": "Supprimer l'utilisateur",
-          "description": "La suppression est définitive.",
+          "description": "La suppression de l'utilisateur est définitive.",
           "button": "Supprimer",
           "hasRolesHint": "Retirez d'abord tous ses rôles pour pouvoir le supprimer.",
           "confirm": "L'utilisateur {{ name }} sera supprimé définitivement. Continuer ?",
@@ -416,7 +421,8 @@
         },
         "delete": {
           "title": "Supprimer le rôle",
-          "description": "La suppression est définitive. Elle est impossible tant que des utilisateurs ont ce rôle.",
+          "description": "La suppression du rôle est définitive.",
+          "hasUsersHint": "Elle est impossible tant que des utilisateurs ont ce rôle.",
           "button": "Supprimer",
           "confirm": "Le rôle {{ name }} sera supprimé définitivement. Continuer ?",
           "confirmSelf": "Vous possédez le rôle {{ name }}. Il sera supprimé définitivement. Continuer ?"
