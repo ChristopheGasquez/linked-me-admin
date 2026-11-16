@@ -179,7 +179,10 @@
           </p>
         }
         <div class="role-detail__danger">
-          <p>{{ t('admin.roles.detail.delete.description') }}</p>
+          <div>
+            <p>{{ t('admin.roles.detail.delete.description') }}</p>
+            <p class="role-detail__hint">{{ t('admin.roles.detail.delete.hasUsersHint') }}</p>
+          </div>
           <button
             matButton="filled"
             class="button--error"

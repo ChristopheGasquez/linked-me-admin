@@ -360,7 +360,7 @@
         },
         "delete": {
           "title": "Delete user",
-          "description": "Deletion is permanent.",
+          "description": "Deleting the user is permanent.",
           "button": "Delete",
           "hasRolesHint": "Remove all their roles first to be able to delete them.",
           "confirm": "User {{ name }} will be permanently deleted. Continue?",
@@ -416,7 +416,8 @@
         },
         "delete": {
           "title": "Delete role",
-          "description": "Deletion is permanent. It is not possible while users have this role.",
+          "description": "Deleting the role is permanent.",
+          "hasUsersHint": "It is not possible while users have this role.",
           "button": "Delete",
           "confirm": "Role {{ name }} will be permanently deleted. Continue?",
           "confirmSelf": "You have the {{ name }} role. It will be permanently deleted. Continue?"
