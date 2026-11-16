@@ -131,6 +131,9 @@
     }
   },
   "api": {
+    "validation": {
+      "failed": "Données invalides"
+    },
     "auth": {
       "register": {
         "conflict": "Un compte existe déjà avec cet email"
@@ -184,8 +187,8 @@
       "user": {
         "not_found": "Utilisateur introuvable",
         "has_roles": "Impossible de supprimer : l'utilisateur possède des rôles",
+        "role_already_assigned": "Ce rôle est déjà assigné à cet utilisateur",
         "role": {
-          "already_assigned": "Ce rôle est déjà assigné à cet utilisateur",
           "not_assigned": "Ce rôle n'est pas assigné à cet utilisateur",
           "assigned": "Rôle assigné avec succès",
           "removed": "Rôle retiré avec succès"
@@ -393,6 +396,7 @@
           "name": "Nom du rôle",
           "nameRequired": "Le nom du rôle est requis",
           "nameMaxlength": "50 caractères maximum",
+          "namePattern": "Lettres, chiffres et _ uniquement, en commençant par une lettre",
           "createdAt": "Créé le",
           "updatedAt": "Modifié le"
         },
