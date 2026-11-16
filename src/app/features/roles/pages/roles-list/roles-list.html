@@ -63,6 +63,7 @@
           mat-table
           [dataSource]="roles()"
           matSort
+          matSortDisableClear
           [matSortActive]="query().sortBy"
           [matSortDirection]="query().sortOrder"
           (matSortChange)="onSortChange($event)"

@@ -263,6 +263,24 @@ describe('AuditLogs', () => {
       await answer(request);
     });
 
+    it('sorts by date ascending on the first click, then back to the default descending', async () => {
+      await answer(await open());
+
+      click('th[mat-sort-header="createdAt"]');
+
+      await urlBecomes('/admin/audit?sortOrder=asc');
+      const ascending = listRequest();
+      expect(paramsOf(ascending)).toMatchObject({ sortBy: 'createdAt', sortOrder: 'asc' });
+      await answer(ascending);
+
+      click('th[mat-sort-header="createdAt"]');
+
+      await urlBecomes('/admin/audit');
+      const descending = listRequest();
+      expect(paramsOf(descending)).toMatchObject({ sortBy: 'createdAt', sortOrder: 'desc' });
+      await answer(descending);
+    });
+
     it('goes to the next page and keeps the rows while it loads', async () => {
       await answer(await open(), [ASSIGN, CLEANUP, CREATE], 45);
 
