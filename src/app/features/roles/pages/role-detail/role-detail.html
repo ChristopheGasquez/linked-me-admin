@@ -23,6 +23,8 @@
             <mat-error>{{ t('admin.roles.detail.fields.nameRequired') }}</mat-error>
           } @else if (nameControl.hasError('maxlength')) {
             <mat-error>{{ t('admin.roles.detail.fields.nameMaxlength') }}</mat-error>
+          } @else if (nameControl.hasError('pattern')) {
+            <mat-error>{{ t('admin.roles.detail.fields.namePattern') }}</mat-error>
           }
         </mat-form-field>
       } @else {

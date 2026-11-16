@@ -79,7 +79,11 @@ export class RoleDetail implements HasUnsavedChanges {
 
   nameControl = new FormControl('', {
     nonNullable: true,
-    validators: [Validators.required, Validators.maxLength(50)],
+    validators: [
+      Validators.required,
+      Validators.maxLength(50),
+      Validators.pattern(/^\s*[A-Za-z][A-Za-z0-9_]*\s*$/),
+    ],
   });
 
   readonly isCreate = computed(() => this.id() === undefined);

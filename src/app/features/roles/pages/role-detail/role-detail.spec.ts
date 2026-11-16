@@ -376,6 +376,18 @@ describe('RoleDetail', () => {
       ]);
     });
 
+    it('refuses a name the API would reject', async () => {
+      await openCreate();
+      const name = await loader.getHarness(MatInputHarness);
+      await name.setValue('mon role');
+      await name.blur();
+
+      expect(await (await loader.getHarness(MatFormFieldHarness)).getTextErrors()).toEqual([
+        fr.admin.roles.detail.fields.namePattern,
+      ]);
+      expect(await (await createButton())!.isDisabled()).toBe(true);
+    });
+
     it('creates the role in uppercase with its permissions, then opens it', async () => {
       await openCreate();
       await (await loader.getHarness(MatInputHarness)).setValue(' editor ');
@@ -442,6 +454,25 @@ describe('RoleDetail', () => {
       expect(text()).toContain(fr.api.admin.role.already_exists);
       expect(TestBed.inject(Router).url).toBe('/admin/roles/new');
       expect(await (await createButton())!.isDisabled()).toBe(false);
+    });
+
+    it('translates a server validation error', async () => {
+      await openCreate();
+      await (await loader.getHarness(MatInputHarness)).setValue('EDITOR');
+      await (await createButton())!.click();
+      await answerDialog(true);
+      backend
+        .expectOne('/admin/roles')
+        .flush(
+          {
+            code: 'validation.failed',
+            params: { fields: [{ key: 'name', code: 'validation.name.matches' }] },
+          },
+          { status: 400, statusText: 'Error' },
+        );
+      await harness.fixture.whenStable();
+
+      expect(text()).toContain(fr.api.validation.failed);
     });
 
     it('reports unsaved changes once a name is typed or a permission checked', async () => {

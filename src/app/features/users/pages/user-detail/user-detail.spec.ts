@@ -262,6 +262,18 @@ describe('UserDetail', () => {
       expect(text()).toContain(fr.api.admin.role.not_found);
     });
 
+    it('translates the role already assigned error', async () => {
+      await open();
+      await (await loader.getHarness(MatSelectHarness)).clickOptions({ text: 'EDITOR' });
+      await (await button(fr.admin.users.detail.assign))!.click();
+      backend
+        .expectOne('/admin/users/5/roles')
+        .flush({ code: 'admin.user.role_already_assigned' }, { status: 409, statusText: 'Error' });
+      await harness.fixture.whenStable();
+
+      expect(text()).toContain(fr.api.admin.user.role_already_assigned);
+    });
+
     it('asks before removing a role and does nothing when cancelled', async () => {
       await open(target({ roles: [EDITOR] }));
 
