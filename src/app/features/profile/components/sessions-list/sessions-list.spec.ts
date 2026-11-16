@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { formatDate } from '@angular/common';
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatPaginatorHarness } from '@angular/material/paginator/testing';
 import { MatTableHarness } from '@angular/material/table/testing';
@@ -31,6 +32,9 @@ describe('SessionsList', () => {
   // While the resource loads the app is not stable, so harnesses would wait: read the DOM instead
   const isLoading = () =>
     (fixture.nativeElement as HTMLElement).querySelector('mat-progress-bar') !== null;
+  const logoutAllButton = () =>
+    loader.getHarnessOrNull(MatButtonHarness.with({ text: fr.me.sessions.logoutAll.button }));
+  const dialog = () => document.querySelector<HTMLElement>('mat-dialog-container');
   const renderedRows = () =>
     (fixture.nativeElement as HTMLElement).querySelectorAll('tr.mat-mdc-row').length;
 
@@ -45,9 +49,16 @@ describe('SessionsList', () => {
     await fixture.whenStable();
   }
 
+  async function answerDialog(confirm: boolean) {
+    const [cancel, ok] = Array.from(dialog()!.querySelectorAll('button'));
+    (confirm ? ok : cancel).click();
+    await fixture.whenStable();
+  }
+
   beforeEach(async () => {
     localStorage.clear();
     localStorage.setItem('access_token', 'access-1');
+    localStorage.setItem('refresh_token', 'refresh-1');
     TestBed.configureTestingModule({ providers: provideTestDefaults() });
     backend = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(SessionsList);
@@ -136,5 +147,59 @@ describe('SessionsList', () => {
     await answerList([session(1), session(2)]);
 
     expect(await loader.getHarnessOrNull(MatPaginatorHarness)).toBeNull();
+  });
+
+  describe('log out all sessions', () => {
+    it('is offered only with at least two sessions', async () => {
+      await answerList([session(1)]);
+      expect(await logoutAllButton()).toBeNull();
+
+      fixture.componentInstance.sessionsResource.reload();
+      await answerList([session(1), session(2)]);
+      expect(await logoutAllButton()).not.toBeNull();
+    });
+
+    it('sends nothing when the dialog is cancelled', async () => {
+      await answerList([session(1), session(2)]);
+
+      await (await logoutAllButton())!.click();
+      expect(dialog()!.textContent).toContain(fr.me.sessions.logoutAll.title);
+      await answerDialog(false);
+
+      backend.expectNone('/auth/logout-all');
+    });
+
+    it('revokes every session, then signs out this device and goes to login', async () => {
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      await answerList([session(1), session(2)]);
+
+      await (await logoutAllButton())!.click();
+      await answerDialog(true);
+      const request = backend.expectOne('/auth/logout-all');
+      expect(request.request.method).toBe('POST');
+      request.flush({ code: 'auth.logout_all.success' });
+
+      backend.expectOne('/auth/logout').flush({ code: 'auth.logout.success' });
+      expect(localStorage.getItem('access_token')).toBeNull();
+      expect(navigate).toHaveBeenCalledWith(['/auth/login']);
+    });
+
+    it('shows the error and stays on the page', async () => {
+      await answerList([session(1), session(2)]);
+
+      await (await logoutAllButton())!.click();
+      await answerDialog(true);
+      backend
+        .expectOne('/auth/logout-all')
+        .flush(
+          { code: 'throttle.too_many_requests', params: { retryAfter: 120 } },
+          { status: 429, statusText: 'Error' },
+        );
+      await fixture.whenStable();
+
+      expect(text()).toContain('2 min');
+      expect(localStorage.getItem('access_token')).toBe('access-1');
+      expect(await (await logoutAllButton())!.isDisabled()).toBe(false);
+    });
   });
 });

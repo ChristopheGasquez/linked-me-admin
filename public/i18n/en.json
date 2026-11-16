@@ -275,7 +275,12 @@
         "expiresAt": "Expires on",
         "actions": "Actions"
       },
-      "disconnect": "Disconnect"
+      "disconnect": "Disconnect",
+      "logoutAll": {
+        "button": "Log out all sessions",
+        "title": "Log out all sessions",
+        "confirm": "All your sessions will be closed, including on this device: you will need to sign in again.\nIf you think your account is compromised, change your password instead: it also closes every session."
+      }
     }
   },
   "layout": {
