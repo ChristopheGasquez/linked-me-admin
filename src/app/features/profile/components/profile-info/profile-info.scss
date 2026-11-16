@@ -9,11 +9,13 @@
 
   .profile-info {
     &__error {
+      margin-bottom: var(--lma-spacing-margin--md);
       color: var(--mat-sys-error);
       font-size: var(--lma-font-size--md);
     }
 
     &__success {
+      margin-bottom: var(--lma-spacing-margin--md);
       color: var(--mat-sys-primary);
       font-size: var(--lma-font-size--md);
     }

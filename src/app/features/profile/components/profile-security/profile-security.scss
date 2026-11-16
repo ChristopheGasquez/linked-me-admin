@@ -9,6 +9,7 @@
 
   .profile-security {
     &__error {
+      margin-bottom: var(--lma-spacing-margin--md);
       color: var(--mat-sys-error);
       font-size: var(--lma-font-size--md);
     }
