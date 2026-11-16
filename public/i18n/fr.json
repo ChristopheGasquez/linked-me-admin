@@ -239,7 +239,8 @@
         "label": "Nom d'utilisateur",
         "edit": "Modifier le nom d'utilisateur",
         "required": "Le nom est requis",
-        "minlength": "Le nom doit contenir au moins 2 caractères"
+        "minlength": "Le nom doit contenir au moins 2 caractères",
+        "maxlength": "Le nom ne peut pas dépasser 100 caractères"
       },
       "password": {
         "label": "Mot de passe",

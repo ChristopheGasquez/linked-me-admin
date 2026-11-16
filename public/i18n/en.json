@@ -239,7 +239,8 @@
         "label": "Username",
         "edit": "Edit username",
         "required": "Username is required",
-        "minlength": "Username must be at least 2 characters"
+        "minlength": "Username must be at least 2 characters",
+        "maxlength": "Username cannot exceed 100 characters"
       },
       "password": {
         "label": "Password",
