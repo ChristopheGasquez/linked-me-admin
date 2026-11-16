@@ -76,12 +76,5 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-
-    <mat-paginator
-      [length]="total()"
-      [pageSize]="limit()"
-      [pageIndex]="page() - 1"
-      [pageSizeOptions]="[5, 10, 20]"
-      (page)="onPageChange($event)" />
   }
 </ng-container>
