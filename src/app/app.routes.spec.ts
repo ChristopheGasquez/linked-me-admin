@@ -95,6 +95,22 @@ describe('App routes', () => {
       expect(await landingOf(url)).toBe(url);
     });
 
+    it.each(['/auth/login', '/auth/register', '/auth/verify-email', '/auth/forgot-password'])(
+      'sends %s to the dashboard',
+      async (url) => {
+        signIn();
+        expect(await landingOf(url)).toBe('/dashboard');
+      },
+    );
+
+    it.each(['/auth/email-confirmed', '/auth/reset-password'])(
+      'still opens %s, reached from an email link',
+      async (url) => {
+        signIn();
+        expect(await landingOf(url)).toBe(url);
+      },
+    );
+
     it.each(['/admin/audit/users/5', '/admin/audit/roles/3'])(
       'requires both audit and admin realms for %s',
       async (url) => {
