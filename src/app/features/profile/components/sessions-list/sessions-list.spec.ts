@@ -57,12 +57,11 @@ describe('SessionsList', () => {
 
   afterEach(() => backend.verify());
 
-  it('loads the first page of sessions, newest first, showing progress meanwhile', async () => {
+  it('loads every session, newest first, showing progress meanwhile', async () => {
     const request = listRequest();
     const params = request.request.params;
     expect(params.keys().map((key) => [key, params.get(key)])).toEqual([
-      ['page', '1'],
-      ['limit', '10'],
+      ['limit', '100'],
       ['sortBy', 'createdAt'],
       ['sortOrder', 'desc'],
     ]);
@@ -112,6 +111,8 @@ describe('SessionsList', () => {
     expect([await first.isDisabled(), await second.isDisabled()]).toEqual([false, true]);
 
     revoke.flush({ code: 'auth.session.revoked' });
+    fixture.detectChanges();
+    expect(renderedRows()).toBe(2);
     await answerList([session(1)]);
 
     expect(await rows()).toHaveLength(1);
@@ -131,23 +132,9 @@ describe('SessionsList', () => {
     expect(await (await disconnectButtons())[0].isDisabled()).toBe(false);
   });
 
-  it('loads the next page and keeps the current rows while it loads', async () => {
-    await answerList([session(1), session(2)], 12);
+  it('shows no paginator', async () => {
+    await answerList([session(1), session(2)]);
 
-    const paginator = await loader.getHarness(MatPaginatorHarness);
-    expect(await paginator.getRangeLabel()).toContain('12');
-
-    (fixture.nativeElement as HTMLElement)
-      .querySelector<HTMLButtonElement>('.mat-mdc-paginator-navigation-next')!
-      .click();
-
-    const request = listRequest();
-    expect(request.request.params.get('page')).toBe('2');
-    fixture.detectChanges();
-    expect(renderedRows()).toBe(2);
-
-    request.flush({ data: [session(3)], meta: { total: 12, page: 2, limit: 10, totalPages: 2 } });
-    await fixture.whenStable();
-    expect(await rows()).toHaveLength(1);
+    expect(await loader.getHarnessOrNull(MatPaginatorHarness)).toBeNull();
   });
 });

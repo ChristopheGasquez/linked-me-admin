@@ -7,7 +7,6 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
@@ -20,15 +19,7 @@ import { toApiError } from '../../../../shared/utils/api-error';
   selector: 'app-sessions-list',
   templateUrl: './sessions-list.html',
   styleUrl: './sessions-list.scss',
-  imports: [
-    TranslocoDirective,
-    DatePipe,
-    MatButton,
-    MatProgressBar,
-    MatPaginator,
-    MatTableModule,
-    EmptyState,
-  ],
+  imports: [TranslocoDirective, DatePipe, MatButton, MatProgressBar, MatTableModule, EmptyState],
 })
 export class SessionsList {
   #authApi = inject(AuthApiService);
@@ -36,21 +27,14 @@ export class SessionsList {
   readonly displayedColumns = ['createdAt', 'expiresAt', 'actions'];
 
   revoking = signal<number | null>(null);
-  page = signal(1);
-  limit = signal(10);
   #revokeError = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
 
+  // The API keeps at most 10 sessions per user; 100 is its maximum page size
   readonly sessionsResource = rxResource({
-    params: () => ({
-      page: this.page(),
-      limit: this.limit(),
-      sortBy: 'createdAt',
-      sortOrder: 'desc' as const,
-    }),
-    stream: ({ params }) => this.#authApi.getSessions(params),
+    stream: () => this.#authApi.getSessions({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' }),
   });
 
-  // Keeps the last result while a new page is loading (value() resets to undefined)
+  // Keeps the last result while reloading after a revoke (value() resets to undefined)
   readonly #lastResult = linkedSignal<
     PaginatedResponse<SessionResponse> | undefined,
     PaginatedResponse<SessionResponse> | undefined
@@ -60,7 +44,6 @@ export class SessionsList {
   });
 
   readonly sessions = computed(() => this.#lastResult()?.data ?? []);
-  readonly total = computed(() => this.#lastResult()?.meta.total ?? 0);
   readonly loading = this.sessionsResource.isLoading;
   readonly error = computed(() => {
     const err = this.sessionsResource.error() as HttpErrorResponse | undefined;
@@ -81,10 +64,5 @@ export class SessionsList {
         finalize(() => this.revoking.set(null)),
       )
       .subscribe();
-  }
-
-  onPageChange(event: PageEvent): void {
-    this.page.set(event.pageIndex + 1);
-    this.limit.set(event.pageSize);
   }
 }
