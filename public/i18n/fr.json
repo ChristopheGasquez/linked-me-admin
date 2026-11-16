@@ -275,7 +275,12 @@
         "expiresAt": "Expire le",
         "actions": "Actions"
       },
-      "disconnect": "Déconnecter"
+      "disconnect": "Déconnecter",
+      "logoutAll": {
+        "button": "Déconnecter toutes les sessions",
+        "title": "Déconnecter toutes les sessions",
+        "confirm": "Toutes vos sessions seront fermées, y compris sur cet appareil : vous devrez vous reconnecter.\nSi vous pensez que votre compte est compromis, changez plutôt votre mot de passe : cela ferme aussi toutes les sessions."
+      }
     }
   },
   "layout": {
