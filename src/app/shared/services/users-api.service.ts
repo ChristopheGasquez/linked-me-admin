@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 import { AppConfigService } from '../../core/services/app-config.service';
 import { ApiMessage } from '../models/api-response.model';
-import { PaginatedResponse } from '../models/pagination.model';
+import { PaginatedResponse, PaginationParams } from '../models/pagination.model';
+import { SessionResponse } from '../models/session.model';
 import { UserAdminListParams, UserAdminResponse } from '../models/user-admin.model';
 
 @Injectable({ providedIn: 'root' })
@@ -34,5 +35,19 @@ export class UsersApiService {
 
   removeRole(id: number, roleId: number): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/roles/${roleId}`);
+  }
+
+  getSessions(id: number, params: PaginationParams = {}): Observable<PaginatedResponse<SessionResponse>> {
+    return this.#http.get<PaginatedResponse<SessionResponse>>(`${this.baseUrl}/${id}/sessions`, {
+      params: { ...params },
+    });
+  }
+
+  revokeSession(id: number, sessionId: number): Observable<ApiMessage> {
+    return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/sessions/${sessionId}`);
+  }
+
+  revokeSessions(id: number): Observable<ApiMessage> {
+    return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/sessions`);
   }
 }
