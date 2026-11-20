@@ -41,6 +41,35 @@
       "lastPage": "Last page",
       "range": "{{ start }} – {{ end }} of {{ total }}",
       "rangeEmpty": "0 of {{ total }}"
+    },
+    "title": {
+      "dashboard": "Dashboard",
+      "auth": {
+        "login": "Sign in",
+        "register": "Create an account",
+        "verifyEmail": "Check your email",
+        "emailConfirmed": "Email confirmation",
+        "forgotPassword": "Forgot password",
+        "resetPassword": "New password"
+      },
+      "me": {
+        "profile": "My profile"
+      },
+      "admin": {
+        "users": "Users",
+        "user": "User",
+        "roles": "Roles",
+        "roleCreate": "Create role",
+        "role": "Role",
+        "audit": "Audit log",
+        "tasks": "Tasks"
+      },
+      "errors": {
+        "unauthorized": "401 – Unauthorized",
+        "forbidden": "403 – Forbidden",
+        "notFound": "404 – Page not found",
+        "workInProgress": "Work in progress"
+      }
     }
   },
   "auth": {

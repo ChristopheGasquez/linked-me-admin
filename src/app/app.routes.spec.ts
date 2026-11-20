@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router, Routes } from '@angular/router';
+import { provideRouter, Route, Router, Routes } from '@angular/router';
 
-import { provideTestDefaults, testUser } from '../testing/test-providers';
+import en from '../../public/i18n/en.json';
+import { fr, provideTestDefaults, testUser } from '../testing/test-providers';
 import { routes } from './app.routes';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { AuthService } from './core/services/auth.service';
@@ -9,6 +10,31 @@ import { auditRoutes } from './features/audit/audit.routes';
 import { profileRoutes } from './features/profile/profile.routes';
 import { rolesRoutes } from './features/roles/roles.routes';
 import { usersRoutes } from './features/users/users.routes';
+
+// Every route rendering a page (component or loadComponent, no children), lazy routes included
+async function pageRoutes(routes: Routes, parent = ''): Promise<{ path: string; route: Route }[]> {
+  const pages: { path: string; route: Route }[] = [];
+  for (const route of routes) {
+    const path = `${parent}/${route.path ?? ''}`;
+    const children =
+      route.children ?? (route.loadChildren ? ((await route.loadChildren()) as Routes) : null);
+    if (children) {
+      pages.push(...(await pageRoutes(children, path)));
+    } else if (route.component || route.loadComponent) {
+      pages.push({ path, route });
+    }
+  }
+  return pages;
+}
+
+function translation(translations: object, key: string): unknown {
+  return key
+    .split('.')
+    .reduce<unknown>(
+      (node, part) => (node as Record<string, unknown> | undefined)?.[part],
+      translations,
+    );
+}
 
 describe('App routes', () => {
   let router: Router;
@@ -139,5 +165,18 @@ describe('App routes', () => {
     ])('asks before leaving %s with unsaved changes', (_, routeList, path) => {
       expect(at(routeList, path).canDeactivate).toContain(unsavedChangesGuard);
     });
+  });
+
+  it('gives every page a common.title key translated in French and English', async () => {
+    const pages = await pageRoutes(routes);
+    expect(pages.length).toBeGreaterThan(20);
+
+    for (const { path, route } of pages) {
+      const key = route.title;
+      expect(key, `${path} has no title`).toBeTypeOf('string');
+      expect(key as string, path).toMatch(/^common\.title\./);
+      expect(translation(fr, key as string), `${path}: ${key} missing in fr`).toBeTypeOf('string');
+      expect(translation(en, key as string), `${path}: ${key} missing in en`).toBeTypeOf('string');
+    }
   });
 });

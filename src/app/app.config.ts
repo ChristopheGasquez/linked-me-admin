@@ -4,9 +4,10 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideTransloco, TranslocoService } from '@jsverse/transloco';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { TranslocoHttpLoader } from './core/services/transloco-loader.service';
 import { TranslatedPaginatorIntl } from './core/services/paginator-intl.service';
+import { TranslatedTitleStrategy } from './core/services/title-strategy.service';
 import { AVAILABLE_LANGS } from './shared/models/lang.model';
 
 import { routes } from './app.routes';
@@ -19,6 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     { provide: MatPaginatorIntl, useClass: TranslatedPaginatorIntl },
+    { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
     provideTransloco({
       config: {
         availableLangs: [...AVAILABLE_LANGS],
