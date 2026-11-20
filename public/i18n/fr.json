@@ -32,6 +32,15 @@
         "confirmOwn": "Toutes vos sessions seront fermées, y compris sur cet appareil : vous devrez vous reconnecter.\nSi vous pensez que votre compte est compromis, changez plutôt votre mot de passe : cela ferme aussi toutes les sessions.",
         "confirmUser": "Toutes les sessions de cet utilisateur seront fermées : il devra se reconnecter."
       }
+    },
+    "paginator": {
+      "itemsPerPage": "Éléments par page",
+      "firstPage": "Première page",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "lastPage": "Dernière page",
+      "range": "{{ start }} – {{ end }} sur {{ total }}",
+      "rangeEmpty": "0 sur {{ total }}"
     }
   },
   "auth": {
