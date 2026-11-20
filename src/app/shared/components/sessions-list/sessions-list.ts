@@ -1,4 +1,4 @@
-import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EMPTY } from 'rxjs';
@@ -11,16 +11,14 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../../../../core/services/auth.service';
-import {
-  ConfirmDialog,
-  ConfirmDialogData,
-} from '../../../../shared/components/confirm-dialog/confirm-dialog';
-import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
-import { AuthApiService } from '../../../../shared/services/auth-api.service';
-import { PaginatedResponse } from '../../../../shared/models/pagination.model';
-import { SessionResponse } from '../../../../shared/models/session.model';
-import { toApiError } from '../../../../shared/utils/api-error';
+import { AuthService } from '../../../core/services/auth.service';
+import { ConfirmDialog, ConfirmDialogData } from '../confirm-dialog/confirm-dialog';
+import { EmptyState } from '../empty-state/empty-state';
+import { AuthApiService } from '../../services/auth-api.service';
+import { UsersApiService } from '../../services/users-api.service';
+import { PaginatedResponse } from '../../models/pagination.model';
+import { SessionResponse } from '../../models/session.model';
+import { toApiError } from '../../utils/api-error';
 
 @Component({
   selector: 'app-sessions-list',
@@ -30,11 +28,13 @@ import { toApiError } from '../../../../shared/utils/api-error';
 })
 export class SessionsList {
   #authApi = inject(AuthApiService);
+  #usersApi = inject(UsersApiService);
   #authService = inject(AuthService);
   #dialog = inject(MatDialog);
   #router = inject(Router);
 
-  readonly displayedColumns = ['createdAt', 'expiresAt', 'actions'];
+  // Admin view of another user's sessions; the signed-in user's own sessions when undefined
+  readonly userId = input<number>();
 
   revoking = signal<number | null>(null);
   loggingOutAll = signal(false);
@@ -42,7 +42,13 @@ export class SessionsList {
 
   // The API keeps at most 10 sessions per user; 100 is its maximum page size
   readonly sessionsResource = rxResource({
-    stream: () => this.#authApi.getSessions({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' }),
+    params: () => ({ userId: this.userId() }),
+    stream: ({ params: { userId } }) => {
+      const query = { limit: 100, sortBy: 'createdAt', sortOrder: 'desc' } as const;
+      return userId === undefined
+        ? this.#authApi.getSessions(query)
+        : this.#usersApi.getSessions(userId, query);
+    },
   });
 
   // Keeps the last result while reloading after a revoke (value() resets to undefined)
@@ -55,6 +61,18 @@ export class SessionsList {
   });
 
   readonly sessions = computed(() => this.#lastResult()?.data ?? []);
+  readonly canRevoke = computed(
+    () =>
+      this.userId() === undefined ||
+      !!this.#authService.currentUser()?.permissions.includes('admin:user:session:revoke'),
+  );
+  readonly displayedColumns = computed(() =>
+    this.canRevoke() ? ['createdAt', 'expiresAt', 'actions'] : ['createdAt', 'expiresAt'],
+  );
+  // Revoking every session of your own account signs this device out too
+  readonly #isOwn = computed(
+    () => this.userId() === undefined || this.userId() === this.#authService.currentUser()?.id,
+  );
   readonly loading = this.sessionsResource.isLoading;
   readonly error = computed(() => {
     const err = this.sessionsResource.error() as HttpErrorResponse | undefined;
@@ -64,8 +82,12 @@ export class SessionsList {
   revokeSession(id: number): void {
     this.revoking.set(id);
     this.#revokeError.set(null);
-    this.#authApi
-      .revokeSession(id)
+    const userId = this.userId();
+    const revoke$ =
+      userId === undefined
+        ? this.#authApi.revokeSession(id)
+        : this.#usersApi.revokeSession(userId, id);
+    revoke$
       .pipe(
         tap(() => this.sessionsResource.reload()),
         catchError((err: HttpErrorResponse) => {
@@ -78,10 +100,11 @@ export class SessionsList {
   }
 
   logoutAll(): void {
+    const userId = this.userId();
     const data: ConfirmDialogData = {
-      titleKey: 'me.sessions.logoutAll.title',
-      messageKey: 'me.sessions.logoutAll.confirm',
-      confirmLabelKey: 'me.sessions.logoutAll.button',
+      titleKey: 'common.sessions.logoutAll.title',
+      messageKey: `common.sessions.logoutAll.${this.#isOwn() ? 'confirmOwn' : 'confirmUser'}`,
+      confirmLabelKey: 'common.sessions.logoutAll.button',
     };
     this.#dialog
       .open(ConfirmDialog, { data })
@@ -92,10 +115,16 @@ export class SessionsList {
           this.loggingOutAll.set(true);
           this.#revokeError.set(null);
         }),
-        switchMap(() => this.#authApi.logoutAll()),
+        switchMap(() =>
+          userId === undefined ? this.#authApi.logoutAll() : this.#usersApi.revokeSessions(userId),
+        ),
         tap(() => {
-          this.#authService.logout();
-          this.#router.navigate(['/auth/login']);
+          if (this.#isOwn()) {
+            this.#authService.logout();
+            this.#router.navigate(['/auth/login']);
+          } else {
+            this.sessionsResource.reload();
+          }
         }),
         catchError((err: HttpErrorResponse) => {
           this.#revokeError.set(toApiError(err));

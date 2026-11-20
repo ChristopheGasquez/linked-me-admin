@@ -378,4 +378,49 @@ describe('UserDetail', () => {
     expect(await button(fr.admin.users.detail.assign)).toBeNull();
     expect(await deleteButton()).toBeNull();
   });
+
+  describe('sessions', () => {
+    it('lists the user sessions with admin:user:session:read', async () => {
+      signIn([...ALL_PERMISSIONS, 'admin:user:session:read']);
+      // open() waits for stability, which never comes while the sessions load: answer them first
+      page = await harness.navigateByUrl('/admin/users/5', UserDetail);
+      TestBed.tick();
+      backend
+        .expectOne((request) => request.url === '/admin/roles')
+        .flush({
+          data: [ADMIN, EDITOR, VIEWER],
+          meta: { total: 3, page: 1, limit: 100, totalPages: 1 },
+        });
+      answerUser();
+      await vi.waitFor(() => {
+        harness.fixture.detectChanges();
+        expect(element().querySelector('app-sessions-list')).not.toBeNull();
+      });
+      TestBed.tick();
+      backend
+        .expectOne((request) => request.url === '/admin/users/5/sessions')
+        .flush({
+          data: [
+            {
+              id: 9,
+              userId: 5,
+              createdAt: '2026-11-01T08:30:00.000Z',
+              expiresAt: '2026-11-08T08:30:00.000Z',
+            },
+          ],
+          meta: { total: 1, page: 1, limit: 100, totalPages: 1 },
+        });
+      await harness.fixture.whenStable();
+
+      expect(text()).toContain(fr.admin.users.detail.sections.sessions);
+      expect(element().querySelectorAll('app-sessions-list tr.mat-mdc-row')).toHaveLength(1);
+    });
+
+    it('hides the sessions without admin:user:session:read', async () => {
+      await open();
+
+      expect(text()).not.toContain(fr.admin.users.detail.sections.sessions);
+      backend.expectNone((r) => r.url === '/admin/users/5/sessions');
+    });
+  });
 });

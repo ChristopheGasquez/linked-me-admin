@@ -4,7 +4,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { ProfileInfo } from '../../components/profile-info/profile-info';
 import { ProfileSecurity } from '../../components/profile-security/profile-security';
-import { SessionsList } from '../../components/sessions-list/sessions-list';
+import { SessionsList } from '../../../../shared/components/sessions-list/sessions-list';
 
 @Component({
   selector: 'app-profile',
