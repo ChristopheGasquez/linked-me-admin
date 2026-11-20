@@ -14,7 +14,7 @@
   @if (!loading() && !error() && sessions().length === 0) {
     <app-empty-state
       icon="devices_off"
-      titleKey="me.sessions.empty" />
+      titleKey="common.sessions.empty" />
   }
 
   @if (sessions().length > 0) {
@@ -26,7 +26,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef>
-          {{ t('me.sessions.columns.createdAt') }}
+          {{ t('common.sessions.columns.createdAt') }}
         </th>
         <td
           mat-cell
@@ -39,7 +39,7 @@
         <th
           mat-header-cell
           *matHeaderCellDef>
-          {{ t('me.sessions.columns.expiresAt') }}
+          {{ t('common.sessions.columns.expiresAt') }}
         </th>
         <td
           mat-cell
@@ -53,7 +53,7 @@
           mat-header-cell
           *matHeaderCellDef
           class="sessions-list__table__column--shrink">
-          {{ t('me.sessions.columns.actions') }}
+          {{ t('common.sessions.columns.actions') }}
         </th>
         <td
           mat-cell
@@ -64,28 +64,28 @@
             type="button"
             [disabled]="revoking() === session.id"
             (click)="revokeSession(session.id)">
-            {{ t('me.sessions.disconnect') }}
+            {{ t('common.sessions.disconnect') }}
           </button>
         </td>
       </ng-container>
 
       <tr
         mat-header-row
-        *matHeaderRowDef="displayedColumns"></tr>
+        *matHeaderRowDef="displayedColumns()"></tr>
       <tr
         mat-row
-        *matRowDef="let row; columns: displayedColumns"></tr>
+        *matRowDef="let row; columns: displayedColumns()"></tr>
     </table>
   }
 
-  @if (sessions().length > 1) {
+  @if (canRevoke() && sessions().length > 1) {
     <div class="sessions-list__actions">
       <button
         matButton="outlined"
         type="button"
         [disabled]="loggingOutAll()"
         (click)="logoutAll()">
-        {{ t('me.sessions.logoutAll.button') }}
+        {{ t('common.sessions.logoutAll.button') }}
       </button>
     </div>
   }

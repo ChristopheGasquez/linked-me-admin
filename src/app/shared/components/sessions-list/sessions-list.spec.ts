@@ -8,8 +8,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatPaginatorHarness } from '@angular/material/paginator/testing';
 import { MatTableHarness } from '@angular/material/table/testing';
 
-import { SessionResponse } from '../../../../shared/models/session.model';
-import { fr, provideTestDefaults } from '../../../../../testing/test-providers';
+import { AuthService } from '../../../core/services/auth.service';
+import { SessionResponse } from '../../models/session.model';
+import { fr, provideTestDefaults, testUser } from '../../../../testing/test-providers';
 import { SessionsList } from './sessions-list';
 
 const session = (id: number): SessionResponse => ({
@@ -28,24 +29,24 @@ describe('SessionsList', () => {
   const rows = async () =>
     (await loader.getHarnessOrNull(MatTableHarness))?.getCellTextByIndex() ?? [];
   const disconnectButtons = () =>
-    loader.getAllHarnesses(MatButtonHarness.with({ text: fr.me.sessions.disconnect }));
+    loader.getAllHarnesses(MatButtonHarness.with({ text: fr.common.sessions.disconnect }));
   // While the resource loads the app is not stable, so harnesses would wait: read the DOM instead
   const isLoading = () =>
     (fixture.nativeElement as HTMLElement).querySelector('mat-progress-bar') !== null;
   const logoutAllButton = () =>
-    loader.getHarnessOrNull(MatButtonHarness.with({ text: fr.me.sessions.logoutAll.button }));
+    loader.getHarnessOrNull(MatButtonHarness.with({ text: fr.common.sessions.logoutAll.button }));
   const dialog = () => document.querySelector<HTMLElement>('mat-dialog-container');
   const renderedRows = () =>
     (fixture.nativeElement as HTMLElement).querySelectorAll('tr.mat-mdc-row').length;
 
-  function listRequest(): TestRequest {
+  function listRequest(url = '/auth/sessions'): TestRequest {
     TestBed.tick();
-    return backend.expectOne((request) => request.url === '/auth/sessions');
+    return backend.expectOne((request) => request.url === url);
   }
 
   // Answers the pending list request with these sessions
-  async function answerList(sessions: SessionResponse[], total = sessions.length) {
-    listRequest().flush({ data: sessions, meta: { total, page: 1, limit: 10, totalPages: 1 } });
+  async function answerList(sessions: SessionResponse[], total = sessions.length, url?: string) {
+    listRequest(url).flush({ data: sessions, meta: { total, page: 1, limit: 10, totalPages: 1 } });
     await fixture.whenStable();
   }
 
@@ -63,7 +64,6 @@ describe('SessionsList', () => {
     backend = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(SessionsList);
     loader = TestbedHarnessEnvironment.loader(fixture);
-    TestBed.tick();
   });
 
   afterEach(() => backend.verify());
@@ -89,15 +89,15 @@ describe('SessionsList', () => {
 
     const format = (date: string) => formatDate(date, fr.common.dateTimeFormat, 'en-US');
     expect(await rows()).toEqual([
-      [format(session(1).createdAt), format(session(1).expiresAt), fr.me.sessions.disconnect],
-      [format(session(2).createdAt), format(session(2).expiresAt), fr.me.sessions.disconnect],
+      [format(session(1).createdAt), format(session(1).expiresAt), fr.common.sessions.disconnect],
+      [format(session(2).createdAt), format(session(2).expiresAt), fr.common.sessions.disconnect],
     ]);
   });
 
   it('shows the empty state when there is no session', async () => {
     await answerList([]);
 
-    expect(text()).toContain(fr.me.sessions.empty);
+    expect(text()).toContain(fr.common.sessions.empty);
     expect(await loader.getHarnessOrNull(MatTableHarness)).toBeNull();
   });
 
@@ -109,7 +109,7 @@ describe('SessionsList', () => {
     await fixture.whenStable();
 
     expect(text()).toContain('2 min');
-    expect(text()).not.toContain(fr.me.sessions.empty);
+    expect(text()).not.toContain(fr.common.sessions.empty);
   });
 
   it('revokes a session, disabling its button meanwhile, then reloads the list', async () => {
@@ -163,7 +163,7 @@ describe('SessionsList', () => {
       await answerList([session(1), session(2)]);
 
       await (await logoutAllButton())!.click();
-      expect(dialog()!.textContent).toContain(fr.me.sessions.logoutAll.title);
+      expect(dialog()!.textContent).toContain(fr.common.sessions.logoutAll.title);
       await answerDialog(false);
 
       backend.expectNone('/auth/logout-all');
@@ -200,6 +200,83 @@ describe('SessionsList', () => {
       expect(text()).toContain('2 min');
       expect(localStorage.getItem('access_token')).toBe('access-1');
       expect(await (await logoutAllButton())!.isDisabled()).toBe(false);
+    });
+  });
+
+  describe("an admin viewing a user's sessions", () => {
+    const USER_SESSIONS = '/admin/users/7/sessions';
+
+    function viewUser(permissions: string[], userId = 7) {
+      TestBed.inject(AuthService).currentUser.set(testUser(permissions));
+      fixture.componentRef.setInput('userId', userId);
+    }
+
+    it('loads the user sessions from the admin API', async () => {
+      viewUser(['admin:user:session:read']);
+
+      const request = listRequest(USER_SESSIONS);
+      expect(request.request.params.get('limit')).toBe('100');
+      request.flush({ data: [session(1)], meta: { total: 1, page: 1, limit: 100, totalPages: 1 } });
+      await fixture.whenStable();
+
+      expect(await rows()).toHaveLength(1);
+    });
+
+    it('offers no revocation without admin:user:session:revoke', async () => {
+      viewUser(['admin:user:session:read']);
+      await answerList([session(1), session(2)], 2, USER_SESSIONS);
+
+      expect(await disconnectButtons()).toHaveLength(0);
+      expect(await logoutAllButton()).toBeNull();
+      expect(text()).not.toContain(fr.common.sessions.columns.actions);
+    });
+
+    it('revokes one session of the user, then reloads the list', async () => {
+      viewUser(['admin:user:session:read', 'admin:user:session:revoke']);
+      await answerList([session(1), session(2)], 2, USER_SESSIONS);
+
+      await (await disconnectButtons())[1].click();
+      const revoke = backend.expectOne(`${USER_SESSIONS}/2`);
+      expect(revoke.request.method).toBe('DELETE');
+      revoke.flush({ code: 'admin.user.session.revoked', params: { userId: 7, sessionId: 2 } });
+
+      await answerList([session(1)], 1, USER_SESSIONS);
+      expect(await rows()).toHaveLength(1);
+    });
+
+    it('revokes every session of another user and stays signed in', async () => {
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigate');
+      viewUser(['admin:user:session:read', 'admin:user:session:revoke']);
+      await answerList([session(1), session(2)], 2, USER_SESSIONS);
+
+      await (await logoutAllButton())!.click();
+      expect(dialog()!.textContent).toContain(fr.common.sessions.logoutAll.confirmUser);
+      await answerDialog(true);
+      const revoke = backend.expectOne(USER_SESSIONS);
+      expect(revoke.request.method).toBe('DELETE');
+      revoke.flush({ code: 'admin.user.sessions.revoked', params: { userId: 7, count: 2 } });
+
+      await answerList([], 0, USER_SESSIONS);
+      expect(text()).toContain(fr.common.sessions.empty);
+      expect(localStorage.getItem('access_token')).toBe('access-1');
+      expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('signs out when the admin revokes every session of their own account', async () => {
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      viewUser(['admin:user:session:read', 'admin:user:session:revoke'], 1);
+      await answerList([session(1), session(2)], 2, '/admin/users/1/sessions');
+
+      await (await logoutAllButton())!.click();
+      expect(dialog()!.textContent).toContain(fr.common.sessions.logoutAll.title);
+      await answerDialog(true);
+      backend
+        .expectOne('/admin/users/1/sessions')
+        .flush({ code: 'admin.user.sessions.revoked', params: { userId: 1, count: 2 } });
+
+      backend.expectOne('/auth/logout').flush({ code: 'auth.logout.success' });
+      expect(localStorage.getItem('access_token')).toBeNull();
+      expect(navigate).toHaveBeenCalledWith(['/auth/login']);
     });
   });
 });

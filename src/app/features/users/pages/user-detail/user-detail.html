@@ -193,6 +193,13 @@
       </section>
 
       <section
+        *appHasPermission="'admin:user:session:read'"
+        class="user-detail__section">
+        <h2>{{ t('admin.users.detail.sections.sessions') }}</h2>
+        <app-sessions-list [userId]="user.id" />
+      </section>
+
+      <section
         *appHasPermission="'admin:user:delete'"
         class="user-detail__section">
         <h2 class="user-detail__danger-title">{{ t('admin.users.detail.sections.danger') }}</h2>

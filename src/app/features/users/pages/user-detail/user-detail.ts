@@ -21,6 +21,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { SessionsList } from '../../../../shared/components/sessions-list/sessions-list';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
@@ -50,6 +51,7 @@ import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
     MatTooltipModule,
     HasPermissionDirective,
     Breadcrumb,
+    SessionsList,
   ],
 })
 export class UserDetail implements HasUnsavedChanges {

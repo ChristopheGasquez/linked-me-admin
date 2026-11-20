@@ -17,6 +17,21 @@
       "title": "Unsaved changes",
       "message": "Your changes will be lost if you leave this page.",
       "leave": "Leave page"
+    },
+    "sessions": {
+      "empty": "No active sessions",
+      "columns": {
+        "createdAt": "Connected on",
+        "expiresAt": "Expires on",
+        "actions": "Actions"
+      },
+      "disconnect": "Disconnect",
+      "logoutAll": {
+        "button": "Log out all sessions",
+        "title": "Log out all sessions",
+        "confirmOwn": "All your sessions will be closed, including on this device: you will need to sign in again.\nIf you think your account is compromised, change your password instead: it also closes every session.",
+        "confirmUser": "All this user's sessions will be closed: they will need to sign in again."
+      }
     }
   },
   "auth": {
@@ -193,7 +208,10 @@
           "assigned": "Role assigned successfully",
           "removed": "Role removed successfully"
         },
-        "deleted": "User deleted"
+        "deleted": "User deleted",
+        "session": {
+          "not_found": "Session not found"
+        }
       },
       "role": {
         "not_found": "Role not found",
@@ -268,19 +286,7 @@
       }
     },
     "sessions": {
-      "title": "My active sessions",
-      "empty": "No active sessions",
-      "columns": {
-        "createdAt": "Connected on",
-        "expiresAt": "Expires on",
-        "actions": "Actions"
-      },
-      "disconnect": "Disconnect",
-      "logoutAll": {
-        "button": "Log out all sessions",
-        "title": "Log out all sessions",
-        "confirm": "All your sessions will be closed, including on this device: you will need to sign in again.\nIf you think your account is compromised, change your password instead: it also closes every session."
-      }
+      "title": "My active sessions"
     }
   },
   "layout": {
@@ -341,7 +347,8 @@
           "info": "Information",
           "security": "Security",
           "roles": "Roles",
-          "danger": "Danger zone"
+          "danger": "Danger zone",
+          "sessions": "Active sessions"
         },
         "fields": {
           "id": "ID",

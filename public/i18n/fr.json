@@ -17,6 +17,21 @@
       "title": "Modifications non enregistrées",
       "message": "Vos modifications seront perdues si vous quittez cette page.",
       "leave": "Quitter la page"
+    },
+    "sessions": {
+      "empty": "Aucune session active",
+      "columns": {
+        "createdAt": "Connecté le",
+        "expiresAt": "Expire le",
+        "actions": "Actions"
+      },
+      "disconnect": "Déconnecter",
+      "logoutAll": {
+        "button": "Déconnecter toutes les sessions",
+        "title": "Déconnecter toutes les sessions",
+        "confirmOwn": "Toutes vos sessions seront fermées, y compris sur cet appareil : vous devrez vous reconnecter.\nSi vous pensez que votre compte est compromis, changez plutôt votre mot de passe : cela ferme aussi toutes les sessions.",
+        "confirmUser": "Toutes les sessions de cet utilisateur seront fermées : il devra se reconnecter."
+      }
     }
   },
   "auth": {
@@ -193,7 +208,10 @@
           "assigned": "Rôle assigné avec succès",
           "removed": "Rôle retiré avec succès"
         },
-        "deleted": "Utilisateur supprimé"
+        "deleted": "Utilisateur supprimé",
+        "session": {
+          "not_found": "Session introuvable"
+        }
       },
       "role": {
         "not_found": "Rôle introuvable",
@@ -268,19 +286,7 @@
       }
     },
     "sessions": {
-      "title": "Mes sessions connectées",
-      "empty": "Aucune session active",
-      "columns": {
-        "createdAt": "Connecté le",
-        "expiresAt": "Expire le",
-        "actions": "Actions"
-      },
-      "disconnect": "Déconnecter",
-      "logoutAll": {
-        "button": "Déconnecter toutes les sessions",
-        "title": "Déconnecter toutes les sessions",
-        "confirm": "Toutes vos sessions seront fermées, y compris sur cet appareil : vous devrez vous reconnecter.\nSi vous pensez que votre compte est compromis, changez plutôt votre mot de passe : cela ferme aussi toutes les sessions."
-      }
+      "title": "Mes sessions connectées"
     }
   },
   "layout": {
@@ -341,7 +347,8 @@
           "info": "Informations",
           "security": "Sécurité",
           "roles": "Rôles",
-          "danger": "Zone de danger"
+          "danger": "Zone de danger",
+          "sessions": "Sessions actives"
         },
         "fields": {
           "id": "ID",
