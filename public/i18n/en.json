@@ -32,6 +32,15 @@
         "confirmOwn": "All your sessions will be closed, including on this device: you will need to sign in again.\nIf you think your account is compromised, change your password instead: it also closes every session.",
         "confirmUser": "All this user's sessions will be closed: they will need to sign in again."
       }
+    },
+    "paginator": {
+      "itemsPerPage": "Items per page",
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "lastPage": "Last page",
+      "range": "{{ start }} – {{ end }} of {{ total }}",
+      "rangeEmpty": "0 of {{ total }}"
     }
   },
   "auth": {
