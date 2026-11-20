@@ -41,6 +41,35 @@
       "lastPage": "Dernière page",
       "range": "{{ start }} – {{ end }} sur {{ total }}",
       "rangeEmpty": "0 sur {{ total }}"
+    },
+    "title": {
+      "dashboard": "Tableau de bord",
+      "auth": {
+        "login": "Connexion",
+        "register": "Créer un compte",
+        "verifyEmail": "Vérifiez votre email",
+        "emailConfirmed": "Confirmation de l'email",
+        "forgotPassword": "Mot de passe oublié",
+        "resetPassword": "Nouveau mot de passe"
+      },
+      "me": {
+        "profile": "Mon profil"
+      },
+      "admin": {
+        "users": "Utilisateurs",
+        "user": "Utilisateur",
+        "roles": "Rôles",
+        "roleCreate": "Créer un rôle",
+        "role": "Rôle",
+        "audit": "Journal d'audit",
+        "tasks": "Tâches"
+      },
+      "errors": {
+        "unauthorized": "401 – Accès non autorisé",
+        "forbidden": "403 – Accès refusé",
+        "notFound": "404 – Page introuvable",
+        "workInProgress": "En construction"
+      }
     }
   },
   "auth": {

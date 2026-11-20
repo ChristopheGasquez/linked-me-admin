@@ -19,6 +19,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        title: 'common.title.dashboard',
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
       },
     ],
@@ -41,6 +42,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        title: 'common.title.errors.unauthorized',
         loadComponent: () =>
           import('./features/errors/unauthorized/unauthorized').then((m) => m.Unauthorized),
       },
@@ -52,6 +54,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        title: 'common.title.errors.forbidden',
         loadComponent: () =>
           import('./features/errors/forbidden/forbidden').then((m) => m.Forbidden),
       },
@@ -63,6 +66,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        title: 'common.title.errors.workInProgress',
         loadComponent: () =>
           import('./features/errors/work-in-progress/work-in-progress').then(
             (m) => m.WorkInProgress,
@@ -76,6 +80,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        title: 'common.title.errors.notFound',
         loadComponent: () =>
           import('./features/errors/not-found/not-found').then((m) => m.NotFound),
       },
