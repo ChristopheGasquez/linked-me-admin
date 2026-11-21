@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatToolbar } from '@angular/material/toolbar';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -10,7 +10,16 @@ import pkg from '../../../../package.json';
 
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterOutlet, RouterLink, MatToolbar, MatButton, ThemeToggle, LangSwitcher, TranslocoPipe],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatToolbar,
+    MatButton,
+    ThemeToggle,
+    LangSwitcher,
+    TranslocoPipe,
+  ],
   templateUrl: './public-layout.html',
   styleUrl: './public-layout.scss',
 })

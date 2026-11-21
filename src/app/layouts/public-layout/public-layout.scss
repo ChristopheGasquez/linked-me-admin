@@ -12,6 +12,10 @@
         flex: 1;
         display: flex;
         gap: var(--lma-spacing-gap--sm);
+
+        a.active {
+          color: var(--mat-sys-primary);
+        }
       }
       &__actions {
         display: flex;
