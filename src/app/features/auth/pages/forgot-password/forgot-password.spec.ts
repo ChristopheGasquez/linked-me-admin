@@ -7,6 +7,7 @@ import { MatFormFieldHarness } from '@angular/material/form-field/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 
 import { fr, provideTestDefaults } from '../../../../../testing/test-providers';
+import { fakeTurnstile } from '../../../../../testing/turnstile-stub';
 import { ForgotPassword } from './forgot-password';
 
 describe('ForgotPassword', () => {
@@ -20,9 +21,15 @@ describe('ForgotPassword', () => {
     loader.getHarness(MatButtonHarness.with({ text: fr.auth.forgotPassword.submit }));
   const emailErrors = async () => (await loader.getHarness(MatFormFieldHarness)).getTextErrors();
 
-  // Fills the email like a user and submits the form
+  async function solveCaptcha(token = 'captcha-token') {
+    fakeTurnstile().solve(token);
+    await fixture.whenStable();
+  }
+
+  // Fills the email like a user, solves the captcha and submits the form
   async function submit(email = 'jo@test.dev') {
     await (await loader.getHarness(MatInputHarness)).setValue(email);
+    await solveCaptcha();
     await (await submitButton()).click();
   }
 
@@ -63,6 +70,7 @@ describe('ForgotPassword', () => {
       email: 'jo@test.dev',
       callbackUrl: `${window.location.origin}/auth/reset-password`,
     });
+    expect(request.request.headers.get('X-Turnstile-Token')).toBe('captcha-token');
     request.flush({ message: 'ok' });
     await fixture.whenStable();
 
@@ -74,11 +82,25 @@ describe('ForgotPassword', () => {
   it('disables the submit button while sending', async () => {
     await submit();
 
-    const button = await submitButton();
-    expect(await button.isDisabled()).toBe(true);
-
+    expect(await (await submitButton()).isDisabled()).toBe(true);
     await failRequest(429, { code: 'throttle.too_many_requests', params: { retryAfter: 60 } });
-    expect(await button.isDisabled()).toBe(false);
+  });
+
+  it('disables the submit button until the captcha is solved', async () => {
+    expect(await (await submitButton()).isDisabled()).toBe(true);
+
+    await solveCaptcha();
+
+    expect(await (await submitButton()).isDisabled()).toBe(false);
+  });
+
+  it('resets the captcha after an error', async () => {
+    await submit();
+    await failRequest(503, { code: 'captcha.unavailable' });
+
+    expect(header()).toContain(fr.api.captcha.unavailable);
+    expect(fakeTurnstile().reset).toHaveBeenCalledTimes(1);
+    expect(await (await submitButton()).isDisabled()).toBe(true);
   });
 
   it('shows the throttle delay in minutes and keeps the form', async () => {

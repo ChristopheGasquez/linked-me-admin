@@ -85,6 +85,8 @@ describe('ResetPassword', () => {
 
     const request = backend.expectOne('/auth/reset-password');
     expect(request.request.body).toEqual({ token: 'reset-token', password: 'new-secret-123' });
+    // Captcha only on register, login, forgot-password and resend-verification
+    expect(request.request.headers.has('X-Turnstile-Token')).toBe(false);
     request.flush({ message: 'ok' });
     await harness.fixture.whenStable();
 

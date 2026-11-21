@@ -70,6 +70,9 @@
         "notFound": "404 – Page introuvable",
         "workInProgress": "En construction"
       }
+    },
+    "turnstile": {
+      "loadError": "Impossible de charger la vérification anti-robot. Désactivez votre bloqueur de publicité ou rechargez la page."
     }
   },
   "auth": {
@@ -286,7 +289,12 @@
       "too_many_requests": "Trop de tentatives. Réessayez dans {{ retryAfter }}."
     },
     "forbidden": "Vous n'avez pas la permission d'effectuer cette action",
-    "unknown": "Une erreur est survenue, réessaie plus tard"
+    "unknown": "Une erreur est survenue, réessaie plus tard",
+    "captcha": {
+      "missing": "Veuillez compléter la vérification anti-robot",
+      "invalid": "La vérification anti-robot a expiré ou est invalide, réessayez",
+      "unavailable": "Vérification anti-robot indisponible, réessayez dans un instant"
+    }
   },
   "me": {
     "profile": {

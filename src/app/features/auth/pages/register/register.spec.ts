@@ -8,6 +8,7 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import { Router } from '@angular/router';
 
 import { fr, provideTestDefaults } from '../../../../../testing/test-providers';
+import { fakeTurnstile } from '../../../../../testing/turnstile-stub';
 import { Register } from './register';
 
 describe('Register', () => {
@@ -24,12 +25,18 @@ describe('Register', () => {
       (await loader.getAllHarnesses(MatFormFieldHarness)).map((field) => field.getTextErrors()),
     );
 
-  // Fills the form like a user and submits it
+  async function solveCaptcha(token = 'captcha-token') {
+    fakeTurnstile().solve(token);
+    await fixture.whenStable();
+  }
+
+  // Fills the form like a user, solves the captcha and submits it
   async function submit(name = 'Jo', email = 'jo@test.dev', password = 'secret-123') {
     const [nameInput, emailInput, passwordInput] = await loader.getAllHarnesses(MatInputHarness);
     await nameInput.setValue(name);
     await emailInput.setValue(email);
     await passwordInput.setValue(password);
+    await solveCaptcha();
     await (await submitButton()).click();
   }
 
@@ -81,6 +88,7 @@ describe('Register', () => {
       password: 'secret-123',
       callbackUrl: `${window.location.origin}/auth/email-confirmed`,
     });
+    expect(request.request.headers.get('X-Turnstile-Token')).toBe('captcha-token');
     request.flush({ id: 1 });
     await fixture.whenStable();
 
@@ -92,11 +100,24 @@ describe('Register', () => {
   it('disables the submit button while registering', async () => {
     await submit();
 
-    const button = await submitButton();
-    expect(await button.isDisabled()).toBe(true);
-
+    expect(await (await submitButton()).isDisabled()).toBe(true);
     await failRegister(409, { code: 'auth.register.conflict' });
-    expect(await button.isDisabled()).toBe(false);
+  });
+
+  it('disables the submit button until the captcha is solved', async () => {
+    expect(await (await submitButton()).isDisabled()).toBe(true);
+
+    await solveCaptcha();
+
+    expect(await (await submitButton()).isDisabled()).toBe(false);
+  });
+
+  it('resets the captcha after an error', async () => {
+    await submit();
+    await failRegister(409, { code: 'auth.register.conflict' });
+
+    expect(fakeTurnstile().reset).toHaveBeenCalledTimes(1);
+    expect(await (await submitButton()).isDisabled()).toBe(true);
   });
 
   it('shows the conflict message when the email is taken', async () => {

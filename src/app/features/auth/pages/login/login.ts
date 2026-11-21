@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -19,6 +19,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { Turnstile } from '../../../../shared/components/turnstile/turnstile';
 import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
@@ -44,12 +45,15 @@ import { applyValidationErrors } from '../../../../shared/utils/form-validation'
     MatCardSubtitle,
     RouterLink,
     TranslocoDirective,
+    Turnstile,
   ],
 })
 export class Login {
   #formBuilder: FormBuilder = inject(FormBuilder);
   #authService = inject(AuthService);
   #router = inject(Router);
+
+  readonly captcha = viewChild.required(Turnstile);
 
   showPassword = signal(false);
   loading = signal(false);
@@ -63,7 +67,8 @@ export class Login {
   });
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    const captchaToken = this.captcha().token();
+    if (this.form.invalid || !captchaToken) return;
 
     const { email, password } = this.form.getRawValue();
     this.error.set(null);
@@ -71,7 +76,7 @@ export class Login {
     this.emailToResend.set(null);
     this.loading.set(true);
     this.#authService
-      .login(email, password)
+      .login(email, password, captchaToken)
       .pipe(
         tap(() => this.#router.navigate(['/dashboard'])),
         catchError((err: HttpErrorResponse) => {
@@ -85,19 +90,23 @@ export class Login {
           }
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          this.loading.set(false);
+          this.captcha().reset();
+        }),
       )
       .subscribe();
   }
 
   resendVerificationEmail(): void {
     const email = this.emailToResend();
-    if (!email) return;
+    const captchaToken = this.captcha().token();
+    if (!email || !captchaToken) return;
 
     this.error.set(null);
     this.loading.set(true);
     this.#authService
-      .resendVerificationEmail(email)
+      .resendVerificationEmail(email, captchaToken)
       .pipe(
         tap((response) => {
           this.success.set(response.code);
@@ -107,7 +116,10 @@ export class Login {
           this.error.set(toApiError(err));
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          this.loading.set(false);
+          this.captcha().reset();
+        }),
       )
       .subscribe();
   }

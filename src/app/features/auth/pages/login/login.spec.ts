@@ -8,6 +8,7 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import { Router } from '@angular/router';
 
 import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fakeTurnstile } from '../../../../../testing/turnstile-stub';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Login } from './login';
 
@@ -18,6 +19,8 @@ describe('Login', () => {
 
   const header = () =>
     (fixture.nativeElement as HTMLElement).querySelector('mat-card-header')!.textContent!;
+  const submitButton = () =>
+    loader.getHarness(MatButtonHarness.with({ text: fr.auth.login.submit }));
   const resendButton = () =>
     loader.getHarnessOrNull(MatButtonHarness.with({ text: fr.auth.login.resendEmail }));
   const fieldErrors = async () =>
@@ -25,12 +28,18 @@ describe('Login', () => {
       (await loader.getAllHarnesses(MatFormFieldHarness)).map((field) => field.getTextErrors()),
     );
 
-  // Fills the form like a user and submits it
+  async function solveCaptcha(token = 'captcha-token') {
+    fakeTurnstile().solve(token);
+    await fixture.whenStable();
+  }
+
+  // Fills the form like a user, solves the captcha and submits it
   async function submit(email = 'jo@test.dev', password = 'secret') {
     const [emailInput, passwordInput] = await loader.getAllHarnesses(MatInputHarness);
     await emailInput.setValue(email);
     await passwordInput.setValue(password);
-    await (await loader.getHarness(MatButtonHarness.with({ text: fr.auth.login.submit }))).click();
+    await solveCaptcha();
+    await (await submitButton()).click();
   }
 
   // Answers the pending login request with an API error
@@ -71,6 +80,7 @@ describe('Login', () => {
 
     const login = backend.expectOne('/auth/login');
     expect(login.request.body).toEqual({ email: 'jo@test.dev', password: 'secret' });
+    expect(login.request.headers.get('X-Turnstile-Token')).toBe('captcha-token');
     login.flush({ access_token: 'access-1', refresh_token: 'refresh-1', user: {} });
     backend.expectOne('/auth/me').flush(testUser(['realm:profile']));
     await fixture.whenStable();
@@ -83,11 +93,43 @@ describe('Login', () => {
   it('disables the submit button while signing in', async () => {
     await submit();
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: fr.auth.login.submit }));
-    expect(await button.isDisabled()).toBe(true);
-
+    expect(await (await submitButton()).isDisabled()).toBe(true);
     await failLogin(401, { code: 'auth.login.invalid_credentials' });
-    expect(await button.isDisabled()).toBe(false);
+  });
+
+  describe('captcha', () => {
+    it('disables the submit button until the captcha is solved, and again once it expires', async () => {
+      expect(await (await submitButton()).isDisabled()).toBe(true);
+
+      await solveCaptcha();
+      expect(await (await submitButton()).isDisabled()).toBe(false);
+
+      fakeTurnstile().expire();
+      await fixture.whenStable();
+      expect(await (await submitButton()).isDisabled()).toBe(true);
+    });
+
+    it('resets the captcha after an error, then accepts a new token', async () => {
+      await submit();
+      await failLogin(401, { code: 'auth.login.invalid_credentials' });
+
+      expect(fakeTurnstile().reset).toHaveBeenCalledTimes(1);
+      expect(await (await submitButton()).isDisabled()).toBe(true);
+
+      await solveCaptcha('captcha-token-2');
+      expect(await (await submitButton()).isDisabled()).toBe(false);
+    });
+
+    it.each([
+      [400, 'captcha.missing', fr.api.captcha.missing],
+      [403, 'captcha.invalid', fr.api.captcha.invalid],
+      [503, 'captcha.unavailable', fr.api.captcha.unavailable],
+    ])('shows the captcha error (%s %s)', async (status, code, message) => {
+      await submit();
+      await failLogin(status, { code });
+
+      expect(header()).toContain(message);
+    });
   });
 
   it.each([
@@ -128,9 +170,11 @@ describe('Login', () => {
   });
 
   describe('resend verification email', () => {
+    // The failed login resets the captcha: the resend needs a new token
     async function loginWithUnverifiedEmail() {
       await submit();
       await failLogin(401, { code: 'auth.login.email_not_verified' });
+      await solveCaptcha('captcha-token-2');
     }
 
     it('confirms the email was sent and hides the button', async () => {
@@ -142,6 +186,7 @@ describe('Login', () => {
         email: 'jo@test.dev',
         callbackUrl: `${window.location.origin}/auth/email-confirmed`,
       });
+      expect(request.request.headers.get('X-Turnstile-Token')).toBe('captcha-token-2');
       request.flush({ message: 'sent', code: 'auth.email.resend_sent' });
       await fixture.whenStable();
 
@@ -163,6 +208,7 @@ describe('Login', () => {
 
       expect(header()).toContain('2 min');
       expect(await resendButton()).not.toBeNull();
+      expect(fakeTurnstile().reset).toHaveBeenCalledTimes(2);
     });
   });
 });
