@@ -8,10 +8,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatChipHarness } from '@angular/material/chips/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatSelectHarness } from '@angular/material/select/testing';
-import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { provideRouter, Router, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
 import { UserAdminResponse } from '../../../../shared/models/user-admin.model';
 import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
@@ -102,7 +104,7 @@ describe('UserDetail', () => {
               data: { breadcrumb: 'layout.private.sidenav.users' },
               children: [
                 { path: '', component: ListStub },
-                { path: ':id', component: UserDetail },
+                { path: ':id', title: 'common.title.admin.user', component: UserDetail },
               ],
             },
             {
@@ -116,6 +118,7 @@ describe('UserDetail', () => {
           ],
           withComponentInputBinding(),
         ),
+        { provide: TitleStrategy, useExisting: TranslatedTitleStrategy },
       ],
     });
     backend = TestBed.inject(HttpTestingController);
@@ -421,6 +424,32 @@ describe('UserDetail', () => {
 
       expect(text()).not.toContain(fr.admin.users.detail.sections.sessions);
       backend.expectNone((r) => r.url === '/admin/users/5/sessions');
+    });
+  });
+
+  describe('tab title', () => {
+    const title = () => TestBed.inject(Title).getTitle();
+
+    it('shows the user name once the user is loaded', async () => {
+      await harness.navigateByUrl('/admin/users/5', UserDetail);
+      expect(title()).toBe(`${fr.common.title.admin.user} — LinkedMe Admin`);
+
+      TestBed.tick();
+      backend
+        .expectOne((request) => request.url === '/admin/roles')
+        .flush({ data: [], meta: { total: 0, page: 1, limit: 100, totalPages: 0 } });
+      answerUser();
+      await harness.fixture.whenStable();
+
+      expect(title()).toBe(`Jo — ${fr.common.title.admin.user} — LinkedMe Admin`);
+    });
+
+    it('forgets the user name when leaving the page', async () => {
+      await open();
+
+      await harness.navigateByUrl('/admin/users');
+
+      expect(title()).toBe('LinkedMe Admin');
     });
   });
 });

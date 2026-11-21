@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
@@ -62,6 +63,7 @@ export class UserDetail implements HasUnsavedChanges {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #urlService = inject(UrlService);
+  #titleStrategy = inject(TranslatedTitleStrategy);
 
   readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
   readonly backLink = this.#urlService.listLink(this.backUrl);
@@ -98,6 +100,11 @@ export class UserDetail implements HasUnsavedChanges {
     const roles = this.#rolesResource.hasValue() ? this.#rolesResource.value().data : [];
     return roles.filter((role) => !owned.has(role.id));
   });
+
+  constructor() {
+    effect(() => this.#titleStrategy.setSubject(this.user()?.name ?? null));
+    inject(DestroyRef).onDestroy(() => this.#titleStrategy.setSubject(null));
+  }
 
   hasUnsavedChanges(): boolean {
     return !this.acting() && !!this.roleToAssign.value;

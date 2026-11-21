@@ -8,10 +8,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatFormFieldHarness } from '@angular/material/form-field/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
-import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { provideRouter, Router, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { PermissionResponse } from '../../../../shared/models/permission.model';
 import { RoleResponse } from '../../../../shared/models/role.model';
 import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
@@ -162,13 +164,14 @@ describe('RoleDetail', () => {
               data: { breadcrumb: 'layout.private.sidenav.roles' },
               children: [
                 { path: '', component: ListStub },
-                { path: 'new', component: RoleDetail },
-                { path: ':id', component: RoleDetail },
+                { path: 'new', title: 'common.title.admin.roleCreate', component: RoleDetail },
+                { path: ':id', title: 'common.title.admin.role', component: RoleDetail },
               ],
             },
           ],
           withComponentInputBinding(),
         ),
+        { provide: TitleStrategy, useExisting: TranslatedTitleStrategy },
       ],
     });
     backend = TestBed.inject(HttpTestingController);
@@ -548,5 +551,29 @@ describe('RoleDetail', () => {
 
     expect(await editButton()).toBeNull();
     expect(await deleteButton()).toBeNull();
+  });
+
+  describe('tab title', () => {
+    const title = () => TestBed.inject(Title).getTitle();
+
+    it('shows the role name once the role is loaded', async () => {
+      await open();
+
+      expect(title()).toBe(`EDITOR — ${fr.common.title.admin.role} — LinkedMe Admin`);
+    });
+
+    it('keeps the generic title while creating a role', async () => {
+      await openCreate();
+
+      expect(title()).toBe(`${fr.common.title.admin.roleCreate} — LinkedMe Admin`);
+    });
+
+    it('forgets the role name when leaving the page', async () => {
+      await open();
+
+      await harness.navigateByUrl('/admin/roles');
+
+      expect(title()).toBe('LinkedMe Admin');
+    });
   });
 });
