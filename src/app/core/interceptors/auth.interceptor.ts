@@ -10,12 +10,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
 
   const token = authService.getAccessToken();
-  const authReq = token
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req;
+  const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
   return next(authReq).pipe(
-    catchError(error => {
+    catchError((error) => {
       if (!(error instanceof HttpErrorResponse) || error.status !== 401) {
         return throwError(() => error);
       }
@@ -33,11 +31,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return authService.refreshTokens().pipe(
-        switchMap(newToken => {
+        switchMap((newToken) => {
           const retryReq = req.clone({ setHeaders: { Authorization: `Bearer ${newToken}` } });
           return next(retryReq);
         }),
-        catchError(refreshError => {
+        catchError((refreshError) => {
           router.navigate(['/auth/login']);
           return throwError(() => refreshError);
         }),

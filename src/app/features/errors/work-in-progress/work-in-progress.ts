@@ -18,7 +18,15 @@ export class WorkInProgress {
 
   actions = computed<InfoCardAction[]>(() => [
     this.#authService.isAuthenticated()
-      ? { type: 'link', labelKey: 'errors.workInProgress.dashboardLink', routerLink: ['/', 'dashboard'] }
-      : { type: 'link', labelKey: 'errors.workInProgress.loginLink', routerLink: ['/', 'auth', 'login'] },
+      ? {
+          type: 'link',
+          labelKey: 'errors.workInProgress.dashboardLink',
+          routerLink: ['/', 'dashboard'],
+        }
+      : {
+          type: 'link',
+          labelKey: 'errors.workInProgress.loginLink',
+          routerLink: ['/', 'auth', 'login'],
+        },
   ]);
 }

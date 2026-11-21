@@ -20,6 +20,9 @@ export class ProfilesApiService {
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<ApiMessage> {
-    return this.#http.patch<ApiMessage>(`${this.baseUrl}/me/password`, { currentPassword, newPassword });
+    return this.#http.patch<ApiMessage>(`${this.baseUrl}/me/password`, {
+      currentPassword,
+      newPassword,
+    });
   }
 }

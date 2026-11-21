@@ -19,6 +19,10 @@ export class Forbidden {
   actions = computed<InfoCardAction[]>(() => [
     this.#authService.isAuthenticated()
       ? { type: 'link', labelKey: 'errors.forbidden.dashboardLink', routerLink: ['/', 'dashboard'] }
-      : { type: 'link', labelKey: 'errors.forbidden.loginLink', routerLink: ['/', 'auth', 'login'] },
+      : {
+          type: 'link',
+          labelKey: 'errors.forbidden.loginLink',
+          routerLink: ['/', 'auth', 'login'],
+        },
   ]);
 }

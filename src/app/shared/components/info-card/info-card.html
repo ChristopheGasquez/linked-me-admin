@@ -1,5 +1,7 @@
 <ng-container *transloco="let t">
-  <mat-card class="info-card" appearance="outlined">
+  <mat-card
+    class="info-card"
+    appearance="outlined">
     <mat-card-header class="info-card__header">
       <mat-card-title class="info-card__header__title">
         <h2>{{ t(titleKey()) }}</h2>
@@ -18,7 +20,10 @@
       <mat-card-actions class="info-card__actions">
         @for (action of actions(); track action.labelKey) {
           @if (action.type === 'link') {
-            <a class="info-card__actions__item" matButton [routerLink]="action.routerLink">
+            <a
+              class="info-card__actions__item"
+              matButton
+              [routerLink]="action.routerLink">
               {{ t(action.labelKey) }}
             </a>
           } @else {

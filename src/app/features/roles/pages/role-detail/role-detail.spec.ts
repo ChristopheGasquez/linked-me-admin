@@ -132,14 +132,12 @@ describe('RoleDetail', () => {
     await (await box('profile:read:own')).check();
     await (await createButton())!.click();
     await answerDialog(true);
-    backend
-      .expectOne('/admin/roles')
-      .flush({
-        id: 7,
-        name: 'EDITOR',
-        createdAt: editor().createdAt,
-        updatedAt: editor().updatedAt,
-      });
+    backend.expectOne('/admin/roles').flush({
+      id: 7,
+      name: 'EDITOR',
+      createdAt: editor().createdAt,
+      updatedAt: editor().updatedAt,
+    });
   }
 
   // After creation the page navigates to the new role, which loads again
@@ -464,15 +462,13 @@ describe('RoleDetail', () => {
       await (await loader.getHarness(MatInputHarness)).setValue('EDITOR');
       await (await createButton())!.click();
       await answerDialog(true);
-      backend
-        .expectOne('/admin/roles')
-        .flush(
-          {
-            code: 'validation.failed',
-            params: { fields: [{ key: 'name', code: 'validation.name.matches' }] },
-          },
-          { status: 400, statusText: 'Error' },
-        );
+      backend.expectOne('/admin/roles').flush(
+        {
+          code: 'validation.failed',
+          params: { fields: [{ key: 'name', code: 'validation.name.matches' }] },
+        },
+        { status: 400, statusText: 'Error' },
+      );
       await harness.fixture.whenStable();
 
       expect(text()).toContain(fr.api.validation.failed);

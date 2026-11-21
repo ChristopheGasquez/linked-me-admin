@@ -90,7 +90,11 @@ export class ProfileSecurity implements OnInit, OnDestroy {
   }
 
   hasUnsavedChanges(): boolean {
-    return this.passwordEditing() && !this.passwordSuccess() && Object.values(this.securityForm.getRawValue()).some(Boolean);
+    return (
+      this.passwordEditing() &&
+      !this.passwordSuccess() &&
+      Object.values(this.securityForm.getRawValue()).some(Boolean)
+    );
   }
 
   enable(): void {

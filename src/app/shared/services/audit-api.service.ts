@@ -16,6 +16,8 @@ export class AuditApiService {
   }
 
   getAuditLogs(params: AuditLogListParams = {}): Observable<PaginatedResponse<AuditLogResponse>> {
-    return this.#http.get<PaginatedResponse<AuditLogResponse>>(this.baseUrl, { params: { ...params } });
+    return this.#http.get<PaginatedResponse<AuditLogResponse>>(this.baseUrl, {
+      params: { ...params },
+    });
   }
 }
