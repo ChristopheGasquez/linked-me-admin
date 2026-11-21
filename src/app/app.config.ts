@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     { provide: MatPaginatorIntl, useClass: TranslatedPaginatorIntl },
-    { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
+    { provide: TitleStrategy, useExisting: TranslatedTitleStrategy },
     provideTransloco({
       config: {
         availableLangs: [...AVAILABLE_LANGS],

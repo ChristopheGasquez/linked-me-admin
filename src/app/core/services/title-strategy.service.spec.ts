@@ -23,7 +23,7 @@ describe('TranslatedTitleStrategy', () => {
           { path: 'roles', title: 'common.title.admin.roles', component: PageStub },
           { path: 'untitled', component: PageStub },
         ]),
-        { provide: TitleStrategy, useClass: TranslatedTitleStrategy },
+        { provide: TitleStrategy, useExisting: TranslatedTitleStrategy },
       ],
     });
     router = TestBed.inject(Router);
@@ -47,5 +47,25 @@ describe('TranslatedTitleStrategy', () => {
     await router.navigateByUrl('/untitled');
 
     expect(title()).toBe('LinkedMe Admin');
+  });
+
+  it('shows the page subject before the page title, in every language', async () => {
+    await router.navigateByUrl('/roles');
+
+    TestBed.inject(TranslatedTitleStrategy).setSubject('ADMIN');
+    expect(title()).toBe(`ADMIN — ${fr.common.title.admin.roles} — LinkedMe Admin`);
+
+    TestBed.inject(TranslocoService).setActiveLang('en');
+    expect(title()).toBe(`ADMIN — ${en.common.title.admin.roles} — LinkedMe Admin`);
+  });
+
+  it('goes back to the page title once the subject is cleared', async () => {
+    await router.navigateByUrl('/roles');
+    const strategy = TestBed.inject(TranslatedTitleStrategy);
+
+    strategy.setSubject('ADMIN');
+    strategy.setSubject(null);
+
+    expect(title()).toBe(`${fr.common.title.admin.roles} — LinkedMe Admin`);
   });
 });
