@@ -68,13 +68,14 @@
             <mat-error>{{ t(form.controls['password'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
+        <app-turnstile />
       </mat-card-content>
       <mat-card-actions class="register-card__actions">
         <button
           class="register-card__actions__item"
           matButton="filled"
           type="submit"
-          [disabled]="loading()">
+          [disabled]="loading() || !captcha().token()">
           {{ t('auth.register.submit') }}
         </button>
         <a

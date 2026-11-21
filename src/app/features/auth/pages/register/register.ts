@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -19,6 +19,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { Turnstile } from '../../../../shared/components/turnstile/turnstile';
 import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
@@ -44,12 +45,15 @@ import { applyValidationErrors } from '../../../../shared/utils/form-validation'
     MatCardSubtitle,
     RouterLink,
     TranslocoDirective,
+    Turnstile,
   ],
 })
 export class Register {
   #formBuilder: FormBuilder = inject(FormBuilder);
   #authService = inject(AuthService);
   #router = inject(Router);
+
+  readonly captcha = viewChild.required(Turnstile);
 
   showPassword = signal(false);
   loading = signal(false);
@@ -62,13 +66,14 @@ export class Register {
   });
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    const captchaToken = this.captcha().token();
+    if (this.form.invalid || !captchaToken) return;
 
     const { name, email, password } = this.form.getRawValue();
     this.error.set(null);
     this.loading.set(true);
     this.#authService
-      .register(name, email, password)
+      .register(name, email, password, captchaToken)
       .pipe(
         tap(() => this.#router.navigate(['/', 'auth', 'verify-email'], { queryParams: { email } })),
         catchError((err: HttpErrorResponse) => {
@@ -79,7 +84,10 @@ export class Register {
           }
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          this.loading.set(false);
+          this.captcha().reset();
+        }),
       )
       .subscribe();
   }

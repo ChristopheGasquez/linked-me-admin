@@ -22,13 +22,18 @@ export class AuthService {
   readonly isAuthenticated = signal<boolean>(!!localStorage.getItem(this.ACCESS_TOKEN_KEY));
   readonly currentUser = signal<MeResponse | null>(null);
 
-  register(name: string, email: string, password: string): Observable<RegisterResponse> {
+  register(
+    name: string,
+    email: string,
+    password: string,
+    captchaToken: string,
+  ): Observable<RegisterResponse> {
     const callbackUrl = `${window.location.origin}/auth/email-confirmed`;
-    return this.#authApi.register({ name, email, password, callbackUrl });
+    return this.#authApi.register({ name, email, password, callbackUrl }, captchaToken);
   }
 
-  login(email: string, password: string): Observable<void> {
-    return this.#authApi.login({ email, password }).pipe(
+  login(email: string, password: string, captchaToken: string): Observable<void> {
+    return this.#authApi.login({ email, password }, captchaToken).pipe(
       tap((response) => {
         localStorage.setItem(this.ACCESS_TOKEN_KEY, response.access_token);
         localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refresh_token);
@@ -45,14 +50,14 @@ export class AuthService {
     );
   }
 
-  resendVerificationEmail(email: string): Observable<ApiMessage> {
+  resendVerificationEmail(email: string, captchaToken: string): Observable<ApiMessage> {
     const callbackUrl = `${window.location.origin}/auth/email-confirmed`;
-    return this.#authApi.resendVerificationEmail(email, callbackUrl);
+    return this.#authApi.resendVerificationEmail(email, callbackUrl, captchaToken);
   }
 
-  forgotPassword(email: string): Observable<ApiMessage> {
+  forgotPassword(email: string, captchaToken: string): Observable<ApiMessage> {
     const callbackUrl = `${window.location.origin}/auth/reset-password`;
-    return this.#authApi.forgotPassword(email, callbackUrl);
+    return this.#authApi.forgotPassword(email, callbackUrl, captchaToken);
   }
 
   resetPassword(token: string, password: string): Observable<ApiMessage> {

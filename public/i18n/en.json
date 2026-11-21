@@ -70,6 +70,9 @@
         "notFound": "404 – Page not found",
         "workInProgress": "Work in progress"
       }
+    },
+    "turnstile": {
+      "loadError": "Unable to load the anti-bot check. Disable your ad blocker or reload the page."
     }
   },
   "auth": {
@@ -286,7 +289,12 @@
       "too_many_requests": "Too many requests. Please try again in {{ retryAfter }}."
     },
     "forbidden": "You are not allowed to perform this action",
-    "unknown": "An error occurred, please try again later"
+    "unknown": "An error occurred, please try again later",
+    "captcha": {
+      "missing": "Please complete the anti-bot check",
+      "invalid": "The anti-bot check expired or is invalid, please try again",
+      "unavailable": "Anti-bot check unavailable, please try again in a moment"
+    }
   },
   "me": {
     "profile": {

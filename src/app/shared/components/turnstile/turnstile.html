@@ -1,0 +1,8 @@
+<div #container></div>
+@if (loadFailed()) {
+  <p
+    class="turnstile__error"
+    *transloco="let t">
+    {{ t('common.turnstile.loadError') }}
+  </p>
+}
