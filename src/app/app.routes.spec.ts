@@ -1,14 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { By } from '@angular/platform-browser';
 import { provideRouter, Route, Router, Routes } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 
 import en from '../../public/i18n/en.json';
 import { fr, provideTestDefaults, testUser } from '../testing/test-providers';
 import { routes } from './app.routes';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { AuthService } from './core/services/auth.service';
+import { AuditLogs } from './features/audit/pages/audit-logs/audit-logs';
 import { auditRoutes } from './features/audit/audit.routes';
 import { profileRoutes } from './features/profile/profile.routes';
+import { RolesList } from './features/roles/pages/roles-list/roles-list';
 import { rolesRoutes } from './features/roles/roles.routes';
+import { UsersList } from './features/users/pages/users-list/users-list';
 import { usersRoutes } from './features/users/users.routes';
 
 // Every route rendering a page (component or loadComponent, no children), lazy routes included
@@ -119,6 +125,22 @@ describe('App routes', () => {
 
       signIn(permission);
       expect(await landingOf(url)).toBe(url);
+    });
+
+    // Provided by the lazy admin routes, not app.config (keeps the paginator out of the initial bundle)
+    it.each([
+      ['/admin/users', UsersList],
+      ['/admin/roles', RolesList],
+      ['/admin/audit', AuditLogs],
+    ])('gives %s the translated paginator labels', async (url, page) => {
+      signIn('realm:admin', 'realm:audit');
+      const harness = await RouterTestingHarness.create(url);
+
+      const intl = harness.fixture.debugElement
+        .query(By.directive(page))
+        .injector.get(MatPaginatorIntl);
+
+      expect(intl.itemsPerPageLabel).toBe(fr.common.paginator.itemsPerPage);
     });
 
     it.each(['/auth/login', '/auth/register', '/auth/verify-email', '/auth/forgot-password'])(
