@@ -7,6 +7,7 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { fr, provideTestDefaults } from '../../../../../testing/test-providers';
+import { fakeTurnstile } from '../../../../../testing/turnstile-stub';
 import { VerifyEmail } from './verify-email';
 
 describe('VerifyEmail', () => {
@@ -20,10 +21,19 @@ describe('VerifyEmail', () => {
   const backToLogin = () =>
     loader.getHarnessOrNull(MatButtonHarness.with({ text: fr.auth.verifyEmail.backToLogin }));
 
-  // Opens the page the way register redirects to it
-  async function open(url = '/verify-email?email=jo%40test.dev') {
+  const widget = () => harness.routeNativeElement!.querySelector('app-turnstile');
+
+  async function solveCaptcha(token = 'captcha-token') {
+    fakeTurnstile().solve(token);
+    await harness.fixture.whenStable();
+  }
+
+  // Opens the page the way register redirects to it, captcha solved when shown
+  async function open(url = '/verify-email?email=jo%40test.dev', { solve = true } = {}) {
     await harness.navigateByUrl(url, VerifyEmail);
+    await harness.fixture.whenStable();
     loader = TestbedHarnessEnvironment.loader(harness.fixture);
+    if (solve && widget()) await solveCaptcha();
   }
 
   // Clicks resend and answers the request with the given response
@@ -54,6 +64,17 @@ describe('VerifyEmail', () => {
 
     expect(await resendButton()).toBeNull();
     expect(await backToLogin()).not.toBeNull();
+    expect(widget()).toBeNull();
+  });
+
+  it('disables the resend button until the captcha is solved', async () => {
+    await open(undefined, { solve: false });
+
+    expect(await (await resendButton())!.isDisabled()).toBe(true);
+
+    await solveCaptcha();
+
+    expect(await (await resendButton())!.isDisabled()).toBe(false);
   });
 
   it('resends the verification email to the address from the url', async () => {
@@ -65,6 +86,7 @@ describe('VerifyEmail', () => {
       email: 'jo@test.dev',
       callbackUrl: `${window.location.origin}/auth/email-confirmed`,
     });
+    expect(request.request.headers.get('X-Turnstile-Token')).toBe('captcha-token');
     request.flush({ code: 'auth.email.resend_sent' });
   });
 
@@ -85,6 +107,8 @@ describe('VerifyEmail', () => {
     expect(header()).toContain(fr.api.auth.email.resend_sent);
     expect(await resendButton()).toBeNull();
     expect(await backToLogin()).not.toBeNull();
+    expect(widget()).toBeNull();
+    expect(fakeTurnstile().widgets.size).toBe(0);
   });
 
   it('shows the throttle delay in minutes and lets the user retry', async () => {
@@ -92,6 +116,10 @@ describe('VerifyEmail', () => {
     await resend({ code: 'throttle.too_many_requests', params: { retryAfter: 120 } }, 429);
 
     expect(header()).toContain('2 min');
+    expect(fakeTurnstile().reset).toHaveBeenCalledTimes(1);
+    expect(await (await resendButton())!.isDisabled()).toBe(true);
+
+    await solveCaptcha('captcha-token-2');
     expect(await (await resendButton())!.isDisabled()).toBe(false);
 
     await resend({ code: 'auth.email.resend_sent' });

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+
+  .turnstile__error {
+    text-align: center;
+    color: var(--mat-sys-error);
+    font-size: var(--lma-font-size--md);
+  }
+}

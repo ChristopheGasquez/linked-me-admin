@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -18,6 +18,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { Turnstile } from '../../../../shared/components/turnstile/turnstile';
 import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
 
@@ -40,11 +41,14 @@ import { applyValidationErrors } from '../../../../shared/utils/form-validation'
     MatInput,
     RouterLink,
     TranslocoDirective,
+    Turnstile,
   ],
 })
 export class ForgotPassword {
   #formBuilder = inject(FormBuilder);
   #authService = inject(AuthService);
+
+  readonly captcha = viewChild(Turnstile);
 
   loading = signal(false);
   submitted = signal(false);
@@ -55,13 +59,14 @@ export class ForgotPassword {
   });
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    const captchaToken = this.captcha()?.token();
+    if (this.form.invalid || !captchaToken) return;
 
     const { email } = this.form.getRawValue();
     this.error.set(null);
     this.loading.set(true);
     this.#authService
-      .forgotPassword(email)
+      .forgotPassword(email, captchaToken)
       .pipe(
         tap(() => this.submitted.set(true)),
         catchError((err: HttpErrorResponse) => {
@@ -72,7 +77,10 @@ export class ForgotPassword {
           }
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          this.loading.set(false);
+          this.captcha()?.reset();
+        }),
       )
       .subscribe();
   }

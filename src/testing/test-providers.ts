@@ -8,13 +8,16 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import en from '../../public/i18n/en.json';
 import fr from '../../public/i18n/fr.json';
 import { authInterceptor } from '../app/core/interceptors/auth.interceptor';
+import { TurnstileService } from '../app/core/services/turnstile.service';
 import { MeResponse } from '../app/shared/models/me.model';
+import { FakeTurnstileService } from './turnstile-stub';
 
 // Real translations, for assertions robust to wording changes (e.g. fr.common.cancel)
 export { fr };
 
 // App-like HTTP stack (real auth interceptor, mocked backend), empty router,
-// real translations (French active, loaded synchronously), Material animations off
+// real translations (French active, loaded synchronously), Material animations off,
+// fake Cloudflare captcha (never loads the real script)
 export function provideTestDefaults(): (Provider | EnvironmentProviders)[] {
   return [
     provideHttpClient(withInterceptors([authInterceptor])),
@@ -28,6 +31,7 @@ export function provideTestDefaults(): (Provider | EnvironmentProviders)[] {
       }),
     ),
     { provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } },
+    { provide: TurnstileService, useClass: FakeTurnstileService },
   ];
 }
 

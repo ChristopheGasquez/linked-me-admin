@@ -55,13 +55,14 @@
             <mat-error>{{ t(form.controls['password'].errors!['serverError']) }}</mat-error>
           }
         </mat-form-field>
+        <app-turnstile />
       </mat-card-content>
       <mat-card-actions class="login-card__actions">
         <button
           class="login-card__actions__item"
           matButton="filled"
           type="submit"
-          [disabled]="loading()">
+          [disabled]="loading() || !captcha().token()">
           {{ t('auth.login.submit') }}
         </button>
         @if (emailToResend()) {
@@ -70,7 +71,7 @@
             matButton="filled"
             type="button"
             color="warn"
-            [disabled]="loading()"
+            [disabled]="loading() || !captcha().token()"
             (click)="resendVerificationEmail()">
             {{ t('auth.login.resendEmail') }}
           </button>

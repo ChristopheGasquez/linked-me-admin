@@ -12,6 +12,7 @@
     </mat-card-header>
     <mat-card-content class="info-card__content">
       {{ t(descriptionKey()) }}
+      <ng-content />
     </mat-card-content>
     @if (actions().length) {
       <mat-card-actions class="info-card__actions">
