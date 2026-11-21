@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, numberAttribute, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,6 +17,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
 import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
@@ -60,6 +61,7 @@ export class RoleDetail implements HasUnsavedChanges {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #urlService = inject(UrlService);
+  #titleStrategy = inject(TranslatedTitleStrategy);
 
   readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
   readonly backLink = this.#urlService.listLink(this.backUrl);
@@ -136,6 +138,11 @@ export class RoleDetail implements HasUnsavedChanges {
       this.role()?.name === 'ADMIN' &&
       this.changes().removed.some((permission) => permission.name === 'admin:role:manage'),
   );
+
+  constructor() {
+    effect(() => this.#titleStrategy.setSubject(this.role()?.name ?? null));
+    inject(DestroyRef).onDestroy(() => this.#titleStrategy.setSubject(null));
+  }
 
   hasUnsavedChanges(): boolean {
     if (this.saving()) {
