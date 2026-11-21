@@ -18,7 +18,9 @@
           }}</mat-card-subtitle>
         }
         @if (success()) {
-          <mat-card-subtitle class="login-card__success">{{ t('api.' + success()) }}</mat-card-subtitle>
+          <mat-card-subtitle class="login-card__success">{{
+            t('api.' + success())
+          }}</mat-card-subtitle>
         }
       </mat-card-header>
       <mat-card-content class="login-card__content">

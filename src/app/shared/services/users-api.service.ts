@@ -18,7 +18,9 @@ export class UsersApiService {
   }
 
   getUsers(params: UserAdminListParams = {}): Observable<PaginatedResponse<UserAdminResponse>> {
-    return this.#http.get<PaginatedResponse<UserAdminResponse>>(this.baseUrl, { params: { ...params } });
+    return this.#http.get<PaginatedResponse<UserAdminResponse>>(this.baseUrl, {
+      params: { ...params },
+    });
   }
 
   getUserById(id: number): Observable<UserAdminResponse> {
@@ -37,7 +39,10 @@ export class UsersApiService {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/roles/${roleId}`);
   }
 
-  getSessions(id: number, params: PaginationParams = {}): Observable<PaginatedResponse<SessionResponse>> {
+  getSessions(
+    id: number,
+    params: PaginationParams = {},
+  ): Observable<PaginatedResponse<SessionResponse>> {
     return this.#http.get<PaginatedResponse<SessionResponse>>(`${this.baseUrl}/${id}/sessions`, {
       params: { ...params },
     });

@@ -1,4 +1,13 @@
-import { Component, computed, DestroyRef, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  numberAttribute,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,7 +29,10 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
-import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import {
+  ConfirmDialog,
+  ConfirmDialogData,
+} from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
 import { PermissionResponse } from '../../../../shared/models/permission.model';
@@ -76,7 +88,9 @@ export class RoleDetail implements HasUnsavedChanges {
   selected = signal<Set<string>>(new Set());
   actionSuccess = signal<string | null>(null);
   // Error passed through navigation state when permissions failed right after creation
-  actionError = signal<ActionError | null>(this.#router.currentNavigation()?.extras.state?.['error'] ?? null);
+  actionError = signal<ActionError | null>(
+    this.#router.currentNavigation()?.extras.state?.['error'] ?? null,
+  );
   deleteError = signal<ActionError | null>(null);
 
   nameControl = new FormControl('', {
@@ -103,7 +117,9 @@ export class RoleDetail implements HasUnsavedChanges {
     stream: () => this.#rolesApi.getPermissions({ limit: 100, sortBy: 'name', sortOrder: 'asc' }),
   });
 
-  readonly role = computed(() => (this.roleResource.hasValue() ? this.roleResource.value() : undefined));
+  readonly role = computed(() =>
+    this.roleResource.hasValue() ? this.roleResource.value() : undefined,
+  );
   readonly loadError = computed(() => {
     const err = this.roleResource.error() as HttpErrorResponse | undefined;
     return err ? toApiError(err) : null;
@@ -111,7 +127,9 @@ export class RoleDetail implements HasUnsavedChanges {
 
   readonly isEditable = computed(() => this.editing() || this.isCreate());
   readonly allPermissions = computed<PermissionResponse[]>(() =>
-    this.#permissionsResource.hasValue() ? this.#permissionsResource.value().data : (this.role()?.permissions ?? []),
+    this.#permissionsResource.hasValue()
+      ? this.#permissionsResource.value().data
+      : (this.role()?.permissions ?? []),
   );
   readonly groups = computed(() => {
     const groups = new Map<string, PermissionResponse[]>();
@@ -121,18 +139,26 @@ export class RoleDetail implements HasUnsavedChanges {
     }
     return [...groups].map(([name, permissions]) => ({ name, permissions }));
   });
-  readonly owned = computed(() => new Set(this.role()?.permissions.map((permission) => permission.name)));
+  readonly owned = computed(
+    () => new Set(this.role()?.permissions.map((permission) => permission.name)),
+  );
   readonly checked = computed(() => (this.isEditable() ? this.selected() : this.owned()));
   readonly changes = computed(() => {
     const selected = this.selected();
     const owned = this.owned();
     return {
       added: [...selected].filter((name) => !owned.has(name)),
-      removed: (this.role()?.permissions ?? []).filter((permission) => !selected.has(permission.name)),
+      removed: (this.role()?.permissions ?? []).filter(
+        (permission) => !selected.has(permission.name),
+      ),
     };
   });
-  readonly hasChanges = computed(() => this.changes().added.length > 0 || this.changes().removed.length > 0);
-  readonly ownsRole = computed(() => !!this.role() && !!this.#authService.currentUser()?.roles.includes(this.role()!.name));
+  readonly hasChanges = computed(
+    () => this.changes().added.length > 0 || this.changes().removed.length > 0,
+  );
+  readonly ownsRole = computed(
+    () => !!this.role() && !!this.#authService.currentUser()?.roles.includes(this.role()!.name),
+  );
   readonly removesAdminManage = computed(
     () =>
       this.role()?.name === 'ADMIN' &&
@@ -182,7 +208,11 @@ export class RoleDetail implements HasUnsavedChanges {
       return;
     }
     const { added, removed } = this.changes();
-    const variant = this.removesAdminManage() ? 'confirmAdminManage' : this.ownsRole() ? 'confirmSelf' : 'confirm';
+    const variant = this.removesAdminManage()
+      ? 'confirmAdminManage'
+      : this.ownsRole()
+        ? 'confirmSelf'
+        : 'confirm';
     const requests: Observable<unknown>[] = [
       ...(added.length ? [this.#rolesApi.addPermissions(role.id, added)] : []),
       ...removed.map((permission) => this.#rolesApi.removePermission(role.id, permission.id)),

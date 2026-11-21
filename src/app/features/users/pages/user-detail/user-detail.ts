@@ -1,4 +1,13 @@
-import { Component, computed, DestroyRef, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  numberAttribute,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -21,7 +30,10 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { HasUnsavedChanges } from '../../../../core/guards/unsaved-changes.guard';
 import { Breadcrumb } from '../../../../shared/components/breadcrumb/breadcrumb';
-import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import {
+  ConfirmDialog,
+  ConfirmDialogData,
+} from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { SessionsList } from '../../../../shared/components/sessions-list/sessions-list';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { UsersApiService } from '../../../../shared/services/users-api.service';
@@ -85,7 +97,9 @@ export class UserDetail implements HasUnsavedChanges {
     stream: () => this.#rolesApi.getRoles({ limit: 100, sortBy: 'name', sortOrder: 'asc' }),
   });
 
-  readonly user = computed(() => (this.userResource.hasValue() ? this.userResource.value() : undefined));
+  readonly user = computed(() =>
+    this.userResource.hasValue() ? this.userResource.value() : undefined,
+  );
   readonly loadError = computed(() => {
     const err = this.userResource.error() as HttpErrorResponse | undefined;
     return err ? toApiError(err) : null;
@@ -150,7 +164,9 @@ export class UserDetail implements HasUnsavedChanges {
     })
       .pipe(
         switchMap(() =>
-          this.#mutate(this.#usersApi.deleteUser(this.id()), () => this.#router.navigateByUrl(this.backLink)),
+          this.#mutate(this.#usersApi.deleteUser(this.id()), () =>
+            this.#router.navigateByUrl(this.backLink),
+          ),
         ),
       )
       .subscribe();
@@ -160,7 +176,10 @@ export class UserDetail implements HasUnsavedChanges {
     return this.#dialog.open(ConfirmDialog, { data }).afterClosed().pipe(filter(Boolean));
   }
 
-  #mutate(request$: Observable<ApiMessage>, onSuccess: (res: ApiMessage) => void): Observable<ApiMessage> {
+  #mutate(
+    request$: Observable<ApiMessage>,
+    onSuccess: (res: ApiMessage) => void,
+  ): Observable<ApiMessage> {
     this.acting.set(true);
     this.actionError.set(null);
     this.actionSuccess.set(null);

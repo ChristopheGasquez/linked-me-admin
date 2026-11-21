@@ -22,5 +22,6 @@ export class Breadcrumb {
     ...item,
     link: this.#urlService.listLink(item.url),
   }));
-  readonly currentKey = this.#route.snapshot.routeConfig?.data?.['breadcrumb'] as string | undefined;
+  readonly currentKey = this.#route.snapshot.routeConfig?.data?.['breadcrumb'] as
+    string | undefined;
 }

@@ -4,7 +4,11 @@ import { hasPermissionGuard } from '../../core/guards/has-permission.guard';
 import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
 
 export const auditRoutes: Routes = [
-  { path: '', title: 'common.title.admin.audit', loadComponent: () => import('./pages/audit-logs/audit-logs').then((m) => m.AuditLogs) },
+  {
+    path: '',
+    title: 'common.title.admin.audit',
+    loadComponent: () => import('./pages/audit-logs/audit-logs').then((m) => m.AuditLogs),
+  },
   {
     path: 'users/:id',
     title: 'common.title.admin.user',

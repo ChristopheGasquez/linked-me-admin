@@ -13,7 +13,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
-import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import {
+  ConfirmDialog,
+  ConfirmDialogData,
+} from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { TasksApiService } from '../../../../shared/services/tasks-api.service';
 import { TaskName } from '../../../../shared/models/task.model';
@@ -55,10 +58,34 @@ export class Tasks {
   #dialog = inject(MatDialog);
 
   readonly tasks: TaskDefinition[] = [
-    { name: 'unverified-users', i18nKey: 'unverifiedUsers', permission: 'task:clean-users', icon: 'person_remove', confirm: true },
-    { name: 'expired-tokens', i18nKey: 'expiredTokens', permission: 'task:clean-tokens', icon: 'key_off', confirm: false },
-    { name: 'audit-logs', i18nKey: 'auditLogs', permission: 'task:clean-audit', icon: 'history', confirm: true },
-    { name: 'orphaned-permissions', i18nKey: 'orphanedPermissions', permission: 'task:clean-permissions', icon: 'link_off', confirm: true },
+    {
+      name: 'unverified-users',
+      i18nKey: 'unverifiedUsers',
+      permission: 'task:clean-users',
+      icon: 'person_remove',
+      confirm: true,
+    },
+    {
+      name: 'expired-tokens',
+      i18nKey: 'expiredTokens',
+      permission: 'task:clean-tokens',
+      icon: 'key_off',
+      confirm: false,
+    },
+    {
+      name: 'audit-logs',
+      i18nKey: 'auditLogs',
+      permission: 'task:clean-audit',
+      icon: 'history',
+      confirm: true,
+    },
+    {
+      name: 'orphaned-permissions',
+      i18nKey: 'orphanedPermissions',
+      permission: 'task:clean-permissions',
+      icon: 'link_off',
+      confirm: true,
+    },
   ];
 
   running = signal<Partial<Record<TaskName, boolean>>>({});

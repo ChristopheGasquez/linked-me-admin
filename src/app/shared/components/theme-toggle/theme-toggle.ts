@@ -10,7 +10,8 @@ import { ThemeService } from '../../../core/services/theme.service';
   selector: 'app-theme-toggle',
   imports: [MatIconButton, MatIcon, MatTooltip, TranslocoPipe],
   template: `
-    <button mat-icon-button
+    <button
+      mat-icon-button
       [matTooltip]="'layout.common.actions.theme' | transloco"
       [matTooltipShowDelay]="500"
       (click)="themeService.toggle()">

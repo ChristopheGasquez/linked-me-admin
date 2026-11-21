@@ -44,13 +44,21 @@
             <mat-label>{{ t('admin.users.detail.fields.emailStatus') }}</mat-label>
             <mat-icon
               matPrefix
-              [class]="user.isEmailChecked ? 'user-detail__icon--verified' : 'user-detail__icon--unverified'">
+              [class]="
+                user.isEmailChecked
+                  ? 'user-detail__icon--verified'
+                  : 'user-detail__icon--unverified'
+              ">
               {{ user.isEmailChecked ? 'verified' : 'verified_off' }}
             </mat-icon>
             <input
               matInput
               [value]="
-                t(user.isEmailChecked ? 'admin.users.filterEmailCheckedVerified' : 'admin.users.filterEmailCheckedUnverified')
+                t(
+                  user.isEmailChecked
+                    ? 'admin.users.filterEmailCheckedVerified'
+                    : 'admin.users.filterEmailCheckedUnverified'
+                )
               "
               disabled />
           </mat-form-field>
@@ -185,7 +193,9 @@
             <input
               matInput
               [value]="
-                isLocked() ? (user.lockedUntil | date: t('common.dateTimeFormat')) : t('admin.users.detail.notLocked')
+                isLocked()
+                  ? (user.lockedUntil | date: t('common.dateTimeFormat'))
+                  : t('admin.users.detail.notLocked')
               "
               disabled />
           </mat-form-field>
