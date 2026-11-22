@@ -52,19 +52,23 @@ export class PrivateLayout {
   private readonly outlet = viewChild.required(RouterOutlet);
 
   readonly isDesktop = toSignal(
-    inject(BreakpointObserver).observe('(min-width: 1200px)').pipe(map(r => r.matches)),
+    inject(BreakpointObserver)
+      .observe('(min-width: 1200px)')
+      .pipe(map((r) => r.matches)),
     { initialValue: false },
   );
 
   version = pkg.version;
 
   constructor() {
-    this.#router.events.pipe(
-      filter(e => e instanceof NavigationEnd),
-      filter(() => !this.isDesktop()),
-      tap(() => this.sidenav().close()),
-      takeUntilDestroyed(),
-    ).subscribe();
+    this.#router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        filter(() => !this.isDesktop()),
+        tap(() => this.sidenav().close()),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
   }
 
   onBeforeUnload(event: BeforeUnloadEvent): void {

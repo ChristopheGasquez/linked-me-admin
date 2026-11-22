@@ -1,6 +1,6 @@
 {
   "name": "linked-me-admin",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +9,9 @@
     "test": "ng test",
     "test:ui": "ng test --ui",
     "test:coverage": "ng test --watch=false --coverage",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "prettier": {
     "printWidth": 100,
@@ -47,6 +49,7 @@
     "angular-eslint": "22.6.0",
     "eslint": "^9.39.1",
     "jsdom": "^30.1.3",
+    "prettier": "3.10.1",
     "typescript": "~6.0.3",
     "typescript-eslint": "8.72.2",
     "vitest": "^5.1.0"

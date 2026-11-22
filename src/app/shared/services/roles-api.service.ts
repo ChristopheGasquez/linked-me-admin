@@ -41,9 +41,14 @@ export class RolesApiService {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/permissions/${permissionId}`);
   }
 
-  getPermissions(params: PermissionListParams = {}): Observable<PaginatedResponse<PermissionResponse>> {
-    return this.#http.get<PaginatedResponse<PermissionResponse>>(`${this.#config.apiUrl}/admin/permissions`, {
-      params: { ...params },
-    });
+  getPermissions(
+    params: PermissionListParams = {},
+  ): Observable<PaginatedResponse<PermissionResponse>> {
+    return this.#http.get<PaginatedResponse<PermissionResponse>>(
+      `${this.#config.apiUrl}/admin/permissions`,
+      {
+        params: { ...params },
+      },
+    );
   }
 }

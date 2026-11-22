@@ -98,6 +98,7 @@ export class AuditLogs {
     'user.delete',
     'user.role.assign',
     'user.role.revoke',
+    'user.session.revoke',
     'role.create',
     'role.delete',
     'role.permission.assign',

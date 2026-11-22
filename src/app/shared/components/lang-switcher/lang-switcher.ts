@@ -10,7 +10,15 @@ import { AVAILABLE_LANGS } from '../../models/lang.model';
 
 @Component({
   selector: 'app-lang-switcher',
-  imports: [MatIconButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatTooltip, TranslocoPipe],
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatTooltip,
+    TranslocoPipe,
+  ],
   template: `
     <button
       mat-icon-button

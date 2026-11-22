@@ -3,7 +3,11 @@ import { Routes } from '@angular/router';
 import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
 
 export const usersRoutes: Routes = [
-  { path: '', title: 'common.title.admin.users', loadComponent: () => import('./pages/users-list/users-list').then((m) => m.UsersList) },
+  {
+    path: '',
+    title: 'common.title.admin.users',
+    loadComponent: () => import('./pages/users-list/users-list').then((m) => m.UsersList),
+  },
   {
     path: ':id',
     title: 'common.title.admin.user',

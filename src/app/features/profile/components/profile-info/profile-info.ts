@@ -61,7 +61,10 @@ export class ProfileInfo {
   });
 
   hasUnsavedChanges(): boolean {
-    return this.nameEditing() && this.infoForm.controls['name'].value !== this.#authService.currentUser()?.name;
+    return (
+      this.nameEditing() &&
+      this.infoForm.controls['name'].value !== this.#authService.currentUser()?.name
+    );
   }
 
   enable(): void {

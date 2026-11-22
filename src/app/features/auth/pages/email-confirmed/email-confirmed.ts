@@ -5,7 +5,13 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+  MatCardHeader,
+  MatCardTitle,
+} from '@angular/material/card';
 
 import { AuthApiService } from '../../../../shared/services/auth-api.service';
 import { toApiError } from '../../../../shared/utils/api-error';

@@ -4,7 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
 
 import { AuthService } from '../services/auth.service';
-import { ConfirmDialog, ConfirmDialogData } from '../../shared/components/confirm-dialog/confirm-dialog';
+import {
+  ConfirmDialog,
+  ConfirmDialogData,
+} from '../../shared/components/confirm-dialog/confirm-dialog';
 
 export interface HasUnsavedChanges {
   hasUnsavedChanges(): boolean;
