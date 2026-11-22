@@ -512,6 +512,9 @@
           "role": {
             "assign": "Role assigned",
             "revoke": "Role revoked"
+          },
+          "session": {
+            "revoke": "Session revoked"
           }
         },
         "role": {
