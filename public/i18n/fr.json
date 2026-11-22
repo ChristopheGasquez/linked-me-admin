@@ -514,7 +514,8 @@
             "revoke": "Retrait de rôle"
           },
           "session": {
-            "revoke": "Révocation de session"
+            "revoke": "Révocation de session",
+            "revoke_all": "Révocation de toutes les sessions"
           }
         },
         "role": {
