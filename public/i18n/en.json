@@ -514,7 +514,8 @@
             "revoke": "Role revoked"
           },
           "session": {
-            "revoke": "Session revoked"
+            "revoke": "Session revoked",
+            "revoke_all": "All sessions revoked"
           }
         },
         "role": {
