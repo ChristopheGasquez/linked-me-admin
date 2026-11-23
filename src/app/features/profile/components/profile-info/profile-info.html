@@ -22,6 +22,7 @@
       <mat-label>{{ t('me.profile.name.label') }}</mat-label>
       <input
         matInput
+        autocomplete="name"
         formControlName="name" />
       @if (!nameEditing()) {
         <button

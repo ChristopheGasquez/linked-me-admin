@@ -36,6 +36,7 @@
           <input
             matInput
             [type]="showCurrentPassword() ? 'text' : 'password'"
+            autocomplete="current-password"
             formControlName="currentPassword" />
           <button
             mat-icon-button
@@ -60,6 +61,7 @@
           <input
             matInput
             [type]="showNewPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
             formControlName="newPassword" />
           <button
             mat-icon-button
@@ -86,6 +88,7 @@
           <input
             matInput
             type="password"
+            autocomplete="new-password"
             formControlName="confirmPassword" />
           @if (securityForm.controls['confirmPassword'].hasError('required')) {
             <mat-error>{{ t('me.profile.password.confirmRequired') }}</mat-error>

@@ -26,6 +26,7 @@
           <input
             matInput
             type="text"
+            autocomplete="name"
             formControlName="name" />
           @if (form.controls['name']?.hasError('required')) {
             <mat-error>{{ t('auth.register.name.required') }}</mat-error>
@@ -40,6 +41,7 @@
           <input
             matInput
             type="email"
+            autocomplete="username"
             formControlName="email" />
           @if (form.controls['email']?.hasError('required')) {
             <mat-error>{{ t('auth.register.email.required') }}</mat-error>
@@ -54,6 +56,7 @@
           <input
             matInput
             [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
             formControlName="password" />
           <button
             mat-icon-button
