@@ -10,6 +10,7 @@
         <mat-icon>arrow_back</mat-icon>
       </a>
       @if (isCreate()) {
+        <h1 class="cdk-visually-hidden">{{ t('admin.roles.create') }}</h1>
         <mat-form-field
           class="role-detail__header__name"
           appearance="outline"
@@ -28,7 +29,7 @@
           }
         </mat-form-field>
       } @else {
-        <h2 class="role-detail__header__title">{{ role()?.name }}</h2>
+        <h1 class="role-detail__header__title">{{ role()?.name }}</h1>
         @if (role() && canListPermissions() && !editing()) {
           <button
             *appHasPermission="'admin:role:manage'"

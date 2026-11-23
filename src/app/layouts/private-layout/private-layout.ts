@@ -12,6 +12,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LangSwitcher } from '../../shared/components/lang-switcher/lang-switcher';
+import { SkipLink } from '../../shared/components/skip-link/skip-link';
 import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
 import { HasPermissionDirective } from '../../shared/directives/has-permission.directive';
 import { AuthService } from '../../core/services/auth.service';
@@ -39,6 +40,7 @@ import pkg from '../../../../package.json';
     ThemeToggle,
     LangSwitcher,
     HasPermissionDirective,
+    SkipLink,
   ],
   templateUrl: './private-layout.html',
   styleUrl: './private-layout.scss',

@@ -24,6 +24,9 @@ describe('LangSwitcher', () => {
     expect(texts[0]).toContain(fr.common.langs.fr);
     expect(texts[0]).toContain('check');
     expect(texts[1]).not.toContain('check');
+    const hosts = await Promise.all(items.map((item) => item.host()));
+    expect(await hosts[0].getAttribute('aria-checked')).toBe('true');
+    expect(await hosts[1].getAttribute('aria-checked')).toBe('false');
   });
 
   it('switches the active language', async () => {

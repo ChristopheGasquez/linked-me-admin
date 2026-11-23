@@ -36,11 +36,14 @@
           <input
             matInput
             [type]="showCurrentPassword() ? 'text' : 'password'"
+            autocomplete="current-password"
             formControlName="currentPassword" />
           <button
             mat-icon-button
             matSuffix
             type="button"
+            [attr.aria-label]="t('common.showPassword')"
+            [attr.aria-pressed]="showCurrentPassword()"
             (click)="showCurrentPassword.set(!showCurrentPassword())">
             <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
@@ -58,11 +61,14 @@
           <input
             matInput
             [type]="showNewPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
             formControlName="newPassword" />
           <button
             mat-icon-button
             matSuffix
             type="button"
+            [attr.aria-label]="t('common.showPassword')"
+            [attr.aria-pressed]="showNewPassword()"
             (click)="showNewPassword.set(!showNewPassword())">
             <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
@@ -82,6 +88,7 @@
           <input
             matInput
             type="password"
+            autocomplete="new-password"
             formControlName="confirmPassword" />
           @if (securityForm.controls['confirmPassword'].hasError('required')) {
             <mat-error>{{ t('me.profile.password.confirmRequired') }}</mat-error>

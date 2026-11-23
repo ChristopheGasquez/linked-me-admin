@@ -1,0 +1,18 @@
+.skip-link {
+  position: absolute;
+  top: var(--lma-spacing-margin--sm);
+  left: var(--lma-spacing-margin--sm);
+  z-index: 1000;
+  padding: var(--lma-spacing-padding--sm) var(--lma-spacing-padding--md);
+  border: none;
+  border-radius: var(--mat-sys-corner-small);
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  font: var(--mat-sys-label-large);
+  cursor: pointer;
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+  }
+}

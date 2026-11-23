@@ -7,15 +7,17 @@
       (ngSubmit)="onSubmit()">
       <mat-card-header class="register-card__header">
         <mat-card-title class="register-card__header__title">
-          <h2>{{ t('auth.register.title') }}</h2>
+          <h1>{{ t('auth.register.title') }}</h1>
         </mat-card-title>
         <mat-card-subtitle>
           {{ t('auth.register.subtitle') }}
         </mat-card-subtitle>
         @if (error()) {
-          <mat-card-subtitle class="register-card__error">{{
-            t('api.' + error()!.code, error()!.params ?? {})
-          }}</mat-card-subtitle>
+          <mat-card-subtitle
+            class="register-card__error"
+            role="alert">
+            {{ t('api.' + error()!.code, error()!.params ?? {}) }}
+          </mat-card-subtitle>
         }
       </mat-card-header>
       <mat-card-content class="register-card__content">
@@ -24,6 +26,7 @@
           <input
             matInput
             type="text"
+            autocomplete="name"
             formControlName="name" />
           @if (form.controls['name']?.hasError('required')) {
             <mat-error>{{ t('auth.register.name.required') }}</mat-error>
@@ -38,6 +41,7 @@
           <input
             matInput
             type="email"
+            autocomplete="username"
             formControlName="email" />
           @if (form.controls['email']?.hasError('required')) {
             <mat-error>{{ t('auth.register.email.required') }}</mat-error>
@@ -52,11 +56,14 @@
           <input
             matInput
             [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
             formControlName="password" />
           <button
             mat-icon-button
             matSuffix
             type="button"
+            [attr.aria-label]="t('common.showPassword')"
+            [attr.aria-pressed]="showPassword()"
             (click)="showPassword.set(!showPassword())">
             <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>

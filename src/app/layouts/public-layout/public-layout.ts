@@ -5,6 +5,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LangSwitcher } from '../../shared/components/lang-switcher/lang-switcher';
+import { SkipLink } from '../../shared/components/skip-link/skip-link';
 import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
 import pkg from '../../../../package.json';
 
@@ -19,6 +20,7 @@ import pkg from '../../../../package.json';
     ThemeToggle,
     LangSwitcher,
     TranslocoPipe,
+    SkipLink,
   ],
   templateUrl: './public-layout.html',
   styleUrl: './public-layout.scss',

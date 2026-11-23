@@ -4,10 +4,12 @@
     appearance="outlined">
     <mat-card-header class="info-card__header">
       <mat-card-title class="info-card__header__title">
-        <h2>{{ t(titleKey()) }}</h2>
+        <h1>{{ t(titleKey()) }}</h1>
       </mat-card-title>
       @for (notification of notifications(); track notification.key) {
-        <mat-card-subtitle [class]="'info-card__' + notification.type">
+        <mat-card-subtitle
+          [class]="'info-card__' + notification.type"
+          [attr.role]="notification.type === 'error' ? 'alert' : 'status'">
           {{ t(notification.key, notification.params ?? {}) }}
         </mat-card-subtitle>
       }
