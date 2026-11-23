@@ -59,5 +59,9 @@
       box-sizing: border-box;
       padding: var(--lma-spacing-padding--xxl);
     }
+
+    &__main:focus {
+      outline: none;
+    }
   }
 }

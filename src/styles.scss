@@ -11,3 +11,8 @@
 @use 'styles/components/icon';
 @use 'styles/components/input';
 @use 'styles/components/heading';
+
+//// A11Y ////
+@use '@angular/cdk' as cdk;
+
+@include cdk.a11y-visually-hidden();
