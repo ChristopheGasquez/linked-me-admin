@@ -23,6 +23,7 @@ import { AVAILABLE_LANGS } from '../../models/lang.model';
     <button
       mat-icon-button
       [matMenuTriggerFor]="langMenu"
+      [attr.aria-label]="'layout.common.actions.lang' | transloco"
       [matTooltip]="'layout.common.actions.lang' | transloco"
       [matTooltipShowDelay]="500">
       <mat-icon>language</mat-icon>
