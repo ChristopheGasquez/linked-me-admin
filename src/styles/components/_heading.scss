@@ -7,10 +7,9 @@ h6 {
   color: var(--mat-sys-primary);
 }
 
-h1 {
-  margin: 0 0 var(--lma-spacing-margin--xl);
-}
+h1,
 h2 {
+  font-size: 1.5em;
   margin: 0 0 var(--lma-spacing-margin--lg);
 }
 h3 {

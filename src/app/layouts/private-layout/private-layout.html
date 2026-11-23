@@ -1,3 +1,4 @@
+<app-skip-link [target]="main" />
 <mat-toolbar class="private-layout__header">
   <nav class="private-layout__header__nav">
     <button
@@ -101,7 +102,12 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content class="private-layout__body">
-    <router-outlet />
+    <main
+      #main
+      tabindex="-1"
+      class="private-layout__main">
+      <router-outlet />
+    </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
 <footer class="private-layout__footer">v{{ version }}</footer>

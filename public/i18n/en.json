@@ -14,6 +14,7 @@
     },
     "breadcrumb": "Breadcrumb",
     "showPassword": "Show password",
+    "skipLink": "Skip to main content",
     "unsavedChanges": {
       "title": "Unsaved changes",
       "message": "Your changes will be lost if you leave this page.",

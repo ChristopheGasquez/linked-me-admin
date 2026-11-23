@@ -15,7 +15,7 @@ describe('Error pages', () => {
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
     return {
-      title: element.querySelector('h2')!.textContent!.trim(),
+      title: element.querySelector('h1')!.textContent!.trim(),
       description: element.querySelector('mat-card-content')!.textContent!.trim(),
       links: Array.from(element.querySelectorAll('a')).map((a) => [
         a.textContent!.trim(),

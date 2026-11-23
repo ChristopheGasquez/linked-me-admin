@@ -9,7 +9,7 @@
         [matTooltip]="t('admin.users.detail.back')">
         <mat-icon>arrow_back</mat-icon>
       </a>
-      <h2 class="user-detail__header__title">{{ user()?.name }}</h2>
+      <h1 class="user-detail__header__title">{{ user()?.name }}</h1>
     </div>
 
     @if (userResource.isLoading()) {

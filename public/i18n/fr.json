@@ -14,6 +14,7 @@
     },
     "breadcrumb": "Fil d'Ariane",
     "showPassword": "Afficher le mot de passe",
+    "skipLink": "Aller au contenu principal",
     "unsavedChanges": {
       "title": "Modifications non enregistrées",
       "message": "Vos modifications seront perdues si vous quittez cette page.",

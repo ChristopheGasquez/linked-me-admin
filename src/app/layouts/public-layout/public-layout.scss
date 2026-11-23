@@ -38,6 +38,10 @@
       align-items: center;
       overflow: auto;
       padding: var(--lma-spacing-padding--xxl);
+
+      &:focus {
+        outline: none;
+      }
     }
   }
 }

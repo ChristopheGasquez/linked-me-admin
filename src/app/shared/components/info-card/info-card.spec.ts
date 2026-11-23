@@ -20,7 +20,7 @@ describe('InfoCard', () => {
   it('shows the translated title and description, without actions by default', async () => {
     const element = await render();
 
-    expect(element.querySelector('h2')?.textContent?.trim()).toBe(fr.errors.notFound.title);
+    expect(element.querySelector('h1')?.textContent?.trim()).toBe(fr.errors.notFound.title);
     expect(element.querySelector('mat-card-content')?.textContent?.trim()).toBe(
       fr.errors.notFound.description,
     );
