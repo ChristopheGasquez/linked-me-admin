@@ -7,7 +7,9 @@
         <h2>{{ t(titleKey()) }}</h2>
       </mat-card-title>
       @for (notification of notifications(); track notification.key) {
-        <mat-card-subtitle [class]="'info-card__' + notification.type">
+        <mat-card-subtitle
+          [class]="'info-card__' + notification.type"
+          [attr.role]="notification.type === 'error' ? 'alert' : 'status'">
           {{ t(notification.key, notification.params ?? {}) }}
         </mat-card-subtitle>
       }

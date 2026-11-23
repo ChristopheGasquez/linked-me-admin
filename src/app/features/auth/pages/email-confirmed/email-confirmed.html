@@ -19,11 +19,13 @@
       @if (loading()) {
         <p>{{ t('auth.emailConfirmed.loading.subtitle') }}</p>
       } @else if (error()) {
-        <p class="email-confirmed-card__content__error">
+        <p
+          class="email-confirmed-card__content__error"
+          role="alert">
           {{ t('api.' + error()!.code, error()!.params ?? {}) }}
         </p>
       } @else {
-        <p>{{ t('auth.emailConfirmed.success.subtitle') }}</p>
+        <p role="status">{{ t('auth.emailConfirmed.success.subtitle') }}</p>
         <p>{{ t('auth.emailConfirmed.success.redirect', { seconds: countdown() }) }}</p>
       }
     </mat-card-content>
