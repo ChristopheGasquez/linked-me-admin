@@ -12,6 +12,7 @@ import { ThemeService } from '../../../core/services/theme.service';
   template: `
     <button
       mat-icon-button
+      [attr.aria-label]="'layout.common.actions.theme' | transloco"
       [matTooltip]="'layout.common.actions.theme' | transloco"
       [matTooltipShowDelay]="500"
       (click)="themeService.toggle()">

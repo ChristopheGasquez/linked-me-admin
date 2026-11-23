@@ -3,6 +3,7 @@
     <button
       mat-icon-button
       (click)="sidenav.toggle()"
+      [attr.aria-label]="'layout.private.nav.menu' | transloco"
       [matTooltip]="'layout.private.nav.menu' | transloco"
       [matTooltipShowDelay]="500">
       <mat-icon>menu</mat-icon>
@@ -12,6 +13,7 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       [routerLink]="['/', 'dashboard']"
+      [attr.aria-label]="'layout.private.nav.home' | transloco"
       [matTooltip]="'layout.private.nav.home' | transloco"
       [matTooltipShowDelay]="500">
       <mat-icon>home</mat-icon>
@@ -23,6 +25,7 @@
     <button
       mat-icon-button
       (click)="logout()"
+      [attr.aria-label]="'layout.private.actions.logout' | transloco"
       [matTooltip]="'layout.private.actions.logout' | transloco"
       [matTooltipShowDelay]="500">
       <mat-icon>logout</mat-icon>

@@ -163,10 +163,16 @@ describe('Login', () => {
   it('toggles the password visibility', async () => {
     const password = (await loader.getAllHarnesses(MatInputHarness))[1];
     expect(await password.getType()).toBe('password');
+    const toggle = await (
+      await loader.getHarness(MatButtonHarness.with({ text: 'visibility' }))
+    ).host();
+    expect(await toggle.getAttribute('aria-label')).toBe(fr.common.showPassword);
+    expect(await toggle.getAttribute('aria-pressed')).toBe('false');
 
-    await (await loader.getHarness(MatButtonHarness.with({ text: 'visibility' }))).click();
+    await toggle.click();
 
     expect(await password.getType()).toBe('text');
+    expect(await toggle.getAttribute('aria-pressed')).toBe('true');
   });
 
   describe('resend verification email', () => {
