@@ -140,6 +140,7 @@ describe('Login', () => {
     await failLogin(status, { code });
 
     expect(header()).toContain(message);
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(message);
     expect(await resendButton()).toBeNull();
   });
 

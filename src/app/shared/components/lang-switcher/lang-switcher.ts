@@ -32,6 +32,8 @@ import { AVAILABLE_LANGS } from '../../models/lang.model';
       @for (lang of langs; track lang) {
         <button
           mat-menu-item
+          role="menuitemradio"
+          [attr.aria-checked]="activeLang() === lang"
           (click)="setLang(lang)">
           <mat-icon>{{ activeLang() === lang ? 'check' : '' }}</mat-icon>
           {{ 'common.langs.' + lang | transloco }}

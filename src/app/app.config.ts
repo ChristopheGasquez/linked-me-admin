@@ -15,6 +15,7 @@ import { TranslocoHttpLoader } from './core/services/transloco-loader.service';
 import { TranslatedTitleStrategy } from './core/services/title-strategy.service';
 import { AVAILABLE_LANGS } from './shared/models/lang.model';
 
+import { tap } from 'rxjs';
 import { routes } from './app.routes';
 import { AppConfigService } from './core/services/app-config.service';
 
@@ -35,9 +36,14 @@ export const appConfig: ApplicationConfig = {
       loader: TranslocoHttpLoader,
     }),
     provideAppInitializer(() => {
-      inject(TranslocoService).langChanges$.subscribe((lang: string) =>
-        localStorage.setItem('lang', lang),
-      );
+      inject(TranslocoService)
+        .langChanges$.pipe(
+          tap((lang: string) => {
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+          }),
+        )
+        .subscribe();
     }),
     provideAppInitializer(() => {
       const cfg = inject(AppConfigService);
