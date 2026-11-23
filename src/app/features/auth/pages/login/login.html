@@ -33,6 +33,7 @@
           <input
             matInput
             type="email"
+            autocomplete="username"
             formControlName="email" />
           @if (form.controls['email']?.hasError('required')) {
             <mat-error>{{ t('auth.login.email.required') }}</mat-error>
@@ -47,6 +48,7 @@
           <input
             matInput
             [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="current-password"
             formControlName="password" />
           <button
             mat-icon-button
