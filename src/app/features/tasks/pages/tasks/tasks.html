@@ -2,8 +2,22 @@
   <div class="tasks">
     <h1 class="tasks__title">{{ t('admin.tasks.title') }}</h1>
 
+    @if (tasksResource.isLoading() && !tasks().length) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    @if (loadError()) {
+      <p
+        class="tasks__error"
+        role="alert">
+        {{ t('api.' + loadError()!.code, loadError()!.params ?? {}) }}
+      </p>
+    }
+
     <div class="tasks__grid">
-      @for (task of tasks; track task.name) {
+      @for (task of tasks(); track task.name) {
+        @let item = display[task.name];
+        @let config = { hours: task.config.ttlHours, days: task.config.retentionDays };
         <mat-card
           class="tasks__card"
           appearance="outlined">
@@ -11,16 +25,30 @@
             <mat-icon
               matCardAvatar
               class="tasks__card__icon">
-              {{ task.icon }}
+              {{ item.icon }}
             </mat-icon>
-            <mat-card-title>{{ t('admin.tasks.items.' + task.i18nKey + '.title') }}</mat-card-title>
+            <mat-card-title>{{ t('admin.tasks.items.' + item.i18nKey + '.title') }}</mat-card-title>
             <mat-card-subtitle>{{
-              t('admin.tasks.items.' + task.i18nKey + '.schedule')
+              task.schedule.automatic
+                ? t('admin.tasks.items.' + item.i18nKey + '.schedule', config)
+                : t('admin.tasks.manualOnly')
             }}</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content class="tasks__card__content">
-            <p>{{ t('admin.tasks.items.' + task.i18nKey + '.description') }}</p>
+            <p>{{ t('admin.tasks.items.' + item.i18nKey + '.description', config) }}</p>
+            <p class="tasks__card__last-run">
+              @if (task.lastRun; as lastRun) {
+                {{
+                  t(lastRun.actorId ? 'admin.tasks.lastRun.byUser' : 'admin.tasks.lastRun.auto', {
+                    date: lastRun.at | date: t('common.dateTimeFormat'),
+                    id: lastRun.actorId,
+                  })
+                }}
+              } @else {
+                {{ t('admin.tasks.lastRun.never') }}
+              }
+            </p>
 
             @if (task.name === 'audit-logs') {
               <mat-form-field
@@ -65,23 +93,24 @@
             }
           </mat-card-content>
 
-          <mat-card-actions class="tasks__card__actions">
-            <button
-              *appHasPermission="task.permission"
-              matButton="filled"
-              type="button"
-              [disabled]="
-                running()[task.name] || (task.name === 'audit-logs' && olderThanDays.invalid)
-              "
-              (click)="run(task)">
-              @if (running()[task.name]) {
-                <mat-progress-spinner
-                  mode="indeterminate"
-                  diameter="18" />
-              }
-              {{ t('admin.tasks.run') }}
-            </button>
-          </mat-card-actions>
+          @if (task.canRun) {
+            <mat-card-actions class="tasks__card__actions">
+              <button
+                matButton="filled"
+                type="button"
+                [disabled]="
+                  running()[task.name] || (task.name === 'audit-logs' && olderThanDays.invalid)
+                "
+                (click)="run(task)">
+                @if (running()[task.name]) {
+                  <mat-progress-spinner
+                    mode="indeterminate"
+                    diameter="18" />
+                }
+                {{ t('admin.tasks.run') }}
+              </button>
+            </mat-card-actions>
+          }
         </mat-card>
       }
     </div>

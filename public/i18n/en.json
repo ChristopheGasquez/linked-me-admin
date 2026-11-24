@@ -566,10 +566,16 @@
       "title": "Tasks",
       "run": "Run task",
       "nothingToClean": "Nothing to clean up",
+      "manualOnly": "Manual only",
+      "lastRun": {
+        "auto": "Last run: {{ date }} (automatic)",
+        "byUser": "Last run: {{ date }} by user #{{ id }}",
+        "never": "Never run"
+      },
       "items": {
         "unverifiedUsers": {
           "title": "Unverified accounts",
-          "description": "Permanently deletes accounts whose email was not verified within the allowed delay (24 h by default).",
+          "description": "Permanently deletes accounts whose email was not verified within the allowed delay ({{ hours }} h).",
           "schedule": "Automatic: every 6 h",
           "confirm": "Unverified accounts will be permanently deleted. Continue?"
         },
@@ -581,7 +587,7 @@
         "auditLogs": {
           "title": "Audit logs",
           "description": "Permanently deletes audit logs older than the given number of days.",
-          "schedule": "Automatic: every day at 3 AM (30-day retention)",
+          "schedule": "Automatic: every day at 3 AM ({{ days }}-day retention)",
           "daysLabel": "Delete logs older than (days)",
           "daysRequired": "Number of days is required",
           "daysMin": "Minimum 1 day",
@@ -592,7 +598,6 @@
         "orphanedPermissions": {
           "title": "Orphaned permissions",
           "description": "Deletes permissions that no longer exist in the code, along with their role links. Run it after a deployment that removes permissions.",
-          "schedule": "Manual only",
           "confirm": "Orphaned permissions and their role links will be deleted. Continue?"
         }
       }
