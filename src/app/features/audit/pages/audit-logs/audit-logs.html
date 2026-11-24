@@ -52,6 +52,30 @@
           }
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic">
+        <mat-label>{{ t('admin.audit.filterTargetLabel') }}</mat-label>
+        <mat-icon matPrefix>manage_search</mat-icon>
+        <input
+          matInput
+          appDigitsOnly
+          type="text"
+          inputmode="numeric"
+          formControlName="targetId"
+          [placeholder]="t('admin.audit.filterTarget')" />
+        @if (filterForm.value.targetId) {
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            [attr.aria-label]="t('admin.audit.clearTarget')"
+            (click)="clearTargetId()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
     </form>
 
     @if (loading()) {
