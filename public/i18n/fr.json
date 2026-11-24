@@ -566,10 +566,16 @@
       "title": "Tâches",
       "run": "Exécuter la tâche",
       "nothingToClean": "Rien à nettoyer",
+      "manualOnly": "Manuel uniquement",
+      "lastRun": {
+        "auto": "Dernière exécution : {{ date }} (automatique)",
+        "byUser": "Dernière exécution : {{ date }} par l'utilisateur #{{ id }}",
+        "never": "Jamais exécutée"
+      },
       "items": {
         "unverifiedUsers": {
           "title": "Comptes non vérifiés",
-          "description": "Supprime définitivement les comptes dont l'email n'a pas été vérifié dans le délai prévu (24 h par défaut).",
+          "description": "Supprime définitivement les comptes dont l'email n'a pas été vérifié dans le délai prévu ({{ hours }} h).",
           "schedule": "Automatique : toutes les 6 h",
           "confirm": "Les comptes non vérifiés seront supprimés définitivement. Continuer ?"
         },
@@ -581,7 +587,7 @@
         "auditLogs": {
           "title": "Logs d'audit",
           "description": "Supprime définitivement les logs d'audit plus anciens que le nombre de jours indiqué.",
-          "schedule": "Automatique : tous les jours à 3 h (rétention 30 jours)",
+          "schedule": "Automatique : tous les jours à 3 h (rétention {{ days }} jours)",
           "daysLabel": "Supprimer les logs plus vieux que (jours)",
           "daysRequired": "Le nombre de jours est requis",
           "daysMin": "Minimum 1 jour",
@@ -592,7 +598,6 @@
         "orphanedPermissions": {
           "title": "Permissions orphelines",
           "description": "Supprime les permissions qui n'existent plus dans le code, ainsi que leurs liaisons aux rôles. À lancer après un déploiement qui retire des permissions.",
-          "schedule": "Manuel uniquement",
           "confirm": "Les permissions orphelines seront supprimées, ainsi que leurs liaisons aux rôles. Continuer ?"
         }
       }

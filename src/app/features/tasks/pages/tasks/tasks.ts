@@ -1,9 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EMPTY, of } from 'rxjs';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { DatePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -11,21 +13,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import {
   ConfirmDialog,
   ConfirmDialogData,
 } from '../../../../shared/components/confirm-dialog/confirm-dialog';
-import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { TasksApiService } from '../../../../shared/services/tasks-api.service';
-import { TaskName } from '../../../../shared/models/task.model';
+import { Task, TaskName } from '../../../../shared/models/task.model';
 import { toApiError } from '../../../../shared/utils/api-error';
 
-interface TaskDefinition {
-  name: TaskName;
+interface TaskDisplay {
   i18nKey: string;
-  permission: string;
   icon: string;
   confirm: boolean;
 }
@@ -42,6 +42,7 @@ interface TaskResult {
   styleUrl: './tasks.scss',
   imports: [
     TranslocoDirective,
+    DatePipe,
     ReactiveFormsModule,
     MatButton,
     MatCardModule,
@@ -49,44 +50,21 @@ interface TaskResult {
     MatFormFieldModule,
     MatIcon,
     MatInputModule,
+    MatProgressBar,
     MatProgressSpinner,
-    HasPermissionDirective,
   ],
 })
 export class Tasks {
   #tasksApi = inject(TasksApiService);
   #dialog = inject(MatDialog);
 
-  readonly tasks: TaskDefinition[] = [
-    {
-      name: 'unverified-users',
-      i18nKey: 'unverifiedUsers',
-      permission: 'task:clean-users',
-      icon: 'person_remove',
-      confirm: true,
-    },
-    {
-      name: 'expired-tokens',
-      i18nKey: 'expiredTokens',
-      permission: 'task:clean-tokens',
-      icon: 'key_off',
-      confirm: false,
-    },
-    {
-      name: 'audit-logs',
-      i18nKey: 'auditLogs',
-      permission: 'task:clean-audit',
-      icon: 'history',
-      confirm: true,
-    },
-    {
-      name: 'orphaned-permissions',
-      i18nKey: 'orphanedPermissions',
-      permission: 'task:clean-permissions',
-      icon: 'link_off',
-      confirm: true,
-    },
-  ];
+  // Display only: list, permissions, schedule and last run come from GET /tasks
+  readonly display: Record<TaskName, TaskDisplay> = {
+    'unverified-users': { i18nKey: 'unverifiedUsers', icon: 'person_remove', confirm: true },
+    'expired-tokens': { i18nKey: 'expiredTokens', icon: 'key_off', confirm: false },
+    'audit-logs': { i18nKey: 'auditLogs', icon: 'history', confirm: true },
+    'orphaned-permissions': { i18nKey: 'orphanedPermissions', icon: 'link_off', confirm: true },
+  };
 
   running = signal<Partial<Record<TaskName, boolean>>>({});
   results = signal<Partial<Record<TaskName, TaskResult>>>({});
@@ -96,15 +74,38 @@ export class Tasks {
     validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
   });
 
-  run(task: TaskDefinition): void {
+  readonly tasksResource = rxResource({ stream: () => this.#tasksApi.getTasks() });
+
+  readonly tasks = computed(() =>
+    this.tasksResource.hasValue() ? this.tasksResource.value().data : [],
+  );
+  readonly loadError = computed(() => {
+    const err = this.tasksResource.error() as HttpErrorResponse | undefined;
+    return err ? toApiError(err) : null;
+  });
+
+  constructor() {
+    // The days field starts from the server retention, unless already edited
+    effect(() => {
+      const days = this.tasks().find((task) => task.name === 'audit-logs')?.config.retentionDays;
+      untracked(() => {
+        if (days && this.olderThanDays.pristine) {
+          this.olderThanDays.setValue(days);
+        }
+      });
+    });
+  }
+
+  run(task: Task): void {
+    const { i18nKey, confirm } = this.display[task.name];
     const data: ConfirmDialogData = {
-      titleKey: `admin.tasks.items.${task.i18nKey}.title`,
-      messageKey: `admin.tasks.items.${task.i18nKey}.confirm`,
+      titleKey: `admin.tasks.items.${i18nKey}.title`,
+      messageKey: `admin.tasks.items.${i18nKey}.confirm`,
       messageParams: { days: this.olderThanDays.value },
       confirmLabelKey: 'admin.tasks.run',
       destructive: true,
     };
-    const confirmed$ = task.confirm
+    const confirmed$ = confirm
       ? this.#dialog.open(ConfirmDialog, { data }).afterClosed().pipe(filter(Boolean))
       : of(true);
 
@@ -116,7 +117,7 @@ export class Tasks {
             ? this.#tasksApi.runCleanup('audit-logs', { olderThanDays: this.olderThanDays.value })
             : this.#tasksApi.runCleanup(task.name),
         ),
-        tap((res) =>
+        tap((res) => {
           this.#setState(task.name, false, {
             type: 'success',
             key:
@@ -124,8 +125,9 @@ export class Tasks {
                 ? 'admin.tasks.nothingToClean'
                 : `api.${res.code}`,
             params: res.params,
-          }),
-        ),
+          });
+          this.tasksResource.reload();
+        }),
         catchError((err: HttpErrorResponse) => {
           const { code, params } = toApiError(err);
           this.#setState(task.name, false, { type: 'error', key: `api.${code}`, params });

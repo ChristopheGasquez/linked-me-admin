@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { AppConfigService } from '../../core/services/app-config.service';
 import { ApiMessage } from '../models/api-response.model';
-import { CleanupAuditLogsDto, TaskName } from '../models/task.model';
+import { CleanupAuditLogsDto, Task, TaskName } from '../models/task.model';
 
 @Injectable({ providedIn: 'root' })
 export class TasksApiService {
@@ -13,6 +13,10 @@ export class TasksApiService {
 
   private get baseUrl(): string {
     return `${this.#config.apiUrl}/tasks`;
+  }
+
+  getTasks(): Observable<{ data: Task[] }> {
+    return this.#http.get<{ data: Task[] }>(this.baseUrl);
   }
 
   runCleanup(task: 'audit-logs', body: CleanupAuditLogsDto): Observable<ApiMessage>;
