@@ -396,7 +396,11 @@
           "security": "Security",
           "roles": "Roles",
           "danger": "Danger zone",
-          "sessions": "Active sessions"
+          "sessions": "Active sessions",
+          "activity": "Recent activity"
+        },
+        "activity": {
+          "empty": "No activity"
         },
         "fields": {
           "id": "ID",

@@ -209,6 +209,91 @@
         <app-sessions-list [userId]="user.id" />
       </section>
 
+      @if (canReadAudit()) {
+        <section class="user-detail__section">
+          <h2>{{ t('admin.users.detail.sections.activity') }}</h2>
+
+          @if (activityResource.isLoading()) {
+            <mat-progress-bar mode="indeterminate" />
+          }
+
+          @if (activityError()) {
+            <p
+              class="user-detail__error"
+              role="alert">
+              {{ t('api.' + activityError()!.code, activityError()!.params ?? {}) }}
+            </p>
+          } @else if (!activityResource.isLoading() && activity().length === 0) {
+            <app-empty-state
+              icon="history"
+              titleKey="admin.users.detail.activity.empty" />
+          }
+
+          @if (activity().length > 0) {
+            <div class="user-detail__activity">
+              <table
+                mat-table
+                [dataSource]="activity()">
+                <ng-container matColumnDef="createdAt">
+                  <th
+                    mat-header-cell
+                    *matHeaderCellDef>
+                    {{ t('admin.audit.columns.createdAt') }}
+                  </th>
+                  <td
+                    mat-cell
+                    *matCellDef="let log">
+                    {{ log.createdAt | date: t('common.dateTimeFormat') }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                  <th
+                    mat-header-cell
+                    *matHeaderCellDef>
+                    {{ t('admin.audit.columns.action') }}
+                  </th>
+                  <td
+                    mat-cell
+                    *matCellDef="let log">
+                    <mat-chip-set>
+                      <mat-chip>{{ t('admin.audit.actions.' + log.action) }}</mat-chip>
+                    </mat-chip-set>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="target">
+                  <th
+                    mat-header-cell
+                    *matHeaderCellDef>
+                    {{ t('admin.audit.columns.target') }}
+                  </th>
+                  <td
+                    mat-cell
+                    *matCellDef="let log">
+                    @if (log.targetType) {
+                      {{ t('admin.audit.targetTypes.' + log.targetType) }}
+                      @if (log.targetId) {
+                        #{{ log.targetId }}
+                      }
+                    } @else {
+                      —
+                    }
+                  </td>
+                </ng-container>
+
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="activityColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: activityColumns"></tr>
+              </table>
+            </div>
+          }
+        </section>
+      }
+
       <section
         *appHasPermission="'admin:user:delete'"
         class="user-detail__section">
