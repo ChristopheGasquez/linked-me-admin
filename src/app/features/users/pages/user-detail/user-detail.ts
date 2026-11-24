@@ -24,6 +24,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -34,10 +35,12 @@ import {
   ConfirmDialog,
   ConfirmDialogData,
 } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { SessionsList } from '../../../../shared/components/sessions-list/sessions-list';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { UsersApiService } from '../../../../shared/services/users-api.service';
 import { RolesApiService } from '../../../../shared/services/roles-api.service';
+import { AuditApiService } from '../../../../shared/services/audit-api.service';
 import { ApiMessage } from '../../../../shared/models/api-response.model';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
 import { UrlService } from '../../../../core/services/url.service';
@@ -61,15 +64,18 @@ import { breadcrumbParents } from '../../../../shared/utils/breadcrumb';
     MatInputModule,
     MatProgressBar,
     MatSelectModule,
+    MatTableModule,
     MatTooltipModule,
     HasPermissionDirective,
     Breadcrumb,
+    EmptyState,
     SessionsList,
   ],
 })
 export class UserDetail implements HasUnsavedChanges {
   #usersApi = inject(UsersApiService);
   #rolesApi = inject(RolesApiService);
+  #auditApi = inject(AuditApiService);
   #authService = inject(AuthService);
   #dialog = inject(MatDialog);
   #router = inject(Router);
@@ -79,6 +85,8 @@ export class UserDetail implements HasUnsavedChanges {
 
   readonly backUrl = breadcrumbParents(this.#route).at(-1)?.url ?? '/';
   readonly backLink = this.#urlService.listLink(this.backUrl);
+  readonly activityLimit = 10;
+  readonly activityColumns = ['createdAt', 'action', 'target'];
 
   id = input.required({ transform: numberAttribute });
 
@@ -113,6 +121,28 @@ export class UserDetail implements HasUnsavedChanges {
     const owned = new Set(this.user()?.roles.map((role) => role.id));
     const roles = this.#rolesResource.hasValue() ? this.#rolesResource.value().data : [];
     return roles.filter((role) => !owned.has(role.id));
+  });
+  readonly canReadAudit = computed(() => {
+    const permissions = this.#authService.currentUser()?.permissions ?? [];
+    return permissions.includes('realm:audit') && permissions.includes('audit:log:read');
+  });
+
+  readonly activityResource = rxResource({
+    params: () => (this.canReadAudit() ? this.id() : undefined),
+    stream: ({ params }) =>
+      this.#auditApi.getAuditLogs({
+        actorId: params,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+        limit: this.activityLimit,
+      }),
+  });
+  readonly activity = computed(() =>
+    this.activityResource.hasValue() ? this.activityResource.value().data : [],
+  );
+  readonly activityError = computed(() => {
+    const err = this.activityResource.error() as HttpErrorResponse | undefined;
+    return err ? toApiError(err) : null;
   });
 
   constructor() {

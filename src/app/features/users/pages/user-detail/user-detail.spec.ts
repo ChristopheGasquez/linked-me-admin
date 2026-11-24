@@ -427,6 +427,81 @@ describe('UserDetail', () => {
     });
   });
 
+  describe('recent activity', () => {
+    const AUDIT_PERMISSIONS = [...ALL_PERMISSIONS, 'realm:audit', 'audit:log:read'];
+    const log = (
+      id: number,
+      action: string,
+      targetType: string | null,
+      targetId: number | null,
+    ) => ({
+      id,
+      action,
+      actorId: 5,
+      targetId,
+      targetType,
+      metadata: null,
+      createdAt: '2026-11-01T08:30:00.000Z',
+    });
+
+    // The activity loads alongside the user: answer it with the given response
+    async function openWithActivity(body: object, status = 200) {
+      signIn(AUDIT_PERMISSIONS);
+      page = await harness.navigateByUrl('/admin/users/5', UserDetail);
+      TestBed.tick();
+      backend
+        .expectOne((request) => request.url === '/admin/roles')
+        .flush({ data: [], meta: { total: 0, page: 1, limit: 100, totalPages: 0 } });
+      const activity = backend.expectOne((request) => request.url === '/admin/audit-logs');
+      activity.flush(body, { status, statusText: status === 200 ? 'OK' : 'Error' });
+      answerUser();
+      await harness.fixture.whenStable();
+      return activity.request;
+    }
+
+    it('lists the last actions made by the user', async () => {
+      const request = await openWithActivity({
+        data: [log(2, 'user.role.assign', 'user', 7), log(1, 'profile.update', null, null)],
+        meta: { total: 2, page: 1, limit: 10, totalPages: 1 },
+      });
+
+      expect(request.params.get('actorId')).toBe('5');
+      expect(request.params.get('sortBy')).toBe('createdAt');
+      expect(request.params.get('sortOrder')).toBe('desc');
+      expect(request.params.get('limit')).toBe('10');
+      const section = element().querySelector('.user-detail__activity')!;
+      expect(text()).toContain(fr.admin.users.detail.sections.activity);
+      expect(section.querySelectorAll('tr.mat-mdc-row')).toHaveLength(2);
+      expect(section.textContent).toContain(fr.admin.audit.actions.user.role.assign);
+      expect(section.textContent!.replace(/\s+/g, ' ')).toContain(
+        `${fr.admin.audit.targetTypes.user} #7`,
+      );
+    });
+
+    it('says when the user has no activity', async () => {
+      await openWithActivity({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } });
+
+      expect(text()).toContain(fr.admin.users.detail.activity.empty);
+    });
+
+    it('shows the activity error', async () => {
+      await openWithActivity({ code: 'forbidden' }, 403);
+
+      expect(element().querySelector('[role="alert"]')!.textContent).toContain(fr.api.forbidden);
+    });
+
+    it.each([
+      ['audit:log:read', [...ALL_PERMISSIONS, 'realm:audit']],
+      ['realm:audit', [...ALL_PERMISSIONS, 'audit:log:read']],
+    ])('hides the activity without %s', async (_, permissions) => {
+      signIn(permissions);
+      await open();
+
+      expect(text()).not.toContain(fr.admin.users.detail.sections.activity);
+      backend.expectNone((request) => request.url === '/admin/audit-logs');
+    });
+  });
+
   describe('tab title', () => {
     const title = () => TestBed.inject(Title).getTitle();
 

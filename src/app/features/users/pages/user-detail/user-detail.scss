@@ -87,6 +87,14 @@
       }
     }
 
+    &__activity {
+      overflow-x: auto;
+
+      table {
+        width: 100%;
+      }
+    }
+
     &__danger-title {
       color: var(--mat-sys-error);
     }
