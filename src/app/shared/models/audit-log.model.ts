@@ -15,5 +15,6 @@ export interface AuditLogListParams {
   sortOrder?: 'asc' | 'desc';
   action?: string;
   actorId?: number;
+  targetId?: number;
   targetType?: string;
 }

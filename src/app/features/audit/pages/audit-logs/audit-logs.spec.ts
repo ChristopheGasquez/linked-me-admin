@@ -101,8 +101,8 @@ describe('AuditLogs', () => {
   }
 
   // While the list loads the app is not stable, so harness actions would wait: act on the DOM
-  function type(value: string) {
-    const input = element().querySelector<HTMLInputElement>('input[formcontrolname="actorId"]')!;
+  function type(value: string, field = 'actorId') {
+    const input = element().querySelector<HTMLInputElement>(`input[formcontrolname="${field}"]`)!;
     input.value = value;
     input.dispatchEvent(new Event('input'));
   }
@@ -179,7 +179,7 @@ describe('AuditLogs', () => {
 
     it('reads pagination, sort and filters from the URL', async () => {
       const request = await open(
-        '/admin/audit?page=2&limit=50&sortOrder=asc&actorId=7&action=role.create&targetType=role',
+        '/admin/audit?page=2&limit=50&sortOrder=asc&actorId=7&targetId=3&action=role.create&targetType=role',
       );
 
       expect(paramsOf(request)).toEqual({
@@ -188,6 +188,7 @@ describe('AuditLogs', () => {
         sortBy: 'createdAt',
         sortOrder: 'asc',
         actorId: '7',
+        targetId: '3',
         action: 'role.create',
         targetType: 'role',
       });
@@ -195,6 +196,7 @@ describe('AuditLogs', () => {
 
       expect(list.filterForm.getRawValue()).toEqual({
         actorId: 7,
+        targetId: 3,
         action: 'role.create',
         targetType: 'role',
       });
@@ -202,7 +204,7 @@ describe('AuditLogs', () => {
 
     it('removes invalid and default values from the URL without loading twice', async () => {
       const request = await open(
-        '/admin/audit?actorId=abc&action=nope&targetType=planet&sortBy=id&limit=7&page=0',
+        '/admin/audit?actorId=abc&targetId=-1&action=nope&targetType=planet&sortBy=id&limit=7&page=0',
       );
 
       expect(paramsOf(request)).toEqual({
@@ -244,6 +246,25 @@ describe('AuditLogs', () => {
       await answer(await open('/admin/audit?actorId=12'), [ASSIGN]);
 
       click(`button[aria-label="${fr.admin.audit.clearActor}"]`);
+
+      await urlBecomes('/admin/audit');
+      await answer(listRequest());
+    });
+
+    it('filters by target id after a pause, back to the first page', async () => {
+      await answer(await open('/admin/audit?page=3'), [ASSIGN], 60);
+
+      type('8', 'targetId');
+      await urlBecomes('/admin/audit?targetId=8');
+      const request = listRequest();
+      expect(paramsOf(request)).toMatchObject({ page: '1', targetId: '8' });
+      await answer(request, [ASSIGN]);
+    });
+
+    it('clears the target with its button', async () => {
+      await answer(await open('/admin/audit?targetId=8'), [ASSIGN]);
+
+      click(`button[aria-label="${fr.admin.audit.clearTarget}"]`);
 
       await urlBecomes('/admin/audit');
       await answer(listRequest());

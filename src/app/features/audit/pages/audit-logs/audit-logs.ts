@@ -38,6 +38,7 @@ import {
 const PAGE_SIZES = [10, 20, 50];
 const SORT_COLUMNS = ['createdAt'];
 const SORT_ORDERS = ['asc', 'desc'] as const;
+const ID_FILTERS = ['actorId', 'targetId'] as const;
 
 interface AuditQuery {
   page: number;
@@ -45,6 +46,7 @@ interface AuditQuery {
   sortBy: string;
   sortOrder: 'asc' | 'desc';
   actorId: number | null;
+  targetId: number | null;
   action: string | null;
   targetType: string | null;
 }
@@ -55,6 +57,7 @@ const DEFAULT_QUERY: AuditQuery = {
   sortBy: 'createdAt',
   sortOrder: 'desc',
   actorId: null,
+  targetId: null,
   action: null,
   targetType: null,
 };
@@ -126,14 +129,16 @@ export class AuditLogs {
   readonly sortBy = input<string>();
   readonly sortOrder = input<string>();
   readonly actorId = input<string>();
+  readonly targetId = input<string>();
   readonly action = input<string>();
   readonly targetType = input<string>();
 
-  // Last actorId synced between URL and form, so URL updates don't overwrite keystrokes still in debounce
-  #syncedActorId: number | null | undefined;
+  // Last ids synced between URL and form, so URL updates don't overwrite keystrokes still in debounce
+  #syncedIds: Partial<Record<(typeof ID_FILTERS)[number], number | null>> = {};
 
   filterForm: FormGroup = this.#fb.group({
     actorId: [''],
+    targetId: [''],
     action: [''],
     targetType: [''],
   });
@@ -144,6 +149,7 @@ export class AuditLogs {
     sortBy: this.sortBy(),
     sortOrder: this.sortOrder(),
     actorId: this.actorId(),
+    targetId: this.targetId(),
     action: this.action(),
     targetType: this.targetType(),
   }));
@@ -157,6 +163,7 @@ export class AuditLogs {
         sortBy: parseOption(raw.sortBy, SORT_COLUMNS) ?? DEFAULT_QUERY.sortBy,
         sortOrder: parseOption(raw.sortOrder, SORT_ORDERS) ?? DEFAULT_QUERY.sortOrder,
         actorId: parsePositiveInt(raw.actorId),
+        targetId: parsePositiveInt(raw.targetId),
         action: parseOption(raw.action, this.actions),
         targetType: parseOption(raw.targetType, this.targetTypes),
       };
@@ -166,10 +173,11 @@ export class AuditLogs {
 
   readonly auditResource = rxResource({
     params: () => {
-      const { actorId, action, targetType, ...rest } = this.query();
+      const { actorId, targetId, action, targetType, ...rest } = this.query();
       return {
         ...rest,
         ...(actorId ? { actorId } : {}),
+        ...(targetId ? { targetId } : {}),
         ...(action ? { action } : {}),
         ...(targetType ? { targetType } : {}),
       };
@@ -195,8 +203,8 @@ export class AuditLogs {
   });
   // Filtered view or page out of range: the empty state offers a reset to the base view
   readonly canResetView = computed(() => {
-    const { actorId, action, targetType, page } = this.query();
-    return !!(actorId || action || targetType) || page > 1;
+    const { actorId, targetId, action, targetType, page } = this.query();
+    return !!(actorId || targetId || action || targetType) || page > 1;
   });
 
   readonly sortIcons = computed(() => {
@@ -224,11 +232,14 @@ export class AuditLogs {
 
     // URL → form (also fills the form on init)
     effect(() => {
-      const { actorId, action, targetType } = this.query();
+      const query = this.query();
+      const { action, targetType } = query;
       untracked(() => {
-        if (actorId !== this.#syncedActorId) {
-          this.#syncedActorId = actorId;
-          this.filterForm.controls['actorId'].setValue(actorId ?? '', { emitEvent: false });
+        for (const key of ID_FILTERS) {
+          if (query[key] !== this.#syncedIds[key]) {
+            this.#syncedIds[key] = query[key];
+            this.filterForm.controls[key].setValue(query[key] ?? '', { emitEvent: false });
+          }
         }
         this.filterForm.patchValue(
           { action: action ?? '', targetType: targetType ?? '' },
@@ -238,18 +249,20 @@ export class AuditLogs {
     });
 
     // Form → URL
-    this.filterForm.controls['actorId'].valueChanges
-      .pipe(
-        debounceTime(300),
-        map((value) => parsePositiveInt(String(value ?? ''))),
-        filter((actorId) => actorId !== this.#syncedActorId),
-        tap((actorId) => {
-          this.#syncedActorId = actorId;
-          this.#updateQuery({ actorId, page: 1 });
-        }),
-        takeUntilDestroyed(),
-      )
-      .subscribe();
+    for (const key of ID_FILTERS) {
+      this.filterForm.controls[key].valueChanges
+        .pipe(
+          debounceTime(300),
+          map((value) => parsePositiveInt(String(value ?? ''))),
+          filter((id) => id !== this.#syncedIds[key]),
+          tap((id) => {
+            this.#syncedIds[key] = id;
+            this.#updateQuery({ [key]: id, page: 1 });
+          }),
+          takeUntilDestroyed(),
+        )
+        .subscribe();
+    }
 
     merge(
       this.filterForm.controls['action'].valueChanges.pipe(
@@ -280,6 +293,10 @@ export class AuditLogs {
 
   clearActorId(): void {
     this.filterForm.controls['actorId'].setValue('');
+  }
+
+  clearTargetId(): void {
+    this.filterForm.controls['targetId'].setValue('');
   }
 
   resetView(): void {
