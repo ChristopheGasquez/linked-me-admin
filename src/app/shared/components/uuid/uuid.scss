@@ -1,0 +1,30 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+
+  .uuid__value {
+    font-family: monospace;
+
+    &--link {
+      color: var(--mat-sys-primary);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .uuid__copy {
+    --mat-icon-button-state-layer-size: 2rem;
+    --mat-icon-button-icon-size: var(--lma-icon-size--xs);
+    --mat-icon-button-icon-color: var(--mat-sys-on-surface-variant);
+
+    mat-icon {
+      font-size: var(--lma-icon-size--xs);
+      width: var(--lma-icon-size--xs);
+      height: var(--lma-icon-size--xs);
+    }
+  }
+}

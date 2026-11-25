@@ -1,8 +1,8 @@
 export interface AuditLogResponse {
-  id: number;
+  id: string;
   action: string;
-  actorId: number | null;
-  targetId: number | null;
+  actorId: string | null;
+  targetId: string | null;
   targetType: string | null;
   metadata: Record<string, unknown> | null;
   createdAt: string;
@@ -14,7 +14,7 @@ export interface AuditLogListParams {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   action?: string;
-  actorId?: number;
-  targetId?: number;
+  actorId?: string;
+  targetId?: string;
   targetType?: string;
 }

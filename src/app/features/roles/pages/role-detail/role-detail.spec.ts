@@ -16,20 +16,20 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { PermissionResponse } from '../../../../shared/models/permission.model';
 import { RoleResponse } from '../../../../shared/models/role.model';
-import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../../testing/test-providers';
 import { RoleDetail } from './role-detail';
 
 @Component({ template: '' })
 class ListStub {}
 
-const MANAGE = { id: 1, name: 'admin:role:manage' };
-const USER_READ = { id: 2, name: 'admin:user:read' };
-const AUDIT_READ = { id: 3, name: 'audit:log:read' };
-const PROFILE_READ = { id: 4, name: 'profile:read:own' };
+const MANAGE = { id: uuid(1), name: 'admin:role:manage' };
+const USER_READ = { id: uuid(2), name: 'admin:user:read' };
+const AUDIT_READ = { id: uuid(3), name: 'audit:log:read' };
+const PROFILE_READ = { id: uuid(4), name: 'profile:read:own' };
 const ALL: PermissionResponse[] = [MANAGE, USER_READ, AUDIT_READ, PROFILE_READ];
 
 const editor = (overrides: Partial<RoleResponse> = {}): RoleResponse => ({
-  id: 3,
+  id: uuid(3),
   name: 'EDITOR',
   createdAt: '2026-01-01T08:00:00.000Z',
   updatedAt: '2026-01-02T08:00:00.000Z',
@@ -133,7 +133,7 @@ describe('RoleDetail', () => {
     await (await createButton())!.click();
     await answerDialog(true);
     backend.expectOne('/admin/roles').flush({
-      id: 7,
+      id: uuid(7),
       name: 'EDITOR',
       createdAt: editor().createdAt,
       updatedAt: editor().updatedAt,
@@ -143,7 +143,7 @@ describe('RoleDetail', () => {
   // After creation the page navigates to the new role, which loads again
   async function landOnNewRole(role: RoleResponse) {
     const router = TestBed.inject(Router);
-    await vi.waitFor(() => expect(router.url).toBe('/admin/roles/7'));
+    await vi.waitFor(() => expect(router.url).toBe(`/admin/roles/${uuid(7)}`));
     TestBed.tick();
     answerPermissions();
     answerRole(role);
@@ -181,7 +181,7 @@ describe('RoleDetail', () => {
 
   describe('display', () => {
     it('loads the role and every permission sorted by name, grouped by realm', async () => {
-      page = await harness.navigateByUrl('/admin/roles/3', RoleDetail);
+      page = await harness.navigateByUrl(`/admin/roles/${uuid(3)}`, RoleDetail);
       TestBed.tick();
       const permissions = backend.expectOne((request) => request.url === '/admin/permissions');
       expect(
@@ -203,7 +203,7 @@ describe('RoleDetail', () => {
       const values = await Promise.all(
         (await loader.getAllHarnesses(MatInputHarness)).map((input) => input.getValue()),
       );
-      expect(values).toEqual(['3', format(editor().createdAt), format(editor().updatedAt)]);
+      expect(values).toEqual([uuid(3), format(editor().createdAt), format(editor().updatedAt)]);
     });
 
     it('shows only the role permissions without the right to list them all', async () => {
@@ -217,11 +217,11 @@ describe('RoleDetail', () => {
     });
 
     it('shows the API error when the role cannot be loaded', async () => {
-      await harness.navigateByUrl('/admin/roles/3', RoleDetail);
+      await harness.navigateByUrl(`/admin/roles/${uuid(3)}`, RoleDetail);
       TestBed.tick();
       answerPermissions();
       backend
-        .expectOne('/admin/roles/3')
+        .expectOne(`/admin/roles/${uuid(3)}`)
         .flush({ code: 'admin.role.not_found' }, { status: 404, statusText: 'Error' });
       await harness.fixture.whenStable();
 
@@ -284,13 +284,13 @@ describe('RoleDetail', () => {
       await editAndSave();
       await answerDialog(true);
 
-      const add = backend.expectOne('/admin/roles/3/permissions');
+      const add = backend.expectOne(`/admin/roles/${uuid(3)}/permissions`);
       expect(add.request.method).toBe('POST');
       expect(add.request.body).toEqual({ permissions: ['audit:log:read'] });
-      backend.expectNone('/admin/roles/3/permissions/2');
+      backend.expectNone(`/admin/roles/${uuid(3)}/permissions/${uuid(2)}`);
       add.flush(editor({ permissions: [USER_READ, AUDIT_READ, PROFILE_READ] }));
 
-      const remove = backend.expectOne('/admin/roles/3/permissions/2');
+      const remove = backend.expectOne(`/admin/roles/${uuid(3)}/permissions/${uuid(2)}`);
       expect(remove.request.method).toBe('DELETE');
       remove.flush({ code: 'admin.role.permission.removed' });
       answerRole(editor({ permissions: [AUDIT_READ, PROFILE_READ] }));
@@ -313,9 +313,9 @@ describe('RoleDetail', () => {
         }),
       );
       await answerDialog(true);
-      backend.expectOne('/admin/roles/3/permissions').flush(editor());
+      backend.expectOne(`/admin/roles/${uuid(3)}/permissions`).flush(editor());
       backend
-        .expectOne('/admin/roles/3/permissions/2')
+        .expectOne(`/admin/roles/${uuid(3)}/permissions/${uuid(2)}`)
         .flush({ code: 'admin.role.permission.removed' });
       answerRole(editor({ permissions: [AUDIT_READ, PROFILE_READ] }));
       backend.expectOne('/auth/me').flush({ ...testUser(MANAGER), roles: ['EDITOR'] });
@@ -343,7 +343,7 @@ describe('RoleDetail', () => {
       await answerDialog(true);
 
       backend
-        .expectOne('/admin/roles/3/permissions')
+        .expectOne(`/admin/roles/${uuid(3)}/permissions`)
         .flush(
           { code: 'admin.permission.unknown', params: { permissions: 'audit:log:read' } },
           { status: 400, statusText: 'Error' },
@@ -405,18 +405,18 @@ describe('RoleDetail', () => {
       expect(create.request.method).toBe('POST');
       expect(create.request.body).toEqual({ name: 'EDITOR' });
       create.flush({
-        id: 7,
+        id: uuid(7),
         name: 'EDITOR',
         createdAt: editor().createdAt,
         updatedAt: editor().updatedAt,
       });
 
-      const permissions = backend.expectOne('/admin/roles/7/permissions');
+      const permissions = backend.expectOne(`/admin/roles/${uuid(7)}/permissions`);
       expect(permissions.request.body).toEqual({
         permissions: ['audit:log:read', 'profile:read:own'],
       });
-      permissions.flush(editor({ id: 7, permissions: [AUDIT_READ, PROFILE_READ] }));
-      await landOnNewRole(editor({ id: 7, permissions: [AUDIT_READ, PROFILE_READ] }));
+      permissions.flush(editor({ id: uuid(7), permissions: [AUDIT_READ, PROFILE_READ] }));
+      await landOnNewRole(editor({ id: uuid(7), permissions: [AUDIT_READ, PROFILE_READ] }));
 
       expect(element().querySelector('.role-detail__header__title')!.textContent).toContain(
         'EDITOR',
@@ -427,12 +427,12 @@ describe('RoleDetail', () => {
     it('opens the created role with the error when its permissions were refused', async () => {
       await createEditor();
       backend
-        .expectOne('/admin/roles/7/permissions')
+        .expectOne(`/admin/roles/${uuid(7)}/permissions`)
         .flush(
           { code: 'admin.permission.unknown', params: { permissions: 'audit:log:read' } },
           { status: 400, statusText: 'Error' },
         );
-      await landOnNewRole(editor({ id: 7, permissions: [] }));
+      await landOnNewRole(editor({ id: uuid(7), permissions: [] }));
 
       expect(text()).toContain(
         message(fr.api.admin.permission.unknown, { permissions: 'audit:log:read' }),
@@ -505,7 +505,7 @@ describe('RoleDetail', () => {
         message(fr.admin.roles.detail.delete.confirm, { name: 'EDITOR' }),
       );
       await answerDialog(true);
-      const request = backend.expectOne('/admin/roles/3');
+      const request = backend.expectOne(`/admin/roles/${uuid(3)}`);
       expect(request.request.method).toBe('DELETE');
       request.flush({ code: 'admin.role.deleted' });
       await harness.fixture.whenStable();
@@ -529,7 +529,7 @@ describe('RoleDetail', () => {
       await (await deleteButton())!.click();
       await answerDialog(true);
       backend
-        .expectOne('/admin/roles/3')
+        .expectOne(`/admin/roles/${uuid(3)}`)
         .flush(
           { code: 'admin.role.has_users', params: { count: 2 } },
           { status: 400, statusText: 'Error' },
@@ -537,7 +537,7 @@ describe('RoleDetail', () => {
       await harness.fixture.whenStable();
 
       expect(text()).toContain(message(fr.api.admin.role.has_users, { count: 2 }));
-      expect(TestBed.inject(Router).url).toBe('/admin/roles/3');
+      expect(TestBed.inject(Router).url).toBe(`/admin/roles/${uuid(3)}`);
     });
   });
 

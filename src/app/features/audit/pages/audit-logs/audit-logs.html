@@ -12,9 +12,7 @@
         <mat-icon matPrefix>person_search</mat-icon>
         <input
           matInput
-          appDigitsOnly
           type="text"
-          inputmode="numeric"
           formControlName="actorId"
           [placeholder]="t('admin.audit.filterActor')" />
         @if (filterForm.value.actorId) {
@@ -26,6 +24,9 @@
             (click)="clearActorId()">
             <mat-icon>close</mat-icon>
           </button>
+        }
+        @if (filterForm.controls['actorId'].hasError('uuid')) {
+          <mat-error>{{ t('validation.uuid') }}</mat-error>
         }
       </mat-form-field>
 
@@ -60,9 +61,7 @@
         <mat-icon matPrefix>manage_search</mat-icon>
         <input
           matInput
-          appDigitsOnly
           type="text"
-          inputmode="numeric"
           formControlName="targetId"
           [placeholder]="t('admin.audit.filterTarget')" />
         @if (filterForm.value.targetId) {
@@ -74,6 +73,9 @@
             (click)="clearTargetId()">
             <mat-icon>close</mat-icon>
           </button>
+        }
+        @if (filterForm.controls['targetId'].hasError('uuid')) {
+          <mat-error>{{ t('validation.uuid') }}</mat-error>
         }
       </mat-form-field>
     </form>
@@ -155,14 +157,10 @@
               *matCellDef="let log">
               @if (!log.actorId) {
                 {{ t('admin.audit.system') }}
-              } @else if (canViewAdmin()) {
-                <a
-                  class="audit-logs__link"
-                  [routerLink]="['users', log.actorId]"
-                  >#{{ log.actorId }}</a
-                >
               } @else {
-                #{{ log.actorId }}
+                <app-uuid
+                  [value]="log.actorId"
+                  [link]="canViewAdmin() ? ['users', log.actorId] : undefined" />
               }
             </td>
           </ng-container>
@@ -178,14 +176,14 @@
               *matCellDef="let log">
               @if (log.targetType) {
                 {{ t('admin.audit.targetTypes.' + log.targetType) }}
-                @if (log.targetId && canViewAdmin() && targetRoutes[log.targetType]) {
-                  <a
-                    class="audit-logs__link"
-                    [routerLink]="[targetRoutes[log.targetType], log.targetId]"
-                    >#{{ log.targetId }}</a
-                  >
-                } @else if (log.targetId) {
-                  #{{ log.targetId }}
+                @if (log.targetId) {
+                  <app-uuid
+                    [value]="log.targetId"
+                    [link]="
+                      canViewAdmin() && targetRoutes[log.targetType]
+                        ? [targetRoutes[log.targetType], log.targetId]
+                        : undefined
+                    " />
                 }
               } @else {
                 —

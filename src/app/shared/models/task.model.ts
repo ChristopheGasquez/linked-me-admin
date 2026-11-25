@@ -11,5 +11,5 @@ export interface Task {
   canRun: boolean;
   schedule: { cron: string | null; automatic: boolean };
   config: { ttlHours?: number; retentionDays?: number };
-  lastRun: { at: string; actorId: number | null; result: Record<string, unknown> | null } | null;
+  lastRun: { at: string; actorId: string | null; result: Record<string, unknown> | null } | null;
 }

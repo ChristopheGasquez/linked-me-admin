@@ -15,6 +15,10 @@
     "breadcrumb": "Breadcrumb",
     "showPassword": "Show password",
     "skipLink": "Skip to main content",
+    "uuid": {
+      "copy": "Copy identifier",
+      "copied": "Identifier copied"
+    },
     "unsavedChanges": {
       "title": "Unsaved changes",
       "message": "Your changes will be lost if you leave this page.",
@@ -179,6 +183,7 @@
     }
   },
   "validation": {
+    "uuid": "Invalid identifier (UUID expected)",
     "password": {
       "matches": "Password must contain at least one uppercase letter, one number and one special character",
       "minLength": "Password must be at least 8 characters"
@@ -497,10 +502,10 @@
     "audit": {
       "title": "Audit log",
       "filterActorLabel": "Actor",
-      "filterActor": "User ID",
+      "filterActor": "User UUID",
       "clearActor": "Clear actor",
       "filterTargetLabel": "Target",
-      "filterTarget": "Target ID",
+      "filterTarget": "Target UUID",
       "clearTarget": "Clear target",
       "filterActionLabel": "Action",
       "filterActionAll": "All actions",
@@ -575,7 +580,7 @@
       "manualOnly": "Manual only",
       "lastRun": {
         "auto": "Last run: {{ date }} (automatic)",
-        "byUser": "Last run: {{ date }} by user #{{ id }}",
+        "byUser": "Last run: {{ date }} by user",
         "never": "Never run"
       },
       "items": {

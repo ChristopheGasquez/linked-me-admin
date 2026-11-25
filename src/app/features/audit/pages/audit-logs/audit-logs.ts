@@ -17,12 +17,12 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { UrlService } from '../../../../core/services/url.service';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
-import { DigitsOnlyDirective } from '../../../../shared/directives/digits-only.directive';
+import { Uuid } from '../../../../shared/components/uuid/uuid';
 import { AuditApiService } from '../../../../shared/services/audit-api.service';
 import { PaginatedResponse } from '../../../../shared/models/pagination.model';
 import { AuditLogResponse } from '../../../../shared/models/audit-log.model';
@@ -31,8 +31,10 @@ import {
   isCanonical,
   parseOption,
   parsePositiveInt,
+  parseUuid,
   sameValues,
   toQueryParams,
+  uuidValidator,
 } from '../../../../shared/utils/list-query-params';
 
 const PAGE_SIZES = [10, 20, 50];
@@ -45,8 +47,8 @@ interface AuditQuery {
   limit: number;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
-  actorId: number | null;
-  targetId: number | null;
+  actorId: string | null;
+  targetId: string | null;
   action: string | null;
   targetType: string | null;
 }
@@ -82,9 +84,8 @@ const DEFAULT_QUERY: AuditQuery = {
     MatChipsModule,
     MatIconButton,
     MatTooltipModule,
-    RouterLink,
     EmptyState,
-    DigitsOnlyDirective,
+    Uuid,
   ],
 })
 export class AuditLogs {
@@ -134,11 +135,11 @@ export class AuditLogs {
   readonly targetType = input<string>();
 
   // Last ids synced between URL and form, so URL updates don't overwrite keystrokes still in debounce
-  #syncedIds: Partial<Record<(typeof ID_FILTERS)[number], number | null>> = {};
+  #syncedIds: Partial<Record<(typeof ID_FILTERS)[number], string | null>> = {};
 
   filterForm: FormGroup = this.#fb.group({
-    actorId: [''],
-    targetId: [''],
+    actorId: ['', uuidValidator],
+    targetId: ['', uuidValidator],
     action: [''],
     targetType: [''],
   });
@@ -162,8 +163,8 @@ export class AuditLogs {
         limit: parseOption(raw.limit, PAGE_SIZES) ?? DEFAULT_QUERY.limit,
         sortBy: parseOption(raw.sortBy, SORT_COLUMNS) ?? DEFAULT_QUERY.sortBy,
         sortOrder: parseOption(raw.sortOrder, SORT_ORDERS) ?? DEFAULT_QUERY.sortOrder,
-        actorId: parsePositiveInt(raw.actorId),
-        targetId: parsePositiveInt(raw.targetId),
+        actorId: parseUuid(raw.actorId),
+        targetId: parseUuid(raw.targetId),
         action: parseOption(raw.action, this.actions),
         targetType: parseOption(raw.targetType, this.targetTypes),
       };
@@ -253,7 +254,7 @@ export class AuditLogs {
       this.filterForm.controls[key].valueChanges
         .pipe(
           debounceTime(300),
-          map((value) => parsePositiveInt(String(value ?? ''))),
+          map((value) => parseUuid(value ?? '')),
           filter((id) => id !== this.#syncedIds[key]),
           tap((id) => {
             this.#syncedIds[key] = id;
