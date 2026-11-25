@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  numberAttribute,
-  signal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -79,9 +70,7 @@ export class RoleDetail implements HasUnsavedChanges {
   readonly backLink = this.#urlService.listLink(this.backUrl);
 
   // undefined on /admin/roles/new (create mode)
-  id = input<number | undefined, string | undefined>(undefined, {
-    transform: (value) => (value === undefined ? undefined : numberAttribute(value)),
-  });
+  id = input<string>();
 
   editing = signal(false);
   saving = signal(false);

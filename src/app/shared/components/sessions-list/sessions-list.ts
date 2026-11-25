@@ -34,9 +34,9 @@ export class SessionsList {
   #router = inject(Router);
 
   // Admin view of another user's sessions; the signed-in user's own sessions when undefined
-  readonly userId = input<number>();
+  readonly userId = input<string>();
 
-  revoking = signal<number | null>(null);
+  revoking = signal<string | null>(null);
   loggingOutAll = signal(false);
   #revokeError = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
 
@@ -79,7 +79,7 @@ export class SessionsList {
     return this.#revokeError() ?? (err ? toApiError(err) : null);
   });
 
-  revokeSession(id: number): void {
+  revokeSession(id: string): void {
     this.revoking.set(id);
     this.#revokeError.set(null);
     const userId = this.userId();

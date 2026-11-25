@@ -274,7 +274,7 @@
                     @if (log.targetType) {
                       {{ t('admin.audit.targetTypes.' + log.targetType) }}
                       @if (log.targetId) {
-                        #{{ log.targetId }}
+                        <app-uuid [value]="log.targetId" />
                       }
                     } @else {
                       —

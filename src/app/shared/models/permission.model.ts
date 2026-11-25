@@ -1,5 +1,5 @@
 export interface PermissionResponse {
-  id: number;
+  id: string;
   name: string;
 }
 

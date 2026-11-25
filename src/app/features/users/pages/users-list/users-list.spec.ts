@@ -11,14 +11,14 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { UrlService } from '../../../../core/services/url.service';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
 import { UserAdminResponse } from '../../../../shared/models/user-admin.model';
-import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../../testing/test-providers';
 import { UsersList } from './users-list';
 
 @Component({ template: '' })
 class DetailStub {}
 
 const role = (id: number, name: string): RoleBasicResponse => ({
-  id,
+  id: uuid(id),
   name,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
@@ -27,7 +27,7 @@ const ADMIN = role(1, 'ADMIN');
 const EDITOR = role(2, 'EDITOR');
 
 const user = (id: number, name: string, roles: RoleBasicResponse[] = []): UserAdminResponse => ({
-  id,
+  id: uuid(id),
   name,
   email: `${name.toLowerCase()}@test.dev`,
   isEmailChecked: id % 2 === 1,
@@ -312,7 +312,7 @@ describe('UsersList', () => {
 
     click(`tr.mat-mdc-row button[aria-label="${fr.admin.users.viewDetail}"]`);
 
-    await urlBecomes('/admin/users/1');
+    await urlBecomes(`/admin/users/${uuid(1)}`);
   });
 
   it('remembers the list URL for the way back from a detail page', async () => {

@@ -10,12 +10,12 @@ import { MatTableHarness } from '@angular/material/table/testing';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionResponse } from '../../models/session.model';
-import { fr, provideTestDefaults, testUser } from '../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../testing/test-providers';
 import { SessionsList } from './sessions-list';
 
 const session = (id: number): SessionResponse => ({
-  id,
-  userId: 1,
+  id: uuid(id),
+  userId: uuid(1),
   createdAt: `2026-11-0${id}T08:30:00.000Z`,
   expiresAt: `2026-11-1${id}T08:30:00.000Z`,
 });
@@ -116,7 +116,7 @@ describe('SessionsList', () => {
     await answerList([session(1), session(2)]);
 
     await (await disconnectButtons())[1].click();
-    const revoke = backend.expectOne('/auth/sessions/2');
+    const revoke = backend.expectOne(`/auth/sessions/${uuid(2)}`);
     expect(revoke.request.method).toBe('DELETE');
     const [first, second] = await disconnectButtons();
     expect([await first.isDisabled(), await second.isDisabled()]).toEqual([false, true]);
@@ -134,7 +134,7 @@ describe('SessionsList', () => {
 
     await (await disconnectButtons())[0].click();
     backend
-      .expectOne('/auth/sessions/1')
+      .expectOne(`/auth/sessions/${uuid(1)}`)
       .flush({ code: 'auth.session.not_found' }, { status: 404, statusText: 'Error' });
     await fixture.whenStable();
 
@@ -204,9 +204,9 @@ describe('SessionsList', () => {
   });
 
   describe("an admin viewing a user's sessions", () => {
-    const USER_SESSIONS = '/admin/users/7/sessions';
+    const USER_SESSIONS = `/admin/users/${uuid(7)}/sessions`;
 
-    function viewUser(permissions: string[], userId = 7) {
+    function viewUser(permissions: string[], userId = uuid(7)) {
       TestBed.inject(AuthService).currentUser.set(testUser(permissions));
       fixture.componentRef.setInput('userId', userId);
     }
@@ -236,9 +236,12 @@ describe('SessionsList', () => {
       await answerList([session(1), session(2)], 2, USER_SESSIONS);
 
       await (await disconnectButtons())[1].click();
-      const revoke = backend.expectOne(`${USER_SESSIONS}/2`);
+      const revoke = backend.expectOne(`${USER_SESSIONS}/${uuid(2)}`);
       expect(revoke.request.method).toBe('DELETE');
-      revoke.flush({ code: 'admin.user.session.revoked', params: { userId: 7, sessionId: 2 } });
+      revoke.flush({
+        code: 'admin.user.session.revoked',
+        params: { userId: uuid(7), sessionId: uuid(2) },
+      });
 
       await answerList([session(1)], 1, USER_SESSIONS);
       expect(await rows()).toHaveLength(1);
@@ -254,7 +257,7 @@ describe('SessionsList', () => {
       await answerDialog(true);
       const revoke = backend.expectOne(USER_SESSIONS);
       expect(revoke.request.method).toBe('DELETE');
-      revoke.flush({ code: 'admin.user.sessions.revoked', params: { userId: 7, count: 2 } });
+      revoke.flush({ code: 'admin.user.sessions.revoked', params: { userId: uuid(7), count: 2 } });
 
       await answerList([], 0, USER_SESSIONS);
       expect(text()).toContain(fr.common.sessions.empty);
@@ -264,15 +267,15 @@ describe('SessionsList', () => {
 
     it('signs out when the admin revokes every session of their own account', async () => {
       const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-      viewUser(['admin:user:session:read', 'admin:user:session:revoke'], 1);
-      await answerList([session(1), session(2)], 2, '/admin/users/1/sessions');
+      viewUser(['admin:user:session:read', 'admin:user:session:revoke'], uuid(1));
+      await answerList([session(1), session(2)], 2, `/admin/users/${uuid(1)}/sessions`);
 
       await (await logoutAllButton())!.click();
       expect(dialog()!.textContent).toContain(fr.common.sessions.logoutAll.title);
       await answerDialog(true);
       backend
-        .expectOne('/admin/users/1/sessions')
-        .flush({ code: 'admin.user.sessions.revoked', params: { userId: 1, count: 2 } });
+        .expectOne(`/admin/users/${uuid(1)}/sessions`)
+        .flush({ code: 'admin.user.sessions.revoked', params: { userId: uuid(1), count: 2 } });
 
       backend.expectOne('/auth/logout').flush({ code: 'auth.logout.success' });
       expect(localStorage.getItem('access_token')).toBeNull();

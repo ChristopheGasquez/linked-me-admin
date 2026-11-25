@@ -205,7 +205,7 @@ export class RolesList {
     });
   }
 
-  navigateToRole(id: number): void {
+  navigateToRole(id: string): void {
     this.#router.navigate(['/admin/roles', id]);
   }
 

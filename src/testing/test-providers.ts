@@ -15,6 +15,9 @@ import { FakeTurnstileService } from './turnstile-stub';
 // Real translations, for assertions robust to wording changes (e.g. fr.common.cancel)
 export { fr };
 
+// Readable UUID v7 for fixtures: uuid(5) ends with 000000000005
+export const uuid = (n: number): string => `019ab8f2-6c3e-7d41-9b2a-${String(n).padStart(12, '0')}`;
+
 // App-like HTTP stack (real auth interceptor, mocked backend), empty router,
 // real translations (French active, loaded synchronously), Material animations off,
 // fake Cloudflare captcha (never loads the real script)
@@ -37,7 +40,7 @@ export function provideTestDefaults(): (Provider | EnvironmentProviders)[] {
 
 export function testUser(permissions: string[] = []): MeResponse {
   return {
-    id: 1,
+    id: uuid(1),
     email: 'admin@test.dev',
     name: 'Admin',
     isEmailChecked: true,
