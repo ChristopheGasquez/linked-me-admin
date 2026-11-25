@@ -1,0 +1,17 @@
+:host {
+  display: contents;
+
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lma-spacing-gap--xl);
+    margin-inline: auto;
+    width: 100%;
+    min-width: var(--lma-container-width--xxxs);
+    max-width: var(--lma-container-width--md);
+
+    &__title {
+      margin: 0;
+    }
+  }
+}

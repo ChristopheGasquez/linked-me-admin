@@ -77,6 +77,12 @@
       "loadError": "Unable to load the anti-bot check. Disable your ad blocker or reload the page."
     }
   },
+  "dashboard": {
+    "empty": {
+      "title": "No application linked to your account",
+      "hint": "Application management is coming soon."
+    }
+  },
   "auth": {
     "login": {
       "title": "Sign in",
