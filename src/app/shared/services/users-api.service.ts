@@ -23,24 +23,24 @@ export class UsersApiService {
     });
   }
 
-  getUserById(id: number): Observable<UserAdminResponse> {
+  getUserById(id: string): Observable<UserAdminResponse> {
     return this.#http.get<UserAdminResponse>(`${this.baseUrl}/${id}`);
   }
 
-  deleteUser(id: number): Observable<ApiMessage> {
+  deleteUser(id: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}`);
   }
 
-  assignRole(id: number, role: string): Observable<ApiMessage> {
+  assignRole(id: string, role: string): Observable<ApiMessage> {
     return this.#http.post<ApiMessage>(`${this.baseUrl}/${id}/roles`, { role });
   }
 
-  removeRole(id: number, roleId: number): Observable<ApiMessage> {
+  removeRole(id: string, roleId: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/roles/${roleId}`);
   }
 
   getSessions(
-    id: number,
+    id: string,
     params: PaginationParams = {},
   ): Observable<PaginatedResponse<SessionResponse>> {
     return this.#http.get<PaginatedResponse<SessionResponse>>(`${this.baseUrl}/${id}/sessions`, {
@@ -48,11 +48,11 @@ export class UsersApiService {
     });
   }
 
-  revokeSession(id: number, sessionId: number): Observable<ApiMessage> {
+  revokeSession(id: string, sessionId: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/sessions/${sessionId}`);
   }
 
-  revokeSessions(id: number): Observable<ApiMessage> {
+  revokeSessions(id: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/sessions`);
   }
 }

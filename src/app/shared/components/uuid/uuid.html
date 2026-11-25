@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  @if (link(); as link) {
+    <a
+      class="uuid__value uuid__value--link"
+      [routerLink]="link"
+      [matTooltip]="value()"
+      >{{ short() }}</a
+    >
+  } @else {
+    <span
+      class="uuid__value"
+      [matTooltip]="value()"
+      >{{ short() }}</span
+    >
+  }
+  <button
+    mat-icon-button
+    type="button"
+    class="uuid__copy"
+    [attr.aria-label]="t('common.uuid.copy')"
+    [matTooltip]="t('common.uuid.copy')"
+    (click)="copy()">
+    <mat-icon>{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+  </button>
+</ng-container>

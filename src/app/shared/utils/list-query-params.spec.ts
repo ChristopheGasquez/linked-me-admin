@@ -2,9 +2,14 @@ import {
   isCanonical,
   parseOption,
   parsePositiveInt,
+  parseUuid,
   sameValues,
   toQueryParams,
+  uuidValidator,
 } from './list-query-params';
+import { FormControl } from '@angular/forms';
+
+const UUID = '019ab8f2-6c3e-7d41-9b2a-5e8c1f3a7d90';
 
 describe('list-query-params', () => {
   describe('parsePositiveInt', () => {
@@ -15,6 +20,35 @@ describe('list-query-params', () => {
 
     it.each([undefined, '', '0', '-3', '1.5', 'abc', '10a'])('returns null for %j', (value) => {
       expect(parsePositiveInt(value)).toBeNull();
+    });
+  });
+
+  describe('parseUuid', () => {
+    it('trims and lowercases a valid uuid', () => {
+      expect(parseUuid(UUID)).toBe(UUID);
+      expect(parseUuid(`  ${UUID.toUpperCase()} `)).toBe(UUID);
+    });
+
+    it.each([
+      undefined,
+      '',
+      '42',
+      'abc',
+      UUID.slice(0, -1),
+      `${UUID}0`,
+      UUID.replace('5e8c', 'zz8c'),
+    ])('returns null for %j', (value) => {
+      expect(parseUuid(value)).toBeNull();
+    });
+  });
+
+  describe('uuidValidator', () => {
+    it.each(['', null, UUID, ` ${UUID} `])('accepts %j', (value) => {
+      expect(uuidValidator(new FormControl(value))).toBeNull();
+    });
+
+    it('rejects anything else', () => {
+      expect(uuidValidator(new FormControl('42'))).toEqual({ uuid: true });
     });
   });
 

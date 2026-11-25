@@ -10,19 +10,19 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UrlService } from '../../../../core/services/url.service';
 import { RoleResponse } from '../../../../shared/models/role.model';
-import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../../testing/test-providers';
 import { RolesList } from './roles-list';
 
 @Component({ template: '' })
 class DetailStub {}
 
 const role = (id: number, name: string, permissionCount: number): RoleResponse => ({
-  id,
+  id: uuid(id),
   name,
   createdAt: `2026-11-0${id}T08:00:00.000Z`,
   updatedAt: `2026-11-1${id}T08:00:00.000Z`,
   permissions: Array.from({ length: permissionCount }, (_, index) => ({
-    id: index + 1,
+    id: uuid(index + 1),
     name: `realm:permission-${index + 1}`,
   })),
 });
@@ -284,7 +284,7 @@ describe('RolesList', () => {
 
     click(`tr.mat-mdc-row button[aria-label="${fr.admin.roles.viewDetail}"]`);
 
-    await urlBecomes('/admin/roles/1');
+    await urlBecomes(`/admin/roles/${uuid(1)}`);
   });
 
   it('remembers the list URL for the way back from a detail page', async () => {

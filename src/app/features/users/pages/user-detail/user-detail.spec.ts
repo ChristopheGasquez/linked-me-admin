@@ -16,14 +16,14 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatedTitleStrategy } from '../../../../core/services/title-strategy.service';
 import { RoleBasicResponse } from '../../../../shared/models/role.model';
 import { UserAdminResponse } from '../../../../shared/models/user-admin.model';
-import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../../testing/test-providers';
 import { UserDetail } from './user-detail';
 
 @Component({ template: '' })
 class ListStub {}
 
 const role = (id: number, name: string): RoleBasicResponse => ({
-  id,
+  id: uuid(id),
   name,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
@@ -33,7 +33,7 @@ const EDITOR = role(2, 'EDITOR');
 const VIEWER = role(3, 'VIEWER');
 
 const target = (overrides: Partial<UserAdminResponse> = {}): UserAdminResponse => ({
-  id: 5,
+  id: uuid(5),
   email: 'jo@test.dev',
   name: 'Jo',
   isEmailChecked: true,
@@ -61,7 +61,7 @@ describe('UserDetail', () => {
     Promise.all((await loader.getAllHarnesses(MatChipHarness)).map((chip) => chip.getText()));
   const dialog = () => document.querySelector<HTMLElement>('mat-dialog-container');
 
-  function signIn(permissions = ALL_PERMISSIONS, id = 1) {
+  function signIn(permissions = ALL_PERMISSIONS, id = uuid(1)) {
     localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set({ ...testUser(permissions), id });
   }
@@ -69,10 +69,10 @@ describe('UserDetail', () => {
   // The user resource (re)loads: answer it
   function answerUser(user = target()) {
     TestBed.tick();
-    backend.expectOne('/admin/users/5').flush(user);
+    backend.expectOne(`/admin/users/${uuid(5)}`).flush(user);
   }
 
-  async function open(user = target(), url = '/admin/users/5') {
+  async function open(user = target(), url = `/admin/users/${uuid(5)}`) {
     page = await harness.navigateByUrl(url, UserDetail);
     TestBed.tick();
     backend
@@ -130,7 +130,7 @@ describe('UserDetail', () => {
 
   describe('display', () => {
     it('loads the user and every role sorted by name', async () => {
-      page = await harness.navigateByUrl('/admin/users/5', UserDetail);
+      page = await harness.navigateByUrl(`/admin/users/${uuid(5)}`, UserDetail);
       TestBed.tick();
       const roles = backend.expectOne((request) => request.url === '/admin/roles');
       expect(['limit', 'sortBy', 'sortOrder'].map((key) => roles.request.params.get(key))).toEqual([
@@ -148,7 +148,7 @@ describe('UserDetail', () => {
         (await loader.getAllHarnesses(MatInputHarness)).map((input) => input.getValue()),
       );
       expect(values).toEqual([
-        '5',
+        uuid(5),
         fr.admin.users.filterEmailCheckedVerified,
         'Jo',
         'jo@test.dev',
@@ -161,13 +161,13 @@ describe('UserDetail', () => {
     });
 
     it('shows the API error when the user cannot be loaded', async () => {
-      await harness.navigateByUrl('/admin/users/5', UserDetail);
+      await harness.navigateByUrl(`/admin/users/${uuid(5)}`, UserDetail);
       TestBed.tick();
       backend
         .expectOne((request) => request.url === '/admin/roles')
         .flush({ data: [], meta: { total: 0, page: 1, limit: 100, totalPages: 0 } });
       backend
-        .expectOne('/admin/users/5')
+        .expectOne(`/admin/users/${uuid(5)}`)
         .flush({ code: 'admin.user.not_found' }, { status: 404, statusText: 'Error' });
       await harness.fixture.whenStable();
 
@@ -197,8 +197,8 @@ describe('UserDetail', () => {
     });
 
     it.each([
-      ['/admin/users/5', '/admin/users'],
-      ['/admin/audit/users/5', '/admin/audit'],
+      [`/admin/users/${uuid(5)}`, '/admin/users'],
+      [`/admin/audit/users/${uuid(5)}`, '/admin/audit'],
     ])('opened from %s, goes back to %s', async (url, back) => {
       await open(target(), url);
 
@@ -238,7 +238,7 @@ describe('UserDetail', () => {
       expect(page.hasUnsavedChanges()).toBe(true);
 
       await (await button(fr.admin.users.detail.assign))!.click();
-      const request = backend.expectOne('/admin/users/5/roles');
+      const request = backend.expectOne(`/admin/users/${uuid(5)}/roles`);
       expect(request.request.method).toBe('POST');
       expect(request.request.body).toEqual({ role: 'EDITOR' });
       request.flush({ code: 'admin.user.role.assigned' });
@@ -255,7 +255,7 @@ describe('UserDetail', () => {
       await (await loader.getHarness(MatSelectHarness)).clickOptions({ text: 'EDITOR' });
       await (await button(fr.admin.users.detail.assign))!.click();
       backend
-        .expectOne('/admin/users/5/roles')
+        .expectOne(`/admin/users/${uuid(5)}/roles`)
         .flush(
           { code: 'admin.role.not_found', params: { roleName: 'EDITOR' } },
           { status: 404, statusText: 'Error' },
@@ -270,7 +270,7 @@ describe('UserDetail', () => {
       await (await loader.getHarness(MatSelectHarness)).clickOptions({ text: 'EDITOR' });
       await (await button(fr.admin.users.detail.assign))!.click();
       backend
-        .expectOne('/admin/users/5/roles')
+        .expectOne(`/admin/users/${uuid(5)}/roles`)
         .flush({ code: 'admin.user.role_already_assigned' }, { status: 409, statusText: 'Error' });
       await harness.fixture.whenStable();
 
@@ -295,7 +295,7 @@ describe('UserDetail', () => {
 
       await (await loader.getHarness(MatChipHarness)).remove();
       await answerDialog(true);
-      const request = backend.expectOne('/admin/users/5/roles/2');
+      const request = backend.expectOne(`/admin/users/${uuid(5)}/roles/${uuid(2)}`);
       expect(request.request.method).toBe('DELETE');
       request.flush({ code: 'admin.user.role.removed' });
       answerUser(target());
@@ -306,7 +306,7 @@ describe('UserDetail', () => {
     });
 
     it('warns harder when removing one of your own roles', async () => {
-      signIn(ALL_PERMISSIONS, 5);
+      signIn(ALL_PERMISSIONS, uuid(5));
       await open(target({ roles: [EDITOR] }));
 
       await (await loader.getHarness(MatChipHarness)).remove();
@@ -340,7 +340,7 @@ describe('UserDetail', () => {
         fr.admin.users.detail.delete.confirm.replace('{{ name }}', 'Jo'),
       );
       await answerDialog(true);
-      const request = backend.expectOne('/admin/users/5');
+      const request = backend.expectOne(`/admin/users/${uuid(5)}`);
       expect(request.request.method).toBe('DELETE');
       request.flush({ code: 'admin.user.deleted' });
       await harness.fixture.whenStable();
@@ -349,7 +349,7 @@ describe('UserDetail', () => {
     });
 
     it('warns harder when deleting your own account', async () => {
-      signIn(ALL_PERMISSIONS, 5);
+      signIn(ALL_PERMISSIONS, uuid(5));
       await open();
 
       await (await deleteButton())!.click();
@@ -364,12 +364,12 @@ describe('UserDetail', () => {
       await (await deleteButton())!.click();
       await answerDialog(true);
       backend
-        .expectOne('/admin/users/5')
+        .expectOne(`/admin/users/${uuid(5)}`)
         .flush({ code: 'admin.user.has_roles' }, { status: 400, statusText: 'Error' });
       await harness.fixture.whenStable();
 
       expect(text()).toContain(fr.api.admin.user.has_roles);
-      expect(TestBed.inject(Router).url).toBe('/admin/users/5');
+      expect(TestBed.inject(Router).url).toBe(`/admin/users/${uuid(5)}`);
     });
   });
 
@@ -386,7 +386,7 @@ describe('UserDetail', () => {
     it('lists the user sessions with admin:user:session:read', async () => {
       signIn([...ALL_PERMISSIONS, 'admin:user:session:read']);
       // open() waits for stability, which never comes while the sessions load: answer them first
-      page = await harness.navigateByUrl('/admin/users/5', UserDetail);
+      page = await harness.navigateByUrl(`/admin/users/${uuid(5)}`, UserDetail);
       TestBed.tick();
       backend
         .expectOne((request) => request.url === '/admin/roles')
@@ -401,12 +401,12 @@ describe('UserDetail', () => {
       });
       TestBed.tick();
       backend
-        .expectOne((request) => request.url === '/admin/users/5/sessions')
+        .expectOne((request) => request.url === `/admin/users/${uuid(5)}/sessions`)
         .flush({
           data: [
             {
-              id: 9,
-              userId: 5,
+              id: uuid(9),
+              userId: uuid(5),
               createdAt: '2026-11-01T08:30:00.000Z',
               expiresAt: '2026-11-08T08:30:00.000Z',
             },
@@ -423,7 +423,7 @@ describe('UserDetail', () => {
       await open();
 
       expect(text()).not.toContain(fr.admin.users.detail.sections.sessions);
-      backend.expectNone((r) => r.url === '/admin/users/5/sessions');
+      backend.expectNone((r) => r.url === `/admin/users/${uuid(5)}/sessions`);
     });
   });
 
@@ -433,11 +433,11 @@ describe('UserDetail', () => {
       id: number,
       action: string,
       targetType: string | null,
-      targetId: number | null,
+      targetId: string | null,
     ) => ({
-      id,
+      id: uuid(id),
       action,
-      actorId: 5,
+      actorId: uuid(5),
       targetId,
       targetType,
       metadata: null,
@@ -447,7 +447,7 @@ describe('UserDetail', () => {
     // The activity loads alongside the user: answer it with the given response
     async function openWithActivity(body: object, status = 200) {
       signIn(AUDIT_PERMISSIONS);
-      page = await harness.navigateByUrl('/admin/users/5', UserDetail);
+      page = await harness.navigateByUrl(`/admin/users/${uuid(5)}`, UserDetail);
       TestBed.tick();
       backend
         .expectOne((request) => request.url === '/admin/roles')
@@ -461,11 +461,11 @@ describe('UserDetail', () => {
 
     it('lists the last actions made by the user', async () => {
       const request = await openWithActivity({
-        data: [log(2, 'user.role.assign', 'user', 7), log(1, 'profile.update', null, null)],
+        data: [log(2, 'user.role.assign', 'user', uuid(7)), log(1, 'profile.update', null, null)],
         meta: { total: 2, page: 1, limit: 10, totalPages: 1 },
       });
 
-      expect(request.params.get('actorId')).toBe('5');
+      expect(request.params.get('actorId')).toBe(uuid(5));
       expect(request.params.get('sortBy')).toBe('createdAt');
       expect(request.params.get('sortOrder')).toBe('desc');
       expect(request.params.get('limit')).toBe('10');
@@ -474,7 +474,7 @@ describe('UserDetail', () => {
       expect(section.querySelectorAll('tr.mat-mdc-row')).toHaveLength(2);
       expect(section.textContent).toContain(fr.admin.audit.actions.user.role.assign);
       expect(section.textContent!.replace(/\s+/g, ' ')).toContain(
-        `${fr.admin.audit.targetTypes.user} #7`,
+        `${fr.admin.audit.targetTypes.user} …00000007`,
       );
     });
 
@@ -506,7 +506,7 @@ describe('UserDetail', () => {
     const title = () => TestBed.inject(Title).getTitle();
 
     it('shows the user name once the user is loaded', async () => {
-      await harness.navigateByUrl('/admin/users/5', UserDetail);
+      await harness.navigateByUrl(`/admin/users/${uuid(5)}`, UserDetail);
       expect(title()).toBe(`${fr.common.title.admin.user} — LinkedMe Admin`);
 
       TestBed.tick();

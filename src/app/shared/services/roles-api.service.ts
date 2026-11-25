@@ -21,7 +21,7 @@ export class RolesApiService {
     return this.#http.get<PaginatedResponse<RoleResponse>>(this.baseUrl, { params: { ...params } });
   }
 
-  getRoleById(id: number): Observable<RoleResponse> {
+  getRoleById(id: string): Observable<RoleResponse> {
     return this.#http.get<RoleResponse>(`${this.baseUrl}/${id}`);
   }
 
@@ -29,15 +29,15 @@ export class RolesApiService {
     return this.#http.post<RoleBasicResponse>(this.baseUrl, { name });
   }
 
-  deleteRole(id: number): Observable<ApiMessage> {
+  deleteRole(id: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}`);
   }
 
-  addPermissions(id: number, permissions: string[]): Observable<RoleResponse> {
+  addPermissions(id: string, permissions: string[]): Observable<RoleResponse> {
     return this.#http.post<RoleResponse>(`${this.baseUrl}/${id}/permissions`, { permissions });
   }
 
-  removePermission(id: number, permissionId: number): Observable<ApiMessage> {
+  removePermission(id: string, permissionId: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/${id}/permissions/${permissionId}`);
   }
 

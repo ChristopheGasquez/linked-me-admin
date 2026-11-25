@@ -12,14 +12,14 @@ import en from '../../../../../../public/i18n/en.json';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UrlService } from '../../../../core/services/url.service';
 import { AuditLogResponse } from '../../../../shared/models/audit-log.model';
-import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../../testing/test-providers';
 import { AuditLogs } from './audit-logs';
 
 @Component({ template: '' })
 class DetailStub {}
 
 const log = (overrides: Partial<AuditLogResponse>): AuditLogResponse => ({
-  id: 1,
+  id: uuid(1),
   action: 'user.delete',
   actorId: null,
   targetId: null,
@@ -29,25 +29,25 @@ const log = (overrides: Partial<AuditLogResponse>): AuditLogResponse => ({
   ...overrides,
 });
 const ASSIGN = log({
-  id: 1,
+  id: uuid(1),
   action: 'user.role.assign',
-  actorId: 5,
+  actorId: uuid(5),
   targetType: 'user',
-  targetId: 8,
+  targetId: uuid(8),
   metadata: { role: 'ADMIN' },
 });
 const CLEANUP = log({
-  id: 2,
+  id: uuid(2),
   action: 'task.cleanup.audit-logs',
   targetType: 'task',
   createdAt: '2026-11-02T08:00:00.000Z',
 });
 const CREATE = log({
-  id: 3,
+  id: uuid(3),
   action: 'role.create',
-  actorId: 5,
+  actorId: uuid(5),
   targetType: 'role',
-  targetId: 3,
+  targetId: uuid(3),
   createdAt: '2026-11-03T08:00:00.000Z',
 });
 
@@ -72,6 +72,13 @@ describe('AuditLogs', () => {
     Object.fromEntries(
       request.request.params.keys().map((key) => [key, request.request.params.get(key)]),
     );
+  // Cell text without the copy button's icon name
+  const cells = (column: string) =>
+    Array.from(element().querySelectorAll(`td.mat-column-${column}`)).map((cell) => {
+      const copy = cell.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll('mat-icon').forEach((icon) => icon.remove());
+      return copy.textContent!.replace(/\s+/g, ' ').trim();
+    });
   const links = () =>
     Array.from(element().querySelectorAll('tr.mat-mdc-row a')).map((a) => a.getAttribute('href'));
 
@@ -154,32 +161,31 @@ describe('AuditLogs', () => {
       const table = await TestbedHarnessEnvironment.loader(harness.fixture).getHarness(
         MatTableHarness,
       );
-      const cells = await table.getCellTextByColumnName();
-      const clean = (values: string[]) => values.map((value) => value.replace(/\s+/g, ' ').trim());
+      const columns = await table.getCellTextByColumnName();
       const actions = fr.admin.audit.actions;
       const targets = fr.admin.audit.targetTypes;
-      expect(cells['createdAt'].text).toEqual(
+      expect(columns['createdAt'].text).toEqual(
         [ASSIGN, CLEANUP, CREATE].map((entry) =>
           formatDate(entry.createdAt, fr.common.dateTimeFormat, 'en-US'),
         ),
       );
-      expect(cells['action'].text).toEqual([
+      expect(columns['action'].text).toEqual([
         actions.user.role.assign,
         actions.task.cleanup['audit-logs'],
         actions.role.create,
       ]);
-      expect(clean(cells['actor'].text)).toEqual(['#5', fr.admin.audit.system, '#5']);
-      expect(clean(cells['target'].text)).toEqual([
-        `${targets.user} #8`,
+      expect(cells('actor')).toEqual(['…00000005', fr.admin.audit.system, '…00000005']);
+      expect(cells('target')).toEqual([
+        `${targets.user} …00000008`,
         targets.task,
-        `${targets.role} #3`,
+        `${targets.role} …00000003`,
       ]);
       expect(element().querySelectorAll('.audit-logs__metadata-icon')).toHaveLength(1);
     });
 
     it('reads pagination, sort and filters from the URL', async () => {
       const request = await open(
-        '/admin/audit?page=2&limit=50&sortOrder=asc&actorId=7&targetId=3&action=role.create&targetType=role',
+        `/admin/audit?page=2&limit=50&sortOrder=asc&actorId=${uuid(7)}&targetId=${uuid(3)}&action=role.create&targetType=role`,
       );
 
       expect(paramsOf(request)).toEqual({
@@ -187,16 +193,16 @@ describe('AuditLogs', () => {
         limit: '50',
         sortBy: 'createdAt',
         sortOrder: 'asc',
-        actorId: '7',
-        targetId: '3',
+        actorId: uuid(7),
+        targetId: uuid(3),
         action: 'role.create',
         targetType: 'role',
       });
       await answer(request, [CREATE], 51);
 
       expect(list.filterForm.getRawValue()).toEqual({
-        actorId: 7,
-        targetId: 3,
+        actorId: uuid(7),
+        targetId: uuid(3),
         action: 'role.create',
         targetType: 'role',
       });
@@ -235,15 +241,37 @@ describe('AuditLogs', () => {
     it('filters by actor id after a pause, back to the first page', async () => {
       await answer(await open('/admin/audit?page=3'), [ASSIGN], 60);
 
-      type('12');
-      await urlBecomes('/admin/audit?actorId=12');
+      type(uuid(12));
+      await urlBecomes(`/admin/audit?actorId=${uuid(12)}`);
       const request = listRequest();
-      expect(paramsOf(request)).toMatchObject({ page: '1', actorId: '12' });
+      expect(paramsOf(request)).toMatchObject({ page: '1', actorId: uuid(12) });
       await answer(request, [ASSIGN]);
     });
 
+    it('trims and lowercases a pasted id', async () => {
+      await answer(await open());
+
+      type(` ${uuid(12).toUpperCase()} `);
+      await urlBecomes(`/admin/audit?actorId=${uuid(12)}`);
+      await answer(listRequest(), [ASSIGN]);
+    });
+
+    it('does not filter on an invalid id and says so once the field is left', async () => {
+      await answer(await open());
+
+      type('12');
+      const input = element().querySelector('input[formcontrolname="actorId"]')!;
+      input.dispatchEvent(new Event('blur'));
+      await harness.fixture.whenStable();
+
+      expect(text()).toContain(fr.validation.uuid);
+      expect(router.url).toBe('/admin/audit');
+      TestBed.tick();
+      backend.expectNone((r) => r.url === '/admin/audit-logs');
+    });
+
     it('clears the actor with its button', async () => {
-      await answer(await open('/admin/audit?actorId=12'), [ASSIGN]);
+      await answer(await open(`/admin/audit?actorId=${uuid(12)}`), [ASSIGN]);
 
       click(`button[aria-label="${fr.admin.audit.clearActor}"]`);
 
@@ -254,15 +282,15 @@ describe('AuditLogs', () => {
     it('filters by target id after a pause, back to the first page', async () => {
       await answer(await open('/admin/audit?page=3'), [ASSIGN], 60);
 
-      type('8', 'targetId');
-      await urlBecomes('/admin/audit?targetId=8');
+      type(uuid(8), 'targetId');
+      await urlBecomes(`/admin/audit?targetId=${uuid(8)}`);
       const request = listRequest();
-      expect(paramsOf(request)).toMatchObject({ page: '1', targetId: '8' });
+      expect(paramsOf(request)).toMatchObject({ page: '1', targetId: uuid(8) });
       await answer(request, [ASSIGN]);
     });
 
     it('clears the target with its button', async () => {
-      await answer(await open('/admin/audit?targetId=8'), [ASSIGN]);
+      await answer(await open(`/admin/audit?targetId=${uuid(8)}`), [ASSIGN]);
 
       click(`button[aria-label="${fr.admin.audit.clearTarget}"]`);
 
@@ -321,10 +349,10 @@ describe('AuditLogs', () => {
       await answer(await open());
 
       expect(links()).toEqual([
-        '/admin/audit/users/5',
-        '/admin/audit/users/8',
-        '/admin/audit/users/5',
-        '/admin/audit/roles/3',
+        `/admin/audit/users/${uuid(5)}`,
+        `/admin/audit/users/${uuid(8)}`,
+        `/admin/audit/users/${uuid(5)}`,
+        `/admin/audit/roles/${uuid(3)}`,
       ]);
     });
 
@@ -333,8 +361,7 @@ describe('AuditLogs', () => {
       await answer(await open());
 
       expect(links()).toEqual([]);
-      expect(text()).toContain('#5');
-      expect(text()).toContain('#8');
+      expect(cells('actor')).toEqual(['…00000005', fr.admin.audit.system, '…00000005']);
     });
   });
 
@@ -347,7 +374,7 @@ describe('AuditLogs', () => {
     });
 
     it('offers to reset the filters, which brings back the base view', async () => {
-      await answer(await open('/admin/audit?actorId=99&action=user.delete'), []);
+      await answer(await open(`/admin/audit?actorId=${uuid(99)}&action=user.delete`), []);
 
       expect(text()).toContain(fr.common.emptyFiltered.hint);
       Array.from(element().querySelectorAll('button'))
@@ -386,10 +413,10 @@ describe('AuditLogs', () => {
   });
 
   it('remembers the list URL for the way back from a detail page', async () => {
-    await answer(await open('/admin/audit?actorId=5&page=2'), [ASSIGN], 30);
+    await answer(await open(`/admin/audit?actorId=${uuid(5)}&page=2`), [ASSIGN], 30);
 
     expect(router.serializeUrl(TestBed.inject(UrlService).listLink('/admin/audit'))).toBe(
-      '/admin/audit?actorId=5&page=2',
+      `/admin/audit?actorId=${uuid(5)}&page=2`,
     );
   });
 });

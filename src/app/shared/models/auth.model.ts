@@ -1,7 +1,7 @@
 import { User } from './user.model';
 
 export interface RegisterResponse {
-  id: number;
+  id: string;
   email: string;
   name: string;
   isEmailChecked: boolean;

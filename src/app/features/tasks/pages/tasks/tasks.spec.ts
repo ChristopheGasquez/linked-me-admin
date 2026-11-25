@@ -10,7 +10,7 @@ import { MatInputHarness } from '@angular/material/input/testing';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { Task, TaskName } from '../../../../shared/models/task.model';
-import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser, uuid } from '../../../../../testing/test-providers';
 import { Tasks } from './tasks';
 
 const task = (name: TaskName, overrides: Partial<Task> = {}): Task => ({
@@ -125,19 +125,23 @@ describe('Tasks', () => {
         lastRun: { at: '2026-11-24T02:00:00.000Z', actorId: null, result: { count: 3 } },
       }),
       task('expired-tokens', {
-        lastRun: { at: '2026-11-23T15:30:00.000Z', actorId: 7, result: null },
+        lastRun: { at: '2026-11-23T15:30:00.000Z', actorId: uuid(7), result: null },
       }),
       task('audit-logs'),
       task('orphaned-permissions'),
     ]);
 
-    const lastRun = (n: number) =>
-      card(n).querySelector('.tasks__card__last-run')!.textContent!.trim();
+    // Without the copy button's icon name
+    const lastRun = (n: number) => {
+      const line = card(n).querySelector('.tasks__card__last-run')!.cloneNode(true) as HTMLElement;
+      line.querySelectorAll('mat-icon').forEach((icon) => icon.remove());
+      return line.textContent!.replace(/\s+/g, ' ').trim();
+    };
     expect(lastRun(USERS)).toBe(
       message(fr.admin.tasks.lastRun.auto, { date: format('2026-11-24T02:00:00.000Z') }),
     );
     expect(lastRun(TOKENS)).toBe(
-      message(fr.admin.tasks.lastRun.byUser, { date: format('2026-11-23T15:30:00.000Z'), id: 7 }),
+      `${message(fr.admin.tasks.lastRun.byUser, { date: format('2026-11-23T15:30:00.000Z') })} …00000007`,
     );
     expect(lastRun(AUDIT)).toBe(fr.admin.tasks.lastRun.never);
   });
@@ -283,7 +287,7 @@ describe('Tasks', () => {
     answerList([
       task('unverified-users'),
       task('expired-tokens', {
-        lastRun: { at: '2026-11-24T10:00:00.000Z', actorId: 1, result: { count: 1 } },
+        lastRun: { at: '2026-11-24T10:00:00.000Z', actorId: uuid(1), result: { count: 1 } },
       }),
       task('audit-logs'),
       task('orphaned-permissions'),
@@ -291,7 +295,7 @@ describe('Tasks', () => {
     await fixture.whenStable();
 
     expect(card(TOKENS).querySelector('.tasks__card__last-run')!.textContent).toContain(
-      message(fr.admin.tasks.lastRun.byUser, { date: format('2026-11-24T10:00:00.000Z'), id: 1 }),
+      message(fr.admin.tasks.lastRun.byUser, { date: format('2026-11-24T10:00:00.000Z') }),
     );
   });
 

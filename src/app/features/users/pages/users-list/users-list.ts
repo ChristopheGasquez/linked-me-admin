@@ -259,7 +259,7 @@ export class UsersList {
     });
   }
 
-  navigateToUser(id: number): void {
+  navigateToUser(id: string): void {
     this.#router.navigate(['/admin/users', id]);
   }
 

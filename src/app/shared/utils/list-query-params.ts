@@ -1,9 +1,20 @@
+import { ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
 
 export function parsePositiveInt(value: string | undefined): number | null {
   const number = Number(value);
   return value && Number.isInteger(number) && number > 0 ? number : null;
 }
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function parseUuid(value: string | undefined): string | null {
+  const uuid = value?.trim().toLowerCase() ?? '';
+  return UUID_PATTERN.test(uuid) ? uuid : null;
+}
+
+export const uuidValidator: ValidatorFn = (control) =>
+  !control.value || parseUuid(control.value) ? null : { uuid: true };
 
 export function parseOption<T extends string | number>(
   value: string | undefined,

@@ -20,6 +20,7 @@ import {
   ConfirmDialog,
   ConfirmDialogData,
 } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { Uuid } from '../../../../shared/components/uuid/uuid';
 import { TasksApiService } from '../../../../shared/services/tasks-api.service';
 import { Task, TaskName } from '../../../../shared/models/task.model';
 import { toApiError } from '../../../../shared/utils/api-error';
@@ -52,6 +53,7 @@ interface TaskResult {
     MatInputModule,
     MatProgressBar,
     MatProgressSpinner,
+    Uuid,
   ],
 })
 export class Tasks {

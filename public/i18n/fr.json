@@ -15,6 +15,10 @@
     "breadcrumb": "Fil d'Ariane",
     "showPassword": "Afficher le mot de passe",
     "skipLink": "Aller au contenu principal",
+    "uuid": {
+      "copy": "Copier l'identifiant",
+      "copied": "Identifiant copié"
+    },
     "unsavedChanges": {
       "title": "Modifications non enregistrées",
       "message": "Vos modifications seront perdues si vous quittez cette page.",
@@ -179,6 +183,7 @@
     }
   },
   "validation": {
+    "uuid": "Identifiant invalide (UUID attendu)",
     "password": {
       "matches": "Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial",
       "minLength": "Le mot de passe doit contenir au moins 8 caractères"
@@ -497,10 +502,10 @@
     "audit": {
       "title": "Journal d'audit",
       "filterActorLabel": "Acteur",
-      "filterActor": "ID de l'utilisateur",
+      "filterActor": "UUID de l'utilisateur",
       "clearActor": "Effacer l'acteur",
       "filterTargetLabel": "Cible",
-      "filterTarget": "ID de la cible",
+      "filterTarget": "UUID de la cible",
       "clearTarget": "Effacer la cible",
       "filterActionLabel": "Action",
       "filterActionAll": "Toutes les actions",
@@ -575,7 +580,7 @@
       "manualOnly": "Manuel uniquement",
       "lastRun": {
         "auto": "Dernière exécution : {{ date }} (automatique)",
-        "byUser": "Dernière exécution : {{ date }} par l'utilisateur #{{ id }}",
+        "byUser": "Dernière exécution : {{ date }} par l'utilisateur",
         "never": "Jamais exécutée"
       },
       "items": {

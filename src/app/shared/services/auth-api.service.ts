@@ -83,7 +83,7 @@ export class AuthApiService {
     });
   }
 
-  revokeSession(id: number): Observable<ApiMessage> {
+  revokeSession(id: string): Observable<ApiMessage> {
     return this.#http.delete<ApiMessage>(`${this.baseUrl}/sessions/${id}`);
   }
 

@@ -1,7 +1,7 @@
 import { RoleBasicResponse } from './role.model';
 
 export interface UserAdminResponse {
-  id: number;
+  id: string;
   email: string;
   name: string;
   isEmailChecked: boolean;

@@ -42,9 +42,11 @@
                 {{
                   t(lastRun.actorId ? 'admin.tasks.lastRun.byUser' : 'admin.tasks.lastRun.auto', {
                     date: lastRun.at | date: t('common.dateTimeFormat'),
-                    id: lastRun.actorId,
                   })
                 }}
+                @if (lastRun.actorId) {
+                  <app-uuid [value]="lastRun.actorId" />
+                }
               } @else {
                 {{ t('admin.tasks.lastRun.never') }}
               }
