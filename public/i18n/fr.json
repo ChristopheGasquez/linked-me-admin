@@ -77,6 +77,12 @@
       "loadError": "Impossible de charger la vérification anti-robot. Désactivez votre bloqueur de publicité ou rechargez la page."
     }
   },
+  "dashboard": {
+    "empty": {
+      "title": "Aucune application liée à votre compte",
+      "hint": "La gestion des applications arrive bientôt."
+    }
+  },
   "auth": {
     "login": {
       "title": "Connexion",
