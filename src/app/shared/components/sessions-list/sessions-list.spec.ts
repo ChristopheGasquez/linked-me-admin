@@ -148,6 +148,52 @@ describe('SessionsList', () => {
     expect(await loader.getHarnessOrNull(MatPaginatorHarness)).toBeNull();
   });
 
+  describe("this device's session", () => {
+    const current = (id: number): SessionResponse => ({ ...session(id), current: true });
+
+    it('is flagged with a badge', async () => {
+      await answerList([current(1), session(2)]);
+
+      const [first, second] = await rows();
+      expect(first[0]).toContain(fr.common.sessions.current);
+      expect(second[0]).not.toContain(fr.common.sessions.current);
+    });
+
+    it('asks for confirmation and sends nothing when cancelled', async () => {
+      await answerList([current(1), session(2)]);
+
+      await (await disconnectButtons())[0].click();
+      expect(dialog()!.textContent).toContain(fr.common.sessions.revokeCurrent.message);
+      await answerDialog(false);
+
+      backend.expectNone(`/auth/sessions/${uuid(1)}`);
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(true);
+    });
+
+    it('signs out and goes to login once confirmed (the API has cleared the cookies)', async () => {
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      await answerList([current(1), session(2)]);
+
+      await (await disconnectButtons())[0].click();
+      await answerDialog(true);
+      backend.expectOne(`/auth/sessions/${uuid(1)}`).flush({ code: 'auth.session.revoked' });
+
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
+      expect(navigate).toHaveBeenCalledWith(['/auth/login']);
+    });
+
+    it('revokes another session without confirmation', async () => {
+      await answerList([current(1), session(2)]);
+
+      await (await disconnectButtons())[1].click();
+
+      expect(dialog()).toBeNull();
+      backend.expectOne(`/auth/sessions/${uuid(2)}`).flush({ code: 'auth.session.revoked' });
+      await answerList([current(1)]);
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(true);
+    });
+  });
+
   describe('log out all sessions', () => {
     it('is offered only with at least two sessions', async () => {
       await answerList([session(1)]);
