@@ -74,7 +74,6 @@ describe('RoleDetail', () => {
     (await Promise.all((await boxes()).map((item) => item.isDisabled()))).every(Boolean);
 
   function signIn(permissions = MANAGER, roles: string[] = []) {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set({ ...testUser(permissions), roles });
   }
 

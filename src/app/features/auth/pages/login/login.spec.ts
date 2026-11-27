@@ -81,13 +81,22 @@ describe('Login', () => {
     const login = backend.expectOne('/auth/login');
     expect(login.request.body).toEqual({ email: 'jo@test.dev', password: 'secret' });
     expect(login.request.headers.get('X-Turnstile-Token')).toBe('captcha-token');
-    login.flush({ access_token: 'access-1', refresh_token: 'refresh-1', user: {} });
+    login.flush({ user: {} });
     backend.expectOne('/auth/me').flush(testUser(['realm:profile']));
     await fixture.whenStable();
 
-    expect(localStorage.getItem('access_token')).toBe('access-1');
     expect(TestBed.inject(AuthService).currentUser()?.permissions).toEqual(['realm:profile']);
     expect(navigate).toHaveBeenCalledWith(['/dashboard']);
+  });
+
+  it('explains a session interrupted by a replayed refresh token', async () => {
+    TestBed.inject(AuthService).sessionInterrupted.set(true);
+    fixture = TestBed.createComponent(Login);
+    await fixture.whenStable();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      fr.api.auth.refresh.token_reused,
+    );
   });
 
   it('disables the submit button while signing in', async () => {

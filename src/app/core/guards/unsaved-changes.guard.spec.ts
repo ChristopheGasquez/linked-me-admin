@@ -3,7 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
-import { provideTestDefaults } from '../../../testing/test-providers';
+import { provideTestDefaults, testUser } from '../../../testing/test-providers';
+import { AuthService } from '../services/auth.service';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { HasUnsavedChanges, unsavedChangesGuard } from './unsaved-changes.guard';
 
@@ -24,7 +25,6 @@ describe('unsavedChangesGuard', () => {
   const dialog = { open: vi.fn(() => ({ afterClosed: () => of(dialogResult) })) };
 
   beforeEach(() => {
-    localStorage.clear();
     dialog.open.mockClear();
     TestBed.configureTestingModule({
       providers: [...provideTestDefaults(), { provide: MatDialog, useValue: dialog }],
@@ -42,7 +42,7 @@ describe('unsavedChangesGuard', () => {
   });
 
   describe('with unsaved changes while signed in', () => {
-    beforeEach(() => localStorage.setItem('access_token', 'access-1'));
+    beforeEach(() => TestBed.inject(AuthService).currentUser.set(testUser()));
 
     it('asks for confirmation with a destructive dialog', () => {
       dialogResult = true;

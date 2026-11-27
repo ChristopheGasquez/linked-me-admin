@@ -7,7 +7,8 @@ import { MatFormFieldHarness } from '@angular/material/form-field/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { Router } from '@angular/router';
 
-import { fr, provideTestDefaults } from '../../../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
+import { AuthService } from '../../../../core/services/auth.service';
 import { ProfileSecurity } from './profile-security';
 
 describe('ProfileSecurity', () => {
@@ -51,8 +52,8 @@ describe('ProfileSecurity', () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    localStorage.setItem('access_token', 'access-1');
     TestBed.configureTestingModule({ providers: provideTestDefaults() });
+    TestBed.inject(AuthService).currentUser.set(testUser());
     backend = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(ProfileSecurity);
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -161,7 +162,7 @@ describe('ProfileSecurity', () => {
     expect(navigate).not.toHaveBeenCalled();
 
     await vi.advanceTimersByTimeAsync(7000);
-    expect(localStorage.getItem('access_token')).toBeNull();
+    expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
     expect(navigate).toHaveBeenCalledExactlyOnceWith(['/', 'auth', 'login']);
   });
 
@@ -175,7 +176,7 @@ describe('ProfileSecurity', () => {
     await (await button(fr.me.profile.passwordChanged.loginLink))!.click();
     await vi.advanceTimersByTimeAsync(10000);
 
-    expect(localStorage.getItem('access_token')).toBeNull();
+    expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
     expect(navigate).toHaveBeenCalledExactlyOnceWith(['/', 'auth', 'login']);
   });
 
@@ -185,7 +186,7 @@ describe('ProfileSecurity', () => {
 
     expect(text()).toContain(fr.api.profile.password.incorrect);
     expect(await loader.getAllHarnesses(MatInputHarness)).toHaveLength(3);
-    expect(localStorage.getItem('access_token')).toBe('access-1');
+    expect(TestBed.inject(AuthService).isAuthenticated()).toBe(true);
   });
 
   it('shows the throttle delay in minutes', async () => {

@@ -112,7 +112,6 @@ describe('UsersList', () => {
         ),
       ],
     });
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(['realm:admin']));
     backend = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);

@@ -47,7 +47,6 @@ describe('App routes', () => {
 
   // Signs in a user holding exactly these permissions
   function signIn(...permissions: string[]) {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(permissions));
   }
 
@@ -65,6 +64,9 @@ describe('App routes', () => {
   });
 
   describe('signed out', () => {
+    // Session already checked (no cookie): the /auth/me round trip is covered by the guard specs
+    beforeEach(() => TestBed.inject(AuthService).clearSession());
+
     it.each([
       '/dashboard',
       '/me',

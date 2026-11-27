@@ -82,7 +82,9 @@ export class PrivateLayout {
   }
 
   logout(): void {
-    this.#authService.logout();
-    this.#router.navigate(['/auth/login']);
+    this.#authService
+      .logout()
+      .pipe(tap(() => this.#router.navigate(['/auth/login'])))
+      .subscribe();
   }
 }

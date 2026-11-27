@@ -58,9 +58,8 @@ describe('SessionsList', () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    localStorage.setItem('access_token', 'access-1');
-    localStorage.setItem('refresh_token', 'refresh-1');
     TestBed.configureTestingModule({ providers: provideTestDefaults() });
+    TestBed.inject(AuthService).currentUser.set(testUser());
     backend = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(SessionsList);
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -169,7 +168,7 @@ describe('SessionsList', () => {
       backend.expectNone('/auth/logout-all');
     });
 
-    it('revokes every session, then signs out this device and goes to login', async () => {
+    it('revokes every session and goes to login (the API has cleared the cookies)', async () => {
       const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
       await answerList([session(1), session(2)]);
 
@@ -179,8 +178,7 @@ describe('SessionsList', () => {
       expect(request.request.method).toBe('POST');
       request.flush({ code: 'auth.logout_all.success' });
 
-      backend.expectOne('/auth/logout').flush({ code: 'auth.logout.success' });
-      expect(localStorage.getItem('access_token')).toBeNull();
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
       expect(navigate).toHaveBeenCalledWith(['/auth/login']);
     });
 
@@ -198,7 +196,7 @@ describe('SessionsList', () => {
       await fixture.whenStable();
 
       expect(text()).toContain('2 min');
-      expect(localStorage.getItem('access_token')).toBe('access-1');
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(true);
       expect(await (await logoutAllButton())!.isDisabled()).toBe(false);
     });
   });
@@ -261,7 +259,7 @@ describe('SessionsList', () => {
 
       await answerList([], 0, USER_SESSIONS);
       expect(text()).toContain(fr.common.sessions.empty);
-      expect(localStorage.getItem('access_token')).toBe('access-1');
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(true);
       expect(navigate).not.toHaveBeenCalled();
     });
 
@@ -278,7 +276,7 @@ describe('SessionsList', () => {
         .flush({ code: 'admin.user.sessions.revoked', params: { userId: uuid(1), count: 2 } });
 
       backend.expectOne('/auth/logout').flush({ code: 'auth.logout.success' });
-      expect(localStorage.getItem('access_token')).toBeNull();
+      expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
       expect(navigate).toHaveBeenCalledWith(['/auth/login']);
     });
   });

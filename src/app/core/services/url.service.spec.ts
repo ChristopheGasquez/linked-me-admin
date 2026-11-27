@@ -64,10 +64,10 @@ describe('UrlService', () => {
     expect(link('/roles')).toBe('/roles?search=admin');
   });
 
-  it('is cleared on logout', async () => {
+  it('is cleared when the session ends', async () => {
     await harness.navigateByUrl('/users?page=2');
 
-    TestBed.inject(AuthService).logout();
+    TestBed.inject(AuthService).clearSession();
 
     expect(link('/users')).toBe('/users');
   });

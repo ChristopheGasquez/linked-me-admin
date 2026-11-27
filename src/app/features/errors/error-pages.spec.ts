@@ -1,7 +1,8 @@
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { fr, provideTestDefaults } from '../../../testing/test-providers';
+import { fr, provideTestDefaults, testUser } from '../../../testing/test-providers';
+import { AuthService } from '../../core/services/auth.service';
 import { Forbidden } from './forbidden/forbidden';
 import { NotFound } from './not-found/not-found';
 import { Unauthorized } from './unauthorized/unauthorized';
@@ -9,8 +10,8 @@ import { WorkInProgress } from './work-in-progress/work-in-progress';
 
 describe('Error pages', () => {
   async function render(page: Type<unknown>, authenticated: boolean) {
-    if (authenticated) localStorage.setItem('access_token', 'access-1');
     TestBed.configureTestingModule({ providers: provideTestDefaults() });
+    if (authenticated) TestBed.inject(AuthService).currentUser.set(testUser());
     const fixture = TestBed.createComponent(page);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
