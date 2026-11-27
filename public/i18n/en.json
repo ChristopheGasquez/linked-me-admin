@@ -32,6 +32,12 @@
         "actions": "Actions"
       },
       "disconnect": "Disconnect",
+      "current": "This device",
+      "revokeCurrent": {
+        "title": "Sign out this device",
+        "message": "This session belongs to this device: you will be signed out and will need to sign in again.",
+        "button": "Sign out"
+      },
       "logoutAll": {
         "button": "Log out all sessions",
         "title": "Log out all sessions",

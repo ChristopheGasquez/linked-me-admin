@@ -79,17 +79,36 @@ export class SessionsList {
     return this.#revokeError() ?? (err ? toApiError(err) : null);
   });
 
-  revokeSession(id: string): void {
-    this.revoking.set(id);
-    this.#revokeError.set(null);
+  revokeSession(session: SessionResponse): void {
     const userId = this.userId();
-    const revoke$ =
-      userId === undefined
-        ? this.#authApi.revokeSession(id)
-        : this.#usersApi.revokeSession(userId, id);
-    revoke$
+    const data: ConfirmDialogData = {
+      titleKey: 'common.sessions.revokeCurrent.title',
+      messageKey: 'common.sessions.revokeCurrent.message',
+      confirmLabelKey: 'common.sessions.revokeCurrent.button',
+    };
+    // This device's session: revoking it signs out (the API clears the cookies), so confirm first
+    const confirmed$ = session.current
+      ? this.#dialog.open(ConfirmDialog, { data }).afterClosed().pipe(filter(Boolean))
+      : of(true);
+    confirmed$
       .pipe(
-        tap(() => this.sessionsResource.reload()),
+        tap(() => {
+          this.revoking.set(session.id);
+          this.#revokeError.set(null);
+        }),
+        switchMap(() =>
+          userId === undefined
+            ? this.#authApi.revokeSession(session.id)
+            : this.#usersApi.revokeSession(userId, session.id),
+        ),
+        tap(() => {
+          if (session.current) {
+            this.#authService.clearSession();
+            this.#router.navigate(['/auth/login']);
+          } else {
+            this.sessionsResource.reload();
+          }
+        }),
         catchError((err: HttpErrorResponse) => {
           this.#revokeError.set(toApiError(err));
           return EMPTY;

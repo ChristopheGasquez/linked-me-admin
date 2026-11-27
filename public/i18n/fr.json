@@ -32,6 +32,12 @@
         "actions": "Actions"
       },
       "disconnect": "Déconnecter",
+      "current": "Cet appareil",
+      "revokeCurrent": {
+        "title": "Déconnecter cet appareil",
+        "message": "Cette session est celle de cet appareil : vous serez déconnecté et devrez vous reconnecter.",
+        "button": "Se déconnecter"
+      },
       "logoutAll": {
         "button": "Déconnecter toutes les sessions",
         "title": "Déconnecter toutes les sessions",
