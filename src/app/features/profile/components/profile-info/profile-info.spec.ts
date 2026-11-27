@@ -41,7 +41,6 @@ describe('ProfileInfo', () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    localStorage.setItem('access_token', 'access-1');
     TestBed.configureTestingModule({ providers: provideTestDefaults() });
     backend = TestBed.inject(HttpTestingController);
     authService = TestBed.inject(AuthService);

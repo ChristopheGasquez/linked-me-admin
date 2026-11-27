@@ -57,7 +57,10 @@ export class Login {
 
   showPassword = signal(false);
   loading = signal(false);
-  error = signal<{ code: string; params?: Record<string, unknown> } | null>(null);
+  // Refresh token replayed (possible theft): explain why the session ended
+  error = signal<{ code: string; params?: Record<string, unknown> } | null>(
+    this.#authService.sessionInterrupted() ? { code: 'auth.refresh.token_reused' } : null,
+  );
   success = signal<string | null>(null);
   emailToResend = signal<string | null>(null);
 

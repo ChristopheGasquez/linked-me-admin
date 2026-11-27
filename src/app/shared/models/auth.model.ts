@@ -9,13 +9,6 @@ export interface RegisterResponse {
   updatedAt: string;
 }
 
-export interface AuthResponse {
-  access_token: string;
-  refresh_token: string;
+export interface LoginResponse {
   user: User;
-}
-
-export interface TokensResponse {
-  access_token: string;
-  refresh_token: string;
 }

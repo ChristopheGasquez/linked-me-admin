@@ -16,7 +16,6 @@ describe('Profile', () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    localStorage.setItem('access_token', 'access-1');
     TestBed.configureTestingModule({ providers: provideTestDefaults() });
     TestBed.inject(AuthService).currentUser.set(testUser(['realm:profile']));
     fixture = TestBed.createComponent(Profile);

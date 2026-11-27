@@ -62,7 +62,6 @@ describe('PrivateLayout', () => {
         },
       ],
     });
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(permissions));
     backend = TestBed.inject(HttpTestingController);
     harness = await RouterTestingHarness.create();
@@ -125,17 +124,17 @@ describe('PrivateLayout', () => {
     expect(await (await sidenav()).isOpen()).toBe(false);
   });
 
-  it('logs out: revokes the session, clears the tokens and goes to login', async () => {
+  it('logs out: waits for the API to clear the cookies, then goes to login', async () => {
     await render();
-    localStorage.setItem('refresh_token', 'refresh-1');
 
     await (await loader().getHarness(MatButtonHarness.with({ text: 'logout' }))).click();
 
     const request = backend.expectOne('/auth/logout');
-    expect(request.request.body).toEqual({ refresh_token: 'refresh-1' });
+    expect(request.request.body).toEqual({});
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(Router).url).not.toBe('/auth/login');
     request.flush({ code: 'auth.logout.success' });
-    expect(localStorage.getItem('access_token')).toBeNull();
-    expect(localStorage.getItem('refresh_token')).toBeNull();
+    expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
     await vi.waitFor(() => expect(TestBed.inject(Router).url).toBe('/auth/login'));
   });
 

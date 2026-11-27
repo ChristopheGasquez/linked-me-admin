@@ -14,8 +14,8 @@ export interface HasUnsavedChanges {
 }
 
 export const unsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (component) => {
-  // Logout (manual, expired session, password change) clears the token before navigating: nothing to protect anymore
-  if (!component.hasUnsavedChanges() || !inject(AuthService).getAccessToken()) {
+  // Logout (manual, expired session, password change) clears the session before navigating: nothing to protect anymore
+  if (!component.hasUnsavedChanges() || !inject(AuthService).isAuthenticated()) {
     return true;
   }
   const data: ConfirmDialogData = {
