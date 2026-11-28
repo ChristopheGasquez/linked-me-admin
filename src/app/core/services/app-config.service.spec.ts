@@ -20,4 +20,23 @@ describe('AppConfigService', () => {
     expect(fetch).toHaveBeenCalledWith('/config.json');
     expect(config.apiUrl).toBe('https://api.test');
   });
+
+  it.each([
+    ['missing', undefined, []],
+    ['empty', '', []],
+    [
+      'a list with spaces',
+      ' https://a.gasquez.fr, https://b.gasquez.fr ,',
+      ['https://a.gasquez.fr', 'https://b.gasquez.fr'],
+    ],
+  ])('splits the return URL origins (%s)', async (_, returnUrlOrigins, expected) => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ apiUrl: 'https://api.test', returnUrlOrigins })),
+    );
+    const config = TestBed.inject(AppConfigService);
+
+    await config.load();
+
+    expect(config.returnUrlOrigins).toEqual(expected);
+  });
 });

@@ -5,7 +5,8 @@ sed -i "s|__API_URL__|${API_URL:-}|" /etc/nginx/conf.d/default.conf
 cat > /usr/share/nginx/html/config.json <<EOF
 {
   "apiUrl": "${API_URL:-}",
-  "turnstileSiteKey": "${TURNSTILE_SITE_KEY:-}"
+  "turnstileSiteKey": "${TURNSTILE_SITE_KEY:-}",
+  "returnUrlOrigins": "${RETURN_URL_ORIGINS:-}"
 }
 EOF
 exec "$@"

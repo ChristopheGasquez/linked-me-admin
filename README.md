@@ -38,9 +38,11 @@ npm install
 
 The app loads its runtime configuration from `public/config.json` at startup (via `provideAppInitializer`).
 
-| Key      | Description                   |
-| -------- | ----------------------------- |
-| `apiUrl` | Base URL of the linked-me API |
+| Key                | Description                                                  |
+| ------------------ | ------------------------------------------------------------ |
+| `apiUrl`           | Base URL of the linked-me API                                |
+| `turnstileSiteKey` | Cloudflare Turnstile site key                                |
+| `returnUrlOrigins` | Comma-separated origins allowed as `returnUrl` after sign-in |
 
 In development, `public/config.json` is committed with a local fallback value and ignored from git tracking:
 
@@ -181,14 +183,23 @@ At container startup, `docker-entrypoint.sh`:
 1. Injects `$PORT` into the Nginx config
 2. Generates `public/config.json` from environment variables
 
-| Variable  | Description                                 |
-| --------- | ------------------------------------------- |
-| `API_URL` | Base URL of the linked-me API               |
-| `PORT`    | Port Nginx listens on (injected by Railway) |
+| Variable             | Description                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `API_URL`            | Base URL of the linked-me API                                                                                |
+| `PORT`               | Port Nginx listens on (injected by Railway)                                                                  |
+| `RETURN_URL_ORIGINS` | Origins of the apps allowed to send users here to sign in (comma-separated, exact: `https://app.gasquez.fr`) |
 
 The API must be on the same site as the front (e.g. `linked-me-admin.gasquez.fr` → `linked-me-api.gasquez.fr`): the session cookies are `SameSite=Strict`, so a `*.up.railway.app` API URL would not work.
 
 Nginx sends a `Content-Security-Policy` header on `index.html`; `connect-src` is filled with `API_URL` at startup. Critical CSS inlining is disabled in the production build so that no inline script is needed. When adding a third-party script, font or API, update the policy in `nginx.conf`.
+
+### Sign-in from another app
+
+An app on the same site sends signed-out users to `/auth/login?returnUrl=<url>`; they come back to `<url>` once signed in, or straight away if already signed in. Requirements:
+
+- the app origin is listed in `RETURN_URL_ORIGINS` (any other `returnUrl` is ignored: the user lands on the dashboard) and in the API allowed origins;
+- the app calls the API with credentials (`withCredentials` / `credentials: 'include'`): the session cookies belong to the API host, so they are shared by every app calling it;
+- the app refreshes the session itself (`POST /auth/refresh` on a 401 without `code`).
 
 ## Git flow
 
