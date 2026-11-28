@@ -210,6 +210,9 @@
       "failed": "Données invalides"
     },
     "auth": {
+      "permission": {
+        "denied": "Vous n'avez pas la permission d'effectuer cette action"
+      },
       "register": {
         "conflict": "Un compte existe déjà avec cet email"
       },
@@ -264,8 +267,8 @@
       "user": {
         "not_found": "Utilisateur introuvable",
         "has_roles": "Impossible de supprimer : l'utilisateur possède des rôles",
-        "role_already_assigned": "Ce rôle est déjà assigné à cet utilisateur",
         "role": {
+          "already_assigned": "Ce rôle est déjà assigné à cet utilisateur",
           "not_assigned": "Ce rôle n'est pas assigné à cet utilisateur",
           "assigned": "Rôle assigné avec succès",
           "removed": "Rôle retiré avec succès"
