@@ -210,6 +210,9 @@
       "failed": "Invalid data"
     },
     "auth": {
+      "permission": {
+        "denied": "You are not allowed to perform this action"
+      },
       "register": {
         "conflict": "An account already exists with this email"
       },
@@ -264,8 +267,8 @@
       "user": {
         "not_found": "User not found",
         "has_roles": "Cannot delete: user has assigned roles",
-        "role_already_assigned": "This role is already assigned to this user",
         "role": {
+          "already_assigned": "This role is already assigned to this user",
           "not_assigned": "This role is not assigned to this user",
           "assigned": "Role assigned successfully",
           "removed": "Role removed successfully"

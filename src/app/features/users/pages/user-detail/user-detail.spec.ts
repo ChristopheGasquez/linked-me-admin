@@ -270,10 +270,10 @@ describe('UserDetail', () => {
       await (await button(fr.admin.users.detail.assign))!.click();
       backend
         .expectOne(`/admin/users/${uuid(5)}/roles`)
-        .flush({ code: 'admin.user.role_already_assigned' }, { status: 409, statusText: 'Error' });
+        .flush({ code: 'admin.user.role.already_assigned' }, { status: 409, statusText: 'Error' });
       await harness.fixture.whenStable();
 
-      expect(text()).toContain(fr.api.admin.user.role_already_assigned);
+      expect(text()).toContain(fr.api.admin.user.role.already_assigned);
     });
 
     it('asks before removing a role and does nothing when cancelled', async () => {
