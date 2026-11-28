@@ -9,7 +9,9 @@ import { Router } from '@angular/router';
 
 import { fr, provideTestDefaults, testUser } from '../../../../../testing/test-providers';
 import { fakeTurnstile } from '../../../../../testing/turnstile-stub';
+import { AppConfigService } from '../../../../core/services/app-config.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ReturnUrlService } from '../../../../core/services/return-url.service';
 import { Login } from './login';
 
 describe('Login', () => {
@@ -87,6 +89,41 @@ describe('Login', () => {
 
     expect(TestBed.inject(AuthService).currentUser()?.permissions).toEqual(['realm:profile']);
     expect(navigate).toHaveBeenCalledWith(['/dashboard']);
+  });
+
+  describe('sent by another app', () => {
+    let navigate: ReturnType<typeof vi.spyOn>;
+    let go: ReturnType<typeof vi.spyOn>;
+
+    async function signIn(returnUrl: string) {
+      fixture.componentRef.setInput('returnUrl', returnUrl);
+      await submit();
+      backend.expectOne('/auth/login').flush({ user: {} });
+      backend.expectOne('/auth/me').flush(testUser());
+      await fixture.whenStable();
+    }
+
+    beforeEach(() => {
+      vi.spyOn(TestBed.inject(AppConfigService), 'returnUrlOrigins', 'get').mockReturnValue([
+        'https://app.gasquez.fr',
+      ]);
+      navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      go = vi.spyOn(TestBed.inject(ReturnUrlService), 'go').mockImplementation(() => undefined);
+    });
+
+    it('goes back to an allowed app once signed in', async () => {
+      await signIn('https://app.gasquez.fr/projects?id=1');
+
+      expect(go).toHaveBeenCalledWith('https://app.gasquez.fr/projects?id=1');
+      expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('goes to the dashboard when the app is not allowed', async () => {
+      await signIn('https://evil.com/');
+
+      expect(go).not.toHaveBeenCalled();
+      expect(navigate).toHaveBeenCalledWith(['/dashboard']);
+    });
   });
 
   it('explains a session interrupted by a replayed refresh token', async () => {

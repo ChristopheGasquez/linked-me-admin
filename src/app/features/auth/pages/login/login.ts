@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -19,6 +19,7 @@ import { EMPTY } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { ReturnUrlService } from '../../../../core/services/return-url.service';
 import { Turnstile } from '../../../../shared/components/turnstile/turnstile';
 import { toApiError } from '../../../../shared/utils/api-error';
 import { applyValidationErrors } from '../../../../shared/utils/form-validation';
@@ -52,8 +53,11 @@ export class Login {
   #formBuilder: FormBuilder = inject(FormBuilder);
   #authService = inject(AuthService);
   #router = inject(Router);
+  #returnUrls = inject(ReturnUrlService);
 
   readonly captcha = viewChild.required(Turnstile);
+  // Set by another app sending the user here to sign in
+  readonly returnUrl = input<string>();
 
   showPassword = signal(false);
   loading = signal(false);
@@ -81,7 +85,14 @@ export class Login {
     this.#authService
       .login(email, password, captchaToken)
       .pipe(
-        tap(() => this.#router.navigate(['/dashboard'])),
+        tap(() => {
+          const returnUrl = this.#returnUrls.resolve(this.returnUrl());
+          if (returnUrl) {
+            this.#returnUrls.go(returnUrl);
+          } else {
+            this.#router.navigate(['/dashboard']);
+          }
+        }),
         catchError((err: HttpErrorResponse) => {
           if (err.error?.code === 'validation.failed') {
             applyValidationErrors(this.form, err.error);
