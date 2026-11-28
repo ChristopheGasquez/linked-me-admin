@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { catchError, filter, finalize, switchMap, tap } from 'rxjs/operators';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { DatePipe } from '@angular/common';
@@ -79,17 +79,36 @@ export class SessionsList {
     return this.#revokeError() ?? (err ? toApiError(err) : null);
   });
 
-  revokeSession(id: string): void {
-    this.revoking.set(id);
-    this.#revokeError.set(null);
+  revokeSession(session: SessionResponse): void {
     const userId = this.userId();
-    const revoke$ =
-      userId === undefined
-        ? this.#authApi.revokeSession(id)
-        : this.#usersApi.revokeSession(userId, id);
-    revoke$
+    const data: ConfirmDialogData = {
+      titleKey: 'common.sessions.revokeCurrent.title',
+      messageKey: 'common.sessions.revokeCurrent.message',
+      confirmLabelKey: 'common.sessions.revokeCurrent.button',
+    };
+    // This device's session: revoking it signs out (the API clears the cookies), so confirm first
+    const confirmed$ = session.current
+      ? this.#dialog.open(ConfirmDialog, { data }).afterClosed().pipe(filter(Boolean))
+      : of(true);
+    confirmed$
       .pipe(
-        tap(() => this.sessionsResource.reload()),
+        tap(() => {
+          this.revoking.set(session.id);
+          this.#revokeError.set(null);
+        }),
+        switchMap(() =>
+          userId === undefined
+            ? this.#authApi.revokeSession(session.id)
+            : this.#usersApi.revokeSession(userId, session.id),
+        ),
+        tap(() => {
+          if (session.current) {
+            this.#authService.clearSession();
+            this.#router.navigate(['/auth/login']);
+          } else {
+            this.sessionsResource.reload();
+          }
+        }),
         catchError((err: HttpErrorResponse) => {
           this.#revokeError.set(toApiError(err));
           return EMPTY;
@@ -101,9 +120,11 @@ export class SessionsList {
 
   logoutAll(): void {
     const userId = this.userId();
+    // Read before signing out: currentUser is cleared by then
+    const isOwn = this.#isOwn();
     const data: ConfirmDialogData = {
       titleKey: 'common.sessions.logoutAll.title',
-      messageKey: `common.sessions.logoutAll.${this.#isOwn() ? 'confirmOwn' : 'confirmUser'}`,
+      messageKey: `common.sessions.logoutAll.${isOwn ? 'confirmOwn' : 'confirmUser'}`,
       confirmLabelKey: 'common.sessions.logoutAll.button',
     };
     this.#dialog
@@ -115,12 +136,17 @@ export class SessionsList {
           this.loggingOutAll.set(true);
           this.#revokeError.set(null);
         }),
-        switchMap(() =>
-          userId === undefined ? this.#authApi.logoutAll() : this.#usersApi.revokeSessions(userId),
-        ),
+        switchMap(() => {
+          if (userId === undefined) {
+            return this.#authApi.logoutAll().pipe(tap(() => this.#authService.clearSession()));
+          }
+          // The admin endpoint does not clear the cookies: an admin on their own page signs out explicitly
+          return this.#usersApi
+            .revokeSessions(userId)
+            .pipe(switchMap(() => (isOwn ? this.#authService.logout() : of(undefined))));
+        }),
         tap(() => {
-          if (this.#isOwn()) {
-            this.#authService.logout();
+          if (isOwn) {
             this.#router.navigate(['/auth/login']);
           } else {
             this.sessionsResource.reload();

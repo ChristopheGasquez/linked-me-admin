@@ -88,7 +88,7 @@ src/
 ├── app/
 │   ├── core/               # Global services and guards
 │   │   ├── guards/         #   Auth & permission guards
-│   │   ├── interceptors/   #   Auth interceptor (token refresh)
+│   │   ├── interceptors/   #   Auth interceptor (credentials, session refresh)
 │   │   └── services/       #   Auth, AppConfig, Theme, Profile, i18n loader
 │   ├── features/           # Lazy-loaded features
 │   │   ├── auth/           #   Authentication pages
@@ -122,6 +122,8 @@ Full auth flow backed by the linked-me API:
 | Email confirmed | `/auth/email-confirmed` |
 | Forgot password | `/auth/forgot-password` |
 | Reset password  | `/auth/reset-password`  |
+
+Sessions rely on HttpOnly cookies set by the API (`withCredentials` on every API request, no token stored by the front). Requires linked-me API ≥ 3.0.0.
 
 ### Error pages
 
@@ -183,6 +185,10 @@ At container startup, `docker-entrypoint.sh`:
 | --------- | ------------------------------------------- |
 | `API_URL` | Base URL of the linked-me API               |
 | `PORT`    | Port Nginx listens on (injected by Railway) |
+
+The API must be on the same site as the front (e.g. `linked-me-admin.gasquez.fr` → `linked-me-api.gasquez.fr`): the session cookies are `SameSite=Strict`, so a `*.up.railway.app` API URL would not work.
+
+Nginx sends a `Content-Security-Policy-Report-Only` header on `index.html` (violations are logged in the browser console, nothing is blocked); `connect-src` is filled with `API_URL` at startup. Critical CSS inlining is disabled in the production build so that no inline script is needed.
 
 ## Git flow
 

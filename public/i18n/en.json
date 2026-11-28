@@ -32,6 +32,12 @@
         "actions": "Actions"
       },
       "disconnect": "Disconnect",
+      "current": "This device",
+      "revokeCurrent": {
+        "title": "Sign out this device",
+        "message": "This session belongs to this device: you will be signed out and will need to sign in again.",
+        "button": "Sign out"
+      },
       "logoutAll": {
         "button": "Log out all sessions",
         "title": "Log out all sessions",
@@ -213,8 +219,10 @@
         "email_not_verified": "Please verify your email before signing in"
       },
       "refresh": {
+        "success": "Session refreshed",
         "invalid_token": "Session expired, please sign in again",
-        "token_revoked": "Session revoked, please sign in again"
+        "token_revoked": "Session revoked, please sign in again",
+        "token_reused": "Session interrupted for security reasons, please sign in again"
       },
       "session": {
         "not_found": "Session not found",
@@ -307,6 +315,9 @@
       "missing": "Please complete the anti-bot check",
       "invalid": "The anti-bot check expired or is invalid, please try again",
       "unavailable": "Anti-bot check unavailable, please try again in a moment"
+    },
+    "origin": {
+      "not_allowed": "Origin not allowed"
     }
   },
   "me": {

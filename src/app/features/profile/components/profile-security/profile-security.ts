@@ -139,7 +139,7 @@ export class ProfileSecurity implements OnInit, OnDestroy {
 
   goToLogin(): void {
     this.#clearInterval();
-    this.#authService.logout();
+    this.#authService.clearSession();
     this.#router.navigate(['/', 'auth', 'login']);
   }
 
@@ -161,7 +161,7 @@ export class ProfileSecurity implements OnInit, OnDestroy {
       const n = this.countdown();
       if (n <= 1) {
         this.#clearInterval();
-        this.#authService.logout();
+        this.#authService.clearSession();
         this.#router.navigate(['/', 'auth', 'login']);
       } else {
         this.countdown.set(n - 1);

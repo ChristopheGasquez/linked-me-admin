@@ -32,6 +32,12 @@
         "actions": "Actions"
       },
       "disconnect": "Déconnecter",
+      "current": "Cet appareil",
+      "revokeCurrent": {
+        "title": "Déconnecter cet appareil",
+        "message": "Cette session est celle de cet appareil : vous serez déconnecté et devrez vous reconnecter.",
+        "button": "Se déconnecter"
+      },
       "logoutAll": {
         "button": "Déconnecter toutes les sessions",
         "title": "Déconnecter toutes les sessions",
@@ -213,8 +219,10 @@
         "email_not_verified": "Vous devez confirmer votre adresse email en cliquant sur le lien qui vous a été envoyé à cette adresse"
       },
       "refresh": {
+        "success": "Session rafraîchie",
         "invalid_token": "Session expirée, veuillez vous reconnecter",
-        "token_revoked": "Session révoquée, veuillez vous reconnecter"
+        "token_revoked": "Session révoquée, veuillez vous reconnecter",
+        "token_reused": "Session interrompue par sécurité, veuillez vous reconnecter"
       },
       "session": {
         "not_found": "Session introuvable",
@@ -307,6 +315,9 @@
       "missing": "Veuillez compléter la vérification anti-robot",
       "invalid": "La vérification anti-robot a expiré ou est invalide, réessayez",
       "unavailable": "Vérification anti-robot indisponible, réessayez dans un instant"
+    },
+    "origin": {
+      "not_allowed": "Origine non autorisée"
     }
   },
   "me": {

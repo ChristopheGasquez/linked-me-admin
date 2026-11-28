@@ -119,7 +119,6 @@ describe('AuditLogs', () => {
   }
 
   function signIn(permissions = ['realm:audit', 'realm:admin']) {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(permissions));
   }
 

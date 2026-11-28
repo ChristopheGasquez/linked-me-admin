@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { AppConfigService } from '../../core/services/app-config.service';
-import { AuthResponse, RegisterResponse, TokensResponse } from '../models/auth.model';
+import { LoginResponse, RegisterResponse } from '../models/auth.model';
 import { LoginDto, RegisterDto } from '../models/login.dto';
 import { MeResponse } from '../models/me.model';
 import { ApiMessage } from '../models/api-response.model';
@@ -27,18 +27,20 @@ export class AuthApiService {
     );
   }
 
-  login(dto: LoginDto, captchaToken: string): Observable<AuthResponse> {
-    return this.#http.post<AuthResponse>(`${this.baseUrl}/login`, dto, this.#captcha(captchaToken));
+  login(dto: LoginDto, captchaToken: string): Observable<LoginResponse> {
+    return this.#http.post<LoginResponse>(
+      `${this.baseUrl}/login`,
+      dto,
+      this.#captcha(captchaToken),
+    );
   }
 
   getMe(): Observable<MeResponse> {
     return this.#http.get<MeResponse>(`${this.baseUrl}/me`);
   }
 
-  refresh(refreshToken: string): Observable<TokensResponse> {
-    return this.#http.post<TokensResponse>(`${this.baseUrl}/refresh`, {
-      refresh_token: refreshToken,
-    });
+  refresh(): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/refresh`, {});
   }
 
   verifyEmail(token: string): Observable<ApiMessage> {
@@ -69,8 +71,8 @@ export class AuthApiService {
     return this.#http.post<ApiMessage>(`${this.baseUrl}/reset-password`, { token, password });
   }
 
-  logout(refreshToken: string): Observable<void> {
-    return this.#http.post<void>(`${this.baseUrl}/logout`, { refresh_token: refreshToken });
+  logout(): Observable<ApiMessage> {
+    return this.#http.post<ApiMessage>(`${this.baseUrl}/logout`, {});
   }
 
   logoutAll(): Observable<void> {

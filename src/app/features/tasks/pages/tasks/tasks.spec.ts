@@ -81,7 +81,6 @@ describe('Tasks', () => {
   }
 
   async function render(tasks = TASKS) {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(['realm:task']));
     fixture = TestBed.createComponent(Tasks);
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -147,7 +146,6 @@ describe('Tasks', () => {
   });
 
   it('shows the error when the tasks cannot be loaded', async () => {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(['realm:task']));
     fixture = TestBed.createComponent(Tasks);
     TestBed.tick();

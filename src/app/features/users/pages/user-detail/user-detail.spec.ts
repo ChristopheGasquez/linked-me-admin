@@ -62,7 +62,6 @@ describe('UserDetail', () => {
   const dialog = () => document.querySelector<HTMLElement>('mat-dialog-container');
 
   function signIn(permissions = ALL_PERMISSIONS, id = uuid(1)) {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set({ ...testUser(permissions), id });
   }
 

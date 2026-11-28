@@ -80,7 +80,6 @@ describe('RolesList', () => {
   }
 
   function signIn(permissions = ['realm:admin', 'admin:role:manage']) {
-    localStorage.setItem('access_token', 'access-1');
     TestBed.inject(AuthService).currentUser.set(testUser(permissions));
   }
 
