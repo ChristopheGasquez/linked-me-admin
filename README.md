@@ -188,6 +188,8 @@ At container startup, `docker-entrypoint.sh`:
 
 The API must be on the same site as the front (e.g. `linked-me-admin.gasquez.fr` → `linked-me-api.gasquez.fr`): the session cookies are `SameSite=Strict`, so a `*.up.railway.app` API URL would not work.
 
+Nginx sends a `Content-Security-Policy-Report-Only` header on `index.html` (violations are logged in the browser console, nothing is blocked); `connect-src` is filled with `API_URL` at startup. Critical CSS inlining is disabled in the production build so that no inline script is needed.
+
 ## Git flow
 
 - `master` — production (protected, merge via PR only)
