@@ -43,4 +43,9 @@ describe('toApiError', () => {
   it('falls back to the forbidden error on a 403 without code', () => {
     expect(toApiError(new HttpErrorResponse({ error: null, status: 403 })).code).toBe('forbidden');
   });
+
+  it('keeps the API code on a 403 with code', () => {
+    const err = new HttpErrorResponse({ error: { code: 'auth.permission.denied' }, status: 403 });
+    expect(toApiError(err).code).toBe('auth.permission.denied');
+  });
 });
